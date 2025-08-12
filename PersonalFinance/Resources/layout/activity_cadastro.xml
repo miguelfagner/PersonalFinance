@@ -9,12 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-		<Spinner
-            android:id="@+id/spinnerTipo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="8dp" />
-
 		<TextView
             android:id="@+id/txtTitulo"
             android:text="Cadastro"
@@ -44,5 +38,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp" />
+
+		<Spinner
+	        android:id="@+id/spinnerTipo"
+	        android:layout_width="match_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_margin="8dp" />
+		
 	</LinearLayout>
 </ScrollView>
+    

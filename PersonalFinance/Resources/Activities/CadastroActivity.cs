@@ -6,29 +6,34 @@ namespace PersonalFinance.Resources.Activities
     [Activity(Label = "Cadastro")]
     public class CadastroActivity : Activity
     {
-        //private EditText _descricao, _valor;
         EditText _txtDescricao, _txtValor;
-
         private Button _btnSalvar;
         Spinner _spinnerTipo;
         private DatabaseService _db;
-        //private string _tipo;
 
-        //ao criar 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_cadastro);
 
-            _txtDescricao = FindViewById<EditText>(Resource.Id.editDescricao)                ;
+            _txtDescricao = FindViewById<EditText>(Resource.Id.editDescricao);
             _spinnerTipo = FindViewById<Spinner>(Resource.Id.spinnerTipo);
             _txtValor = FindViewById<EditText>(Resource.Id.editValor);
             _btnSalvar = FindViewById<Button>(Resource.Id.btnSalvar);
 
-            int _idTransacao = 0; // Guardar ID para saber se é edição
+            int _idTransacao = 0;
 
             _db = new DatabaseService();
-            //_tipo = Intent.GetStringExtra("tipo");
+
+            // Preencher o Spinner com opções
+            var tipos = new List<string> { "Receita", "Despesa" };
+            var adapter = new ArrayAdapter<string>(
+                this,
+                Android.Resource.Layout.SimpleSpinnerItem,
+                tipos
+            );
+            adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
+            _spinnerTipo.Adapter = adapter;
 
             // Verifica se veio um Id na Intent (edição)
             _idTransacao = Intent.GetIntExtra("Id", 0);
@@ -40,6 +45,7 @@ namespace PersonalFinance.Resources.Activities
                 {
                     _txtDescricao.Text = transacao.Descricao;
                     _txtValor.Text = transacao.Valor.ToString("F2");
+
                     var indexTipo = transacao.Tipo == "Receita" ? 0 : 1;
                     _spinnerTipo.SetSelection(indexTipo);
                 }
@@ -55,22 +61,23 @@ namespace PersonalFinance.Resources.Activities
 
                 new AlertDialog.Builder(this)
                     .SetTitle("Confirmação")
-                    //.SetMessage($"Deseja salvar esta {_tipo.ToLower()}?")
-                    .SetMessage($"Deseja salvar ?")
+                    .SetMessage("Deseja salvar?")
                     .SetPositiveButton("Sim", async (senderAlert, args) =>
                     {
+                        var tipoSelecionado = _spinnerTipo.SelectedItem.ToString();
+
                         var transacao = new Transacao
                         {
                             Id = _idTransacao,
-                            Tipo = "Receita",
+                            Tipo = tipoSelecionado,
                             Descricao = _txtDescricao.Text,
                             Valor = decimal.Parse(_txtValor.Text),
                             Data = DateTime.Now,
-                            Pago = true //_tipo == "Receita" // Receitas já como pagas
+                            Pago = tipoSelecionado == "Receita" // receitas já como pagas
                         };
                         await _db.SalvarTransacaoAsync(transacao);
-                        //Toast.MakeText(this, $"{_tipo} salva!", ToastLength.Short).Show();
-                        Toast.MakeText(this, $"salvo!", ToastLength.Short).Show();
+
+                        Toast.MakeText(this, "Salvo!", ToastLength.Short).Show();
                         Finish();
                     })
                     .SetNegativeButton("Não", (senderAlert, args) => { })
