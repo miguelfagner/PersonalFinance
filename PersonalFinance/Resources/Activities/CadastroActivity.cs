@@ -14,6 +14,7 @@ namespace PersonalFinance.Resources.Activities
         private DatabaseService _db;
         //private string _tipo;
 
+        //ao criar 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
