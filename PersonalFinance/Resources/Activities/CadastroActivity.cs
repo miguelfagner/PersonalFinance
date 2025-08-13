@@ -69,12 +69,12 @@ namespace PersonalFinance.Resources.Activities
                         var transacao = new Transacao
                         {
                             Id = _idTransacao,
-                            Tipo = tipoSelecionado,
-                            Descricao = _txtDescricao.Text,
+                            //Tipo = tipoSelecionado,
+                            //Descricao = _txtDescricao.Text,
                             Valor = decimal.Parse(_txtValor.Text),
-                            DataCadastro = DateTime.Now,
-                            DataPgmto = DateTime.Now,
-                            Pago = tipoSelecionado == "Receita" // receitas já como pagas
+                            //DataCadastro = DateTime.Now,
+                            //DataPgmto = DateTime.Now,
+                            //Pago = tipoSelecionado == "Receita" // receitas já como pagas
                         };
                         await _db.SalvarTransacaoAsync(transacao);
 

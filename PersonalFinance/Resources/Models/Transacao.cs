@@ -8,26 +8,33 @@ namespace PersonalFinance.Resources.Models
         [PrimaryKey, AutoIncrement]
         public int Id { get; set; }
 
+        
         [ForeignKey(nameof(Banco))]
         public int BancoId { get; set; } // Referência ao banco
 
         [Ignore]
         public Banco Banco { get; set; }
 
-        public string Tipo { get; set; } // Receita Despesa Cofre
 
-        public string Categoria { get; set; } // Ex: Alimentação, Transporte, etc
+        [ForeignKey(nameof(Despesa))]
+        public int DespesaId { get; set; } // Referência ao banco
 
-        public string Descricao { get; set; }
-        public string Origem { get; set; } // Elza Extra Beneficio governo...
+        [Ignore]
+        public Despesa Despesa { get; set; }
 
+
+        [ForeignKey(nameof(Receita))]
+        public int ReceitaId { get; set; } // Referência ao banco
+
+        [Ignore]
+        public Receita Receita { get; set; }
+
+        [MaxLength(100)]
+        public string Observacao { get; set; }
+        
         public decimal Valor { get; set; }
 
-        public DateTime DataCadastro { get; set; }
-
-        public bool Pago { get; set; }
-
-        public DateTime DataPgmto { get; set; }
+        public DateTime Data { get; set; }
 
     }
 }
