@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Threading.Tasks;
-using PersonalFinance.Resources.Models;
+﻿using PersonalFinance.Resources.Models;
 using SQLite;
 
 namespace PersonalFinance.Resources.Services
@@ -15,6 +12,8 @@ namespace PersonalFinance.Resources.Services
             string dbPath = Path.Combine(Android.App.Application.Context.FilesDir.AbsolutePath, "financeiro.db");
 
             _db = new SQLiteAsyncConnection(dbPath);
+           
+            _db.CreateTableAsync<Banco>().Wait();
             _db.CreateTableAsync<Transacao>().Wait();
         }
 

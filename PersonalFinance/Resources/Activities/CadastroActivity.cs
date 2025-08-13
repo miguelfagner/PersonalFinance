@@ -26,7 +26,7 @@ namespace PersonalFinance.Resources.Activities
             _db = new DatabaseService();
 
             // Preencher o Spinner com opções
-            var tipos = new List<string> { "Receita", "Despesa" };
+            var tipos = new List<string> { "Receita", "Despesa", "Cofre" };
             var adapter = new ArrayAdapter<string>(
                 this,
                 Android.Resource.Layout.SimpleSpinnerItem,
@@ -72,7 +72,8 @@ namespace PersonalFinance.Resources.Activities
                             Tipo = tipoSelecionado,
                             Descricao = _txtDescricao.Text,
                             Valor = decimal.Parse(_txtValor.Text),
-                            Data = DateTime.Now,
+                            DataCadastro = DateTime.Now,
+                            DataPgmto = DateTime.Now,
                             Pago = tipoSelecionado == "Receita" // receitas já como pagas
                         };
                         await _db.SalvarTransacaoAsync(transacao);
