@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="#FAFAFA"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -10,9 +11,11 @@
         android:layout_height="wrap_content">
 
 		<TextView
-            android:text="Receitas"
-            android:textSize="20sp"
+            android:text="RECEITAS"
+            android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="#2E7D32"
+            android:layout_marginBottom="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -20,13 +23,20 @@
             android:id="@+id/layoutReceitas"
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="8dp" />
+            android:layout_height="wrap_content" />
+
+		<View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DDDDDD"
+            android:layout_marginVertical="5dp" />
 
 		<TextView
-            android:text="Despesas"
-            android:textSize="20sp"
+            android:text="DESPESAS"
+            android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="#C62828"
+            android:layout_marginBottom="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -36,10 +46,18 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+		<View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#DDDDDD"
+            android:layout_marginVertical="5dp" />
+
 		<TextView
-            android:text="Cofre"
-            android:textSize="20sp"
+            android:text="COFRE"
+            android:textSize="18sp"
             android:textStyle="bold"
+            android:textColor="#1565C0"
+            android:layout_marginBottom="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 

@@ -1,7 +1,12 @@
-﻿using Android.Views;
+﻿using Android.App;
+using Android.Graphics;
+using Android.OS;
 using Android.Util;
+using Android.Views;
+using Android.Widget;
 using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
+using System.Linq;
 
 namespace PersonalFinance.Resources.Activities
 {
@@ -19,95 +24,82 @@ namespace PersonalFinance.Resources.Activities
             _db = new DatabaseService();
 
             _layoutReceitas = FindViewById<LinearLayout>(Resource.Id.layoutReceitas);
-            _layoutCofre = FindViewById<LinearLayout>(Resource.Id.layoutCofre);
             _layoutDespesas = FindViewById<LinearLayout>(Resource.Id.layoutDespesas);
+            _layoutCofre = FindViewById<LinearLayout>(Resource.Id.layoutCofre);
 
-            var receitas = (await _db.GetTransacoesAsync())
-                .Where(t => t.Tipo == "Receita")
-                .OrderByDescending(t => t.Valor)
-                .ToList();
-
-            var despesas = (await _db.GetTransacoesAsync())
-                .Where(t => t.Tipo == "Despesa")
-                .OrderByDescending(t => t.Valor)
-                .ToList();
-
-            var cofre = (await _db.GetTransacoesAsync())
-                .Where(t => t.Tipo == "Cofre")
-                .OrderByDescending(t => t.Valor)
-                .ToList();
-
-            PopularLista(_layoutReceitas, receitas);
-            PopularLista(_layoutCofre, cofre);
-            PopularLista(_layoutDespesas, despesas);
+            await AtualizarListasAsync();
         }
 
         protected override async void OnResume()
         {
             base.OnResume();
-
-            _db = new DatabaseService();
-
-            _layoutReceitas = FindViewById<LinearLayout>(Resource.Id.layoutReceitas);
-            _layoutDespesas = FindViewById<LinearLayout>(Resource.Id.layoutDespesas);
-            _layoutCofre = FindViewById<LinearLayout>(Resource.Id.layoutCofre);
-
-            var receitas = (await _db.GetTransacoesAsync())
-                .Where(t => t.Tipo == "Receita")
-                .OrderByDescending(t => t.Valor)
-                .ToList();
-
-            var despesas = (await _db.GetTransacoesAsync())
-                .Where(t => t.Tipo == "Despesa")
-                .OrderByDescending(t => t.Valor)
-                .ToList();
-
-            var cofre = (await _db.GetTransacoesAsync())
-                .Where(t => t.Tipo == "Cofre")
-                .OrderByDescending(t => t.Valor)
-                .ToList();
-
-            PopularLista(_layoutReceitas, receitas);
-            PopularLista(_layoutDespesas, despesas);
-            PopularLista(_layoutCofre, cofre);
+            await AtualizarListasAsync();
         }
 
-        private void PopularLista(LinearLayout layout, System.Collections.Generic.List<Transacao> lista)
+        private async System.Threading.Tasks.Task AtualizarListasAsync()
         {
-            layout.RemoveAllViews();
+            var transacoes = await _db.GetTransacoesAsync();
 
-            // Conversão de dp para px para manter proporção
-            int larguraPx = (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 60, Resources.DisplayMetrics);
-            int alturaPx = (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 35, Resources.DisplayMetrics);
-
-            var layoutParamsBotao = new LinearLayout.LayoutParams(larguraPx, alturaPx);
-            layoutParamsBotao.SetMargins(5, 0, 5, 0);
+            PopularLista(_layoutReceitas, transacoes.Where(t => t.Tipo == "Receita").ToList());
+            PopularLista(_layoutDespesas, transacoes.Where(t => t.Tipo == "Despesa").ToList());
+            PopularLista(_layoutCofre, transacoes.Where(t => t.Tipo == "Cofre").ToList());
+        }
+        private void PopularLista(LinearLayout container, System.Collections.Generic.List<Transacao> lista)
+        {
+            container.RemoveAllViews();
 
             foreach (var item in lista)
             {
-                // Layout vertical: texto em cima, botões embaixo
-                var verticalLayout = new LinearLayout(this)
+                // Container horizontal para texto + botões
+                var itemLayout = new LinearLayout(this)
                 {
-                    Orientation = Orientation.Vertical
+                    Orientation = Orientation.Horizontal,
+                    LayoutParameters = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.MatchParent,
+                        ViewGroup.LayoutParams.WrapContent)
                 };
 
-                // Texto da transação
-                var textView = new TextView(this)
+                // Texto da transação (peso 1 para ocupar o máximo possível)
+                var tv = new TextView(this)
                 {
-                    Text = $"{item.Descricao} - R$ {item.Valor:F2}",
-                    TextSize = 16
+                    Text = $"{item.Descricao.ToUpper()} - R$ {item.Valor:F2}",
+                    TextSize = 16,
+                    LayoutParameters = new LinearLayout.LayoutParams(
+                        0,
+                        ViewGroup.LayoutParams.WrapContent, 1f)
                 };
-                textView.SetTextColor(Android.Graphics.Color.Black);
+                tv.SetTextColor(Color.Black);
+                tv.SetPadding(10, 10, 10, 10);
 
-                // Layout horizontal para os botões
+                // Layout horizontal para botões (para colocar margem vertical)
                 var botoesLayout = new LinearLayout(this)
                 {
-                    Orientation = Orientation.Horizontal
+                    Orientation = Orientation.Horizontal,
+                    LayoutParameters = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WrapContent,
+                        ViewGroup.LayoutParams.WrapContent)
+                    {
+                        TopMargin = (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 2, Resources.DisplayMetrics),
+                        BottomMargin = (int)TypedValue.ApplyDimension(ComplexUnitType.Dip, 2, Resources.DisplayMetrics)
+                    }
                 };
 
-                // Botão Editar (azul claro)
-                var btnEditar = CriarBotao("Editar", layoutParamsBotao);
-                btnEditar.SetBackgroundColor(Android.Graphics.Color.LightBlue);
+                int larguraPx = (int)TypedValue.ApplyDimension(
+                    ComplexUnitType.Dip, 70, Resources.DisplayMetrics);
+                int alturaPx = (int)TypedValue.ApplyDimension(
+                    ComplexUnitType.Dip, 36, Resources.DisplayMetrics);
+
+                // Margem horizontal para cada botão
+                var btnParams = new LinearLayout.LayoutParams(larguraPx, alturaPx) { LeftMargin = 8 };
+
+                var btnEditar = new Button(this)
+                {
+                    Text = "Editar",
+                    LayoutParameters = btnParams,
+                    TextSize = 12,
+                };
+                btnEditar.SetBackgroundColor(Color.ParseColor("#4CAF50"));
+                btnEditar.SetTextColor(Color.White);
                 btnEditar.Click += (s, e) =>
                 {
                     var intent = new Android.Content.Intent(this, typeof(CadastroActivity));
@@ -115,48 +107,51 @@ namespace PersonalFinance.Resources.Activities
                     StartActivity(intent);
                 };
 
-                // Botão Excluir (vermelho)
-                var btnExcluir = CriarBotao("Excluir", layoutParamsBotao);
-                btnExcluir.SetBackgroundColor(Android.Graphics.Color.LightSalmon);
-                btnExcluir.Click += async (s, e) =>
-                {
-                    await _db.DeletarTransacaoAsync(item);
-                    PopularLista(layout, lista.Where(t => t.Id != item.Id).ToList());
-                };
+                //var btnExcluir = new Button(this)
+                //{
+                //    Text = "Excluir",
+                //    LayoutParameters = btnParams,
+                //    TextSize = 12,
+                //};
+                //btnExcluir.SetBackgroundColor(Color.ParseColor("#F44336"));
+                //btnExcluir.SetTextColor(Color.White);
+                //btnExcluir.Click += async (s, e) =>
+                //{
+                //    await _db.DeletarTransacaoAsync(item);
+                //    await AtualizarListasAsync();
+                //};
 
-                // Botão Quitar (verde)
-                var btnQuitar = CriarBotao("Quitar", layoutParamsBotao);
-                btnQuitar.SetBackgroundColor(Android.Graphics.Color.LightGreen);
-                btnQuitar.Click += async (s, e) =>
+                if (item.Tipo == "Despesa")
                 {
-                    // Exemplo: marcar como quitado
-                    PopularLista(layout, lista.Where(t => t.Id != item.Id).ToList());
-                };
+                    var btnQuitar = new Button(this)
+                    {
+                        Text = "Quitar",
+                        LayoutParameters = btnParams,
+                        TextSize = 12,
+                    };
+                    btnQuitar.SetBackgroundColor(Color.ParseColor("#2196F3"));
+                    btnQuitar.SetTextColor(Color.White);
+                    btnQuitar.Click += async (s, e) =>
+                    {
+                        // Sua lógica para quitar
+                        await AtualizarListasAsync();
+                    };
+                    botoesLayout.AddView(btnQuitar);
+                }
 
-                // Adiciona os botões no layout horizontal
+
+                // Adiciona botões no layout horizontal
                 botoesLayout.AddView(btnEditar);
-                botoesLayout.AddView(btnExcluir);
-                botoesLayout.AddView(btnQuitar);
+                //botoesLayout.AddView(btnExcluir);
 
-                // Adiciona o texto e os botões no layout vertical
-                verticalLayout.AddView(textView);
-                verticalLayout.AddView(botoesLayout);
+                // Adiciona texto e botões no item principal
+                itemLayout.AddView(tv);
+                itemLayout.AddView(botoesLayout);
 
-                // Adiciona o bloco final na tela
-                layout.AddView(verticalLayout);
+                container.AddView(itemLayout);
             }
         }
 
-        private Button CriarBotao(string texto, LinearLayout.LayoutParams parametros)
-        {
-            var btn = new Button(this)
-            {
-                Text = texto,
-                TextSize = 10 // fonte pequena
-            };
-            btn.SetPadding(5, 0, 5, 0); // reduz o espaço interno
-            btn.LayoutParameters = parametros;
-            return btn;
-        }
+
     }
 }
