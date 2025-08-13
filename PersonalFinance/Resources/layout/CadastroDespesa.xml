@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+	<LinearLayout
+		android:orientation="vertical"
+		android:padding="16dp"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content">
+
+		<TextView
+			android:text="Descrição"
+			android:textStyle="bold"
+			android:layout_marginTop="10dp"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+		<EditText
+			android:id="@+id/edtDescricao"
+			android:hint="Descrição da despesa"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+		<TextView
+			android:text="Categoria"
+			android:textStyle="bold"
+			android:layout_marginTop="10dp"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+		<EditText
+			android:id="@+id/edtCategoria"
+			android:hint="Ex: Alimentação, Transporte"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+		<TextView
+			android:text="Valor"
+			android:textStyle="bold"
+			android:layout_marginTop="10dp"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+		<EditText
+			android:id="@+id/edtValor"
+			android:hint="Valor"
+			android:inputType="numberDecimal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+		<TextView
+			android:text="Número da Parcela"
+			android:textStyle="bold"
+			android:layout_marginTop="10dp"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+		<EditText
+			android:id="@+id/edtNParcela"
+			android:hint="Ex: 1"
+			android:inputType="number"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+		<Button
+			android:id="@+id/btnSalvar"
+			android:text="Salvar Despesa"
+			android:layout_marginTop="20dp"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:background="#F44336"
+			android:textColor="#FFFFFF"/>
+
+		<TextView
+			android:text="Selecione a Receita"
+			android:textStyle="bold"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+		<Spinner
+			android:id="@+id/spinnerReceita"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"/>
+
+	</LinearLayout>
+</ScrollView>

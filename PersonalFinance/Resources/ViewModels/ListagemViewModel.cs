@@ -23,9 +23,9 @@ namespace PersonalFinance.Resources.ViewModels
         {
             var transacoes = await _db.GetTransacoesAsync();
 
-            Receitas = transacoes.Where(t => t.Tipo == "Receita").ToList();
-            Despesas = transacoes.Where(t => t.Tipo == "Despesa").ToList();
-            Cofre = transacoes.Where(t => t.Tipo == "Cofre").ToList();
+            Receitas = transacoes.ToList();
+            Despesas = transacoes.ToList();
+            Cofre = transacoes.ToList();
 
             DadosAtualizados?.Invoke();
         }

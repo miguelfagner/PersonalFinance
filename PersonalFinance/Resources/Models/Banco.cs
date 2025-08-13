@@ -2,8 +2,6 @@
 
 namespace PersonalFinance.Resources.Models
 {
-    [Table("Bancos")]
-
     public class Banco
     {
         [PrimaryKey, AutoIncrement]

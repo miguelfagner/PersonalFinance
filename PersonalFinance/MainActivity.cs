@@ -1,7 +1,5 @@
 using Android.Content;
 using PersonalFinance.Resources.Activities;
-using PersonalFinance.Resources.Models;
-using PersonalFinance.Resources.Services;
 
 namespace PersonalFinance
 {
@@ -20,14 +18,14 @@ namespace PersonalFinance
 
             btnReceita.Click += (s, e) =>
             {
-                var intent = new Intent(this, typeof(CadastroActivity));
+                var intent = new Intent(this, typeof(CadastroReceitaActivity));
                 intent.PutExtra("tipo", "Receita");
                 StartActivity(intent);
             };
 
             btnDespesa.Click += (s, e) =>
             {
-                var intent = new Intent(this, typeof(CadastroActivity));
+                var intent = new Intent(this, typeof(CadastroDespesaActivity));
                 intent.PutExtra("tipo", "Despesa");
                 StartActivity(intent);
             };

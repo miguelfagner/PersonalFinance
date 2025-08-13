@@ -2,8 +2,6 @@
 
 namespace PersonalFinance.Resources.Models
 {
-    [Table("Receitas")]
-
     public class Receita
     {
         [PrimaryKey, AutoIncrement]
@@ -17,8 +15,6 @@ namespace PersonalFinance.Resources.Models
 
         public string Tipo { get; set; }
 
-        //// Propriedade de navegação (não mapeada pelo SQLite-net)
-        //[Ignore]
-        //public List<Transacao> Transacoes { get; set; }
+        public decimal Valor { get; set; }
     }
 }

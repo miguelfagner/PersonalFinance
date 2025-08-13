@@ -13,6 +13,8 @@ namespace PersonalFinance.Resources.Services
 
             _db = new SQLiteAsyncConnection(dbPath);
            
+            _db.CreateTableAsync<Receita>().Wait();
+            _db.CreateTableAsync<Despesa>().Wait();
             _db.CreateTableAsync<Banco>().Wait();
             _db.CreateTableAsync<Transacao>().Wait();
         }
@@ -38,6 +40,27 @@ namespace PersonalFinance.Resources.Services
         internal Task<List<Transacao>> GetTransacoesAsync()
         {
             return _db.Table<Transacao>().ToListAsync();
+        }
+
+        internal Task<int> SalvarReceitaAsync(Receita receita)
+        {
+            if (receita.Id != 0)
+                return _db.UpdateAsync(receita);
+            else
+                return _db.InsertAsync(receita);
+        }
+
+        internal Task<int> SalvarDespesaAsync(Despesa despesa)
+        {
+            if (despesa.Id != 0)
+                return _db.UpdateAsync(despesa);
+            else
+                return _db.InsertAsync(despesa);
+        }
+
+        internal Task<List<Receita>> ListaReceitasAsync()
+        {
+            return _db.Table<Receita>().ToListAsync();
         }
     }
 }

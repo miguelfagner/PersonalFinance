@@ -40,9 +40,9 @@ namespace PersonalFinance.Resources.Activities
         {
             var transacoes = await _db.GetTransacoesAsync();
 
-            PopularLista(_layoutReceitas, transacoes.Where(t => t.Tipo == "Receita").ToList());
-            PopularLista(_layoutDespesas, transacoes.Where(t => t.Tipo == "Despesa").ToList());
-            PopularLista(_layoutCofre, transacoes.Where(t => t.Tipo == "Cofre").ToList());
+            PopularLista(_layoutReceitas, transacoes.ToList());
+            PopularLista(_layoutDespesas, transacoes.ToList());
+            PopularLista(_layoutCofre, transacoes.ToList());
         }
         private void PopularLista(LinearLayout container, System.Collections.Generic.List<Transacao> lista)
         {
@@ -62,7 +62,7 @@ namespace PersonalFinance.Resources.Activities
                 // Texto da transação (peso 1 para ocupar o máximo possível)
                 var tv = new TextView(this)
                 {
-                    Text = $"{item.Descricao.ToUpper()} - R$ {item.Valor:F2}",
+                    Text = $"- R$ {item.Valor:F2}",
                     TextSize = 16,
                     LayoutParameters = new LinearLayout.LayoutParams(
                         0,
@@ -102,7 +102,7 @@ namespace PersonalFinance.Resources.Activities
                 btnEditar.SetTextColor(Color.White);
                 btnEditar.Click += (s, e) =>
                 {
-                    var intent = new Android.Content.Intent(this, typeof(CadastroActivity));
+                    var intent = new Android.Content.Intent(this, typeof(CadastroReceitaActivity));
                     intent.PutExtra("Id", item.Id);
                     StartActivity(intent);
                 };
@@ -121,8 +121,6 @@ namespace PersonalFinance.Resources.Activities
                 //    await AtualizarListasAsync();
                 //};
 
-                if (item.Tipo == "Despesa")
-                {
                     var btnQuitar = new Button(this)
                     {
                         Text = "Quitar",
@@ -137,7 +135,6 @@ namespace PersonalFinance.Resources.Activities
                         await AtualizarListasAsync();
                     };
                     botoesLayout.AddView(btnQuitar);
-                }
 
 
                 // Adiciona botões no layout horizontal
