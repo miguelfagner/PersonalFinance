@@ -60,7 +60,16 @@ namespace PersonalFinance.Resources.Services
 
         internal Task<List<Receita>> ListaReceitasAsync()
         {
-            return _db.Table<Receita>().ToListAsync();
+           var ls = _db.Table<Receita>().ToListAsync();
+
+            return ls;
+        }
+
+        internal Task<List<Receita>> GetReceitasAsync()
+        {
+            var ls = _db.Table<Receita>().OrderByDescending(r => r.MesReferencia).ToListAsync();
+
+            return ls;
         }
     }
 }

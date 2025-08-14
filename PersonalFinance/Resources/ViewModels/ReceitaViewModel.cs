@@ -1,20 +1,26 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
-using Android.Widget;
 
 namespace PersonalFinance.Resources.ViewModels
 {
     public class ReceitaViewModel : INotifyPropertyChanged
     {
+        private DateTime _mesReferencia;
         private string _fontePagadora;
         private string _descricao;
         private string _tipo;
         private decimal _valor;
         private readonly DatabaseService _db;
+
+        public DateTime MesReferencia
+        {
+            get => _mesReferencia;
+            set { _mesReferencia = value; OnPropertyChanged(); }
+        }
 
         public string FontePagadora
         {
@@ -43,6 +49,8 @@ namespace PersonalFinance.Resources.ViewModels
         public ReceitaViewModel()
         {
             _db = new DatabaseService();
+            // Padrão: mês atual, dia 1
+            MesReferencia = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
         }
 
         public async Task<bool> SalvarReceita()
@@ -52,6 +60,9 @@ namespace PersonalFinance.Resources.ViewModels
 
             var receita = new Receita
             {
+                MesReferencia = this.MesReferencia == default
+                    ? new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1)
+                    : this.MesReferencia,
                 FontePagadora = this.FontePagadora,
                 Descricao = this.Descricao,
                 Tipo = this.Tipo,
@@ -60,9 +71,12 @@ namespace PersonalFinance.Resources.ViewModels
 
             await _db.SalvarReceitaAsync(receita);
 
+            // Limpa propriedades
+            MesReferencia = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             FontePagadora = string.Empty;
             Descricao = string.Empty;
             Tipo = string.Empty;
+            Valor = 0;
 
             return true;
         }

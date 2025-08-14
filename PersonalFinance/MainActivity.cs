@@ -35,6 +35,13 @@ namespace PersonalFinance
                 var intent = new Intent(this, typeof(ListagemActivity));
                 StartActivity(intent);
             };
+
+            var btnListarReceitas = FindViewById<Button>(Resource.Id.btnListarReceitas);
+            btnListarReceitas.Click += (s, e) =>
+            {
+                var intent = new Android.Content.Intent(this, typeof(ReceitaListActivity));
+                StartActivity(intent);
+            };
         }
     }
 

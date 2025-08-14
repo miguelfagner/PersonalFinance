@@ -1,25 +1,27 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
 	<LinearLayout
-		android:orientation="vertical"
-		android:padding="16dp"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content">
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
 		<TextView
-			android:text="Fonte Pagadora"
-			android:textStyle="bold"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content" />
+            android:text="Fonte Pagadora"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
 		<EditText
 			android:id="@+id/edtFonte"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
-			android:hint="Digite a fonte pagadora" />
+			android:hint="Digite a fonte pagadora"
+			android:inputType="text" />
 
 		<TextView
 			android:text="Descrição"
@@ -59,6 +61,22 @@
 			android:inputType="numberDecimal"
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"/>
+
+		<!-- Mês de Referência -->
+		<TextView
+            android:text="Mês de Referência"
+            android:textStyle="bold"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+		<EditText
+            android:id="@+id/edtMesReferencia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="MM/AAAA"
+            android:inputType="date"
+            android:focusable="false"
+            android:clickable="true" />
 
 		<Button
 			android:id="@+id/btnSalvar"
