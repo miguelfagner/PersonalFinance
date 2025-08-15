@@ -1,14 +1,9 @@
 ﻿using PersonalFinance.Resources.ViewModels;
-using Android.App;
-using Android.OS;
-using Android.Widget;
-using Java.Util;
-using System;
 
 namespace PersonalFinance.Resources.Activities
 {
     [Activity(Label = "Cadastro de Receita")]
-    public class CadastroReceitaActivity : Activity
+    public class ReceitaCadastroActivity : Activity
     {
         private EditText _edtMesReferencia, _edtFonte, _edtDescricao, _edtTipo, _edtValor;
         private Button _btnSalvar;
@@ -17,7 +12,7 @@ namespace PersonalFinance.Resources.Activities
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.CadastroReceita);
+            SetContentView(Resource.Layout.activity_ReceitaCadastro);
 
             _viewModel = new ReceitaViewModel();
 

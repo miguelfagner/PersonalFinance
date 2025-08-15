@@ -1,16 +1,11 @@
-﻿using Android.App;
-using Android.OS;
-using Android.Widget;
-using PersonalFinance.Resources.ViewModels;
-using PersonalFinance.Resources.Models;
+﻿using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
-using System.Collections.Generic;
-using System.Linq;
+using PersonalFinance.Resources.ViewModels;
 
 namespace PersonalFinance.Resources.Activities
 {
     [Activity(Label = "Cadastro de Despesa")]
-    public class CadastroDespesaActivity : Activity
+    public class DespesaCadastroActivity : Activity
     {
         private Spinner _spinnerReceita;
         private EditText _edtDescricao, _edtCategoria, _edtValor, _edtNParcela;
@@ -21,7 +16,7 @@ namespace PersonalFinance.Resources.Activities
         protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.CadastroDespesa);
+            SetContentView(Resource.Layout.activity_DespesaCadastro);
 
             _viewModel = new DespesaViewModel();
 

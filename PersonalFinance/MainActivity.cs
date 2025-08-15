@@ -18,23 +18,23 @@ namespace PersonalFinance
 
             btnReceita.Click += (s, e) =>
             {
-                var intent = new Intent(this, typeof(CadastroReceitaActivity));
+                var intent = new Intent(this, typeof(ReceitaCadastroActivity));
                 intent.PutExtra("tipo", "Receita");
                 StartActivity(intent);
             };
 
             btnDespesa.Click += (s, e) =>
             {
-                var intent = new Intent(this, typeof(CadastroDespesaActivity));
+                var intent = new Intent(this, typeof(DespesaCadastroActivity));
                 intent.PutExtra("tipo", "Despesa");
                 StartActivity(intent);
             };
 
-            btnListar.Click += (s, e) =>
-            {
-                var intent = new Intent(this, typeof(ListagemActivity));
-                StartActivity(intent);
-            };
+            //btnListar.Click += (s, e) =>
+            //{
+            //    var intent = new Intent(this, typeof(ExtratoActivity));
+            //    StartActivity(intent);
+            //};
 
             var btnListarReceitas = FindViewById<Button>(Resource.Id.btnListarReceitas);
             btnListarReceitas.Click += (s, e) =>
