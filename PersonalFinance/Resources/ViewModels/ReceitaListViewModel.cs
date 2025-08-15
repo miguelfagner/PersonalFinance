@@ -25,7 +25,7 @@ namespace PersonalFinance.Resources.ViewModels
 
         public async Task CarregarReceitasAsync()
         {
-            var lista = await _db.GetReceitasAsync();
+            var lista = await _db.ListaReceitasAsync();
            
             Receitas.Clear();
             foreach (var item in lista)

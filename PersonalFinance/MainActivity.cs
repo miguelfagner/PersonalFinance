@@ -14,7 +14,8 @@ namespace PersonalFinance
 
             var btnReceita = FindViewById<Button>(Resource.Id.btnAdicionarReceita);
             var btnDespesa = FindViewById<Button>(Resource.Id.btnAdicionarDespesa);
-            var btnListar = FindViewById<Button>(Resource.Id.btnListar);
+            var btnReceitaLista = FindViewById<Button>(Resource.Id.btnListarReceitas);
+            var btnDespesaLista = FindViewById<Button>(Resource.Id.btnListarDespesas);
 
             btnReceita.Click += (s, e) =>
             {
@@ -36,10 +37,17 @@ namespace PersonalFinance
             //    StartActivity(intent);
             //};
 
-            var btnListarReceitas = FindViewById<Button>(Resource.Id.btnListarReceitas);
-            btnListarReceitas.Click += (s, e) =>
+            var btnListaReceitas = FindViewById<Button>(Resource.Id.btnListarReceitas);
+            btnReceitaLista.Click += (s, e) =>
             {
                 var intent = new Android.Content.Intent(this, typeof(ReceitaListActivity));
+                StartActivity(intent);
+            };
+
+            var btnListaDespesas = FindViewById<Button>(Resource.Id.btnListarDespesas);
+            btnDespesaLista.Click += (s, e) =>
+            {
+                var intent = new Android.Content.Intent(this, typeof(DespesaListActivity));
                 StartActivity(intent);
             };
         }

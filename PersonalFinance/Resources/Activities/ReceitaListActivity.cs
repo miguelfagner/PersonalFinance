@@ -18,7 +18,7 @@ namespace PersonalFinance.Resources.Activities
             // Caminho do banco
             _db = new DatabaseService();
 
-            var lista = await _db.GetReceitasAsync();
+            var lista = await _db.ListaReceitasAsync();
 
             // Transformar em lista de strings para mostrar no ListView
             var displayList = lista
