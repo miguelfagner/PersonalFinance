@@ -11,7 +11,7 @@ namespace PersonalFinance.Resources.Activities
         protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.activity_ReceitaList);
+            SetContentView(Resource.Layout.activity_receita_list);
 
             _listView = FindViewById<ListView>(Resource.Id.listReceitas);
 

@@ -16,7 +16,7 @@ namespace PersonalFinance.Resources.Activities
         protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.activity_DespesaCadastro);
+            SetContentView(Resource.Layout.activity_despesa_cadastro);
 
             _viewModel = new DespesaViewModel();
 

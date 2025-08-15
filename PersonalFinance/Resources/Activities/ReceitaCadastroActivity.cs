@@ -12,7 +12,7 @@ namespace PersonalFinance.Resources.Activities
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.activity_ReceitaCadastro);
+            SetContentView(Resource.Layout.activity_receita_cadastro);
 
             _viewModel = new ReceitaViewModel();
 
