@@ -2,124 +2,134 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="#F5F5F5"
-    android:fitsSystemWindows="true">
+    android:background="#F2F2F2"
+    android:fitsSystemWindows="true"
+    android:padding="16dp">
 
 	<LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="#FFFFFF"
+        android:padding="16dp"
+        android:elevation="4dp"
+        android:layout_marginBottom="16dp"
+        android:clipToPadding="false"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp">
 
-		<!-- Título -->
-		<TextView
-            android:id="@+id/tvTitulo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Detalhes da Despesa"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:paddingBottom="16dp"
-            android:textColor="#333" />
+			<!-- Descrição -->
+			<TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Descrição"
+                android:textStyle="bold"
+                android:textColor="#555555"
+                android:textSize="16sp"/>
+			<TextView
+                android:id="@+id/tvDescricao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="#222222"
+                android:paddingBottom="12dp" />
 
-		<!-- Descrição -->
-		<TextView
-            android:text="Descrição:"
-            android:textStyle="bold"
-			android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp" />
-		<TextView
-            android:id="@+id/tvDescricao"
-            android:textSize="16sp"
-			android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="8dp" />
+			<!-- Categoria -->
+			<TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Categoria"
+                android:textStyle="bold"
+                android:textColor="#555555"
+                android:textSize="16sp"/>
+			<TextView
+                android:id="@+id/tvCategoria"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="#222222"
+                android:paddingBottom="12dp" />
 
-		<!-- Categoria -->
-		<TextView
-            android:text="Categoria:"
-            android:textStyle="bold"
-			android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp" />
-		<TextView
-            android:id="@+id/tvCategoria"
-            android:textSize="16sp"
-			android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="8dp" />
+			<!-- Valor -->
+			<TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Valor"
+                android:textStyle="bold"
+                android:textColor="#555555"
+                android:textSize="16sp"/>
+			<TextView
+                android:id="@+id/tvValor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="#E53935"
+                android:textStyle="bold"
+                android:paddingBottom="12dp" />
 
-		<!-- Valor -->
-		<TextView
-            android:text="Valor:"
-            android:textStyle="bold"
-			android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp" />
-		<TextView
-            android:id="@+id/tvValor"
-            android:textSize="16sp"
-			android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="8dp" />
+			<!-- Data de cadastro -->
+			<TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Data de Cadastro"
+                android:textStyle="bold"
+                android:textColor="#555555"
+                android:textSize="16sp"/>
+			<TextView
+                android:id="@+id/tvDataCadastro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="#222222"
+                android:paddingBottom="12dp" />
 
-		<!-- Data de cadastro -->
-		<TextView
-            android:text="Data de Cadastro:"
-            android:textStyle="bold"
-			android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp" />
-		<TextView
-            android:id="@+id/tvDataCadastro"
-            android:textSize="16sp"
-			android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="8dp" />
+			<!-- Vencimento -->
+			<TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Vencimento"
+                android:textStyle="bold"
+                android:textColor="#555555"
+                android:textSize="16sp"/>
+			<TextView
+                android:id="@+id/tvVencimento"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="#222222"
+                android:paddingBottom="12dp" />
 
-		<!-- Vencimento -->
-		<TextView
-            android:text="Vencimento:"
-            android:textStyle="bold"
-			android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp" />
-		<TextView
-            android:id="@+id/tvVencimento"
-            android:textSize="16sp"
-			android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="8dp" />
+			<!-- Número da Parcela -->
+			<TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Número da Parcela"
+                android:textStyle="bold"
+                android:textColor="#555555"
+                android:textSize="16sp"/>
+			<TextView
+                android:id="@+id/tvNParcela"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="#222222"
+                android:paddingBottom="12dp" />
 
-		<!-- Número da Parcela -->
-		<TextView
-            android:text="Número da Parcela:"
-            android:textStyle="bold"
-			android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp" />
-		<TextView
-            android:id="@+id/tvNParcela"
-            android:textSize="16sp"
-			android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="8dp" />
-
-		<!-- Receita Id -->
-		<TextView
-            android:text="Receita Id:"
-            android:textStyle="bold"
-			android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="16sp" />
-		<TextView
-            android:id="@+id/tvReceitaId"
-            android:textSize="16sp"
-			android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingBottom="8dp" />
-
-	</LinearLayout>
+			<!-- Receita Id -->
+			<TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Receita Id"
+                android:textStyle="bold"
+                android:textColor="#555555"
+                android:textSize="16sp"/>
+			<TextView
+                android:id="@+id/tvReceitaId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="16sp"
+                android:textColor="#222222"
+                android:paddingBottom="12dp" />
+		</LinearLayout>
 </ScrollView>
