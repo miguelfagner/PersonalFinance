@@ -43,12 +43,15 @@
 
 	<!-- Botão QUITAR -->
 	<Button
-        android:id="@+id/btnQuitar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="QUITAR"
-        android:backgroundTint="#4CAF50"
-        android:textColor="#FFFFFF"
-        android:padding="8dp"
-        android:minWidth="80dp"/>
+		android:id="@+id/btnQuitar"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:text="QUITAR"
+		android:backgroundTint="#4CAF50"
+		android:textColor="#FFFFFF"
+		android:padding="8dp"
+		android:minWidth="80dp"
+		android:focusable="false"
+		android:focusableInTouchMode="false"
+		android:clickable="true"/>
 </LinearLayout>

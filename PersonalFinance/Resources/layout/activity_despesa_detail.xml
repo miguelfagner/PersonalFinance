@@ -1,0 +1,125 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#F5F5F5"
+    android:fitsSystemWindows="true">
+
+	<LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+		<!-- Título -->
+		<TextView
+            android:id="@+id/tvTitulo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Detalhes da Despesa"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingBottom="16dp"
+            android:textColor="#333" />
+
+		<!-- Descrição -->
+		<TextView
+            android:text="Descrição:"
+            android:textStyle="bold"
+			android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp" />
+		<TextView
+            android:id="@+id/tvDescricao"
+            android:textSize="16sp"
+			android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp" />
+
+		<!-- Categoria -->
+		<TextView
+            android:text="Categoria:"
+            android:textStyle="bold"
+			android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp" />
+		<TextView
+            android:id="@+id/tvCategoria"
+            android:textSize="16sp"
+			android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp" />
+
+		<!-- Valor -->
+		<TextView
+            android:text="Valor:"
+            android:textStyle="bold"
+			android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp" />
+		<TextView
+            android:id="@+id/tvValor"
+            android:textSize="16sp"
+			android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp" />
+
+		<!-- Data de cadastro -->
+		<TextView
+            android:text="Data de Cadastro:"
+            android:textStyle="bold"
+			android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp" />
+		<TextView
+            android:id="@+id/tvDataCadastro"
+            android:textSize="16sp"
+			android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp" />
+
+		<!-- Vencimento -->
+		<TextView
+            android:text="Vencimento:"
+            android:textStyle="bold"
+			android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp" />
+		<TextView
+            android:id="@+id/tvVencimento"
+            android:textSize="16sp"
+			android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp" />
+
+		<!-- Número da Parcela -->
+		<TextView
+            android:text="Número da Parcela:"
+            android:textStyle="bold"
+			android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp" />
+		<TextView
+            android:id="@+id/tvNParcela"
+            android:textSize="16sp"
+			android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp" />
+
+		<!-- Receita Id -->
+		<TextView
+            android:text="Receita Id:"
+            android:textStyle="bold"
+			android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp" />
+		<TextView
+            android:id="@+id/tvReceitaId"
+            android:textSize="16sp"
+			android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingBottom="8dp" />
+
+	</LinearLayout>
+</ScrollView>

@@ -19,27 +19,9 @@ namespace PersonalFinance.Resources.Services
             _db.CreateTableAsync<Transacao>().Wait();
         }
 
-        //public Task<int> SalvarTransacaoAsync(Transacao transacao)
-        //{
-        //    if (transacao.Id != 0)
-        //        return _db.UpdateAsync(transacao);
-        //    else
-        //        return _db.InsertAsync(transacao);
-        //}
-
-        //public Task<List<Transacao>> ListarTransacoesAsync()
-        //{
-        //    return _db.Table<Transacao>().ToListAsync();
-        //}
-
         //public Task<int> DeletarTransacaoAsync(Transacao transacao)
         //{
         //    return _db.DeleteAsync(transacao);
-        //}
-
-        //internal Task<List<Transacao>> GetTransacoesAsync()
-        //{
-        //    return _db.Table<Transacao>().ToListAsync();
         //}
 
         internal Task<int> SalvarReceitaAsync(Receita receita)
@@ -58,13 +40,6 @@ namespace PersonalFinance.Resources.Services
                 return _db.InsertAsync(despesa);
         }
 
-        //internal Task<List<Receita>> ListaReceitasAsync()
-        //{
-        //   var ls = _db.Table<Receita>().ToListAsync();
-
-        //    return ls;
-        //}
-
         internal Task<List<Receita>> ListaReceitasAsync()
         {
             var ls = _db.Table<Receita>().OrderByDescending(r => r.MesReferencia).ToListAsync();
@@ -77,6 +52,16 @@ namespace PersonalFinance.Resources.Services
             var ls = _db.Table<Despesa>().ToListAsync();
 
             return ls;
+        }
+
+        internal Task<Despesa> PegarDespesaAsync(int despesaId)
+        {
+            return _db.FindAsync<Despesa>(despesaId);
+        }
+
+        internal Task<Despesa> PegarReceitaAsync(int receitaId)
+        {
+            return _db.FindAsync<Despesa>(receitaId);
         }
     }
 }
