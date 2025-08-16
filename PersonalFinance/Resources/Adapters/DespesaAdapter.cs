@@ -1,8 +1,7 @@
-﻿using Android.Content;
+﻿using Android;
+using Android.Content;
 using Android.Views;
-using Android.Widget;
 using PersonalFinance.Resources.Models;
-using System.Collections.Generic;
 
 namespace PersonalFinance.Resources.Adapters
 {
@@ -31,7 +30,28 @@ namespace PersonalFinance.Resources.Adapters
             view.FindViewById<TextView>(Resource.Id.tvCategoria).Text = despesa.Categoria;
             view.FindViewById<TextView>(Resource.Id.tvValor).Text = $"R$ {despesa.Valor:N2}";
 
+            var btnQuitar = view.FindViewById<Button>(Resource.Id.btnQuitar);
+            btnQuitar.Click += (s, e) =>
+            {
+                QuitarDespesa(despesa);
+            };
+
             return view;
+        }
+
+        private void QuitarDespesa(Despesa despesa)
+        {
+            // Exemplo simples: mostrar Toast e remover da lista
+            Toast.MakeText(_context, $"Despesa '{despesa.Descricao}' quitada!", ToastLength.Short).Show();
+
+            // Opcional: remover da lista e atualizar adapter
+            _despesas.Remove(despesa);
+            NotifyDataSetChanged();
+
+            // Aqui você também pode atualizar no banco de dados:
+            // using var db = new SQLiteConnection(dbPath);
+            // despesa.Pago = true; // se tiver campo Pago
+            // db.Update(despesa);
         }
     }
 }

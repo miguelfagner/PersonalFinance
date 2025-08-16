@@ -1,7 +1,6 @@
 ﻿using PersonalFinance.Resources.Adapters;
 using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
-using SQLite;
 
 namespace PersonalFinance.Resources.Activities
 {

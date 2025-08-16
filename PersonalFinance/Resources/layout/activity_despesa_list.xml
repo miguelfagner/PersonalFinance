@@ -5,9 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true">
->
 
-	<!-- Barra fixa -->
+	<!-- Barra fixa no topo (AppBar) -->
 	<LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -27,13 +26,14 @@
             android:textColor="#FFFFFF" />
 	</LinearLayout>
 
-	<!-- Lista ocupando o espaço restante -->
+	<!-- Lista de despesas -->
 	<ListView
         android:id="@+id/listDespesas"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:divider="@android:color/darker_gray"
         android:dividerHeight="1dp"
-        android:padding="8dp" />
+        android:padding="8dp"
+        android:clipToPadding="false" />
 
 </LinearLayout>
