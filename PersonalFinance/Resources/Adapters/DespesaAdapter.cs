@@ -1,5 +1,4 @@
-﻿using Android;
-using Android.Content;
+﻿using Android.Content;
 using Android.Views;
 using PersonalFinance.Resources.Models;
 

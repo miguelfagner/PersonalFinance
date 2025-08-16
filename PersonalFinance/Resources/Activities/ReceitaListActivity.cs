@@ -1,4 +1,5 @@
-﻿using PersonalFinance.Resources.Services;
+﻿using PersonalFinance.Resources.Adapters;
+using PersonalFinance.Resources.Services;
 
 namespace PersonalFinance.Resources.Activities
 {
@@ -15,22 +16,14 @@ namespace PersonalFinance.Resources.Activities
 
             _listView = FindViewById<ListView>(Resource.Id.listReceitas);
 
-            // Caminho do banco
             _db = new DatabaseService();
 
+            // Carregar receitas do banco
             var lista = await _db.ListaReceitasAsync();
 
-            // Transformar em lista de strings para mostrar no ListView
-            var displayList = lista
-                .OrderByDescending(r => r.MesReferencia) // mostrar do mês mais recente
-                .Select(r => $"{r.MesReferencia:MM/yyyy} | {r.FontePagadora} | {r.Descricao} | {r.Valor:C}")
-                .ToList();
-
-            _listView.Adapter = new ArrayAdapter<string>(
-                this,
-                Android.Resource.Layout.SimpleListItem1,
-                displayList
-            );
+            // Usar o adapter customizado em vez de ArrayAdapter<string>
+            var adapter = new ReceitaAdapter(this, lista);
+            _listView.Adapter = adapter;
         }
     }
 }

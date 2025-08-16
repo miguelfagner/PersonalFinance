@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="10dp"
+    android:background="#FFFFFF"
+    android:gravity="center_vertical">
+
+	<!-- Conteúdo da receita -->
+	<LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+		<TextView
+            android:id="@+id/tvFontePagadora"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fonte Pagadora"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#222" />
+
+		<TextView
+            android:id="@+id/tvDescricaoReceita"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Descrição da Receita"
+            android:textColor="#666"
+            android:textSize="14sp" />
+
+		<TextView
+            android:id="@+id/tvTipoReceita"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tipo"
+            android:textColor="#666"
+            android:textSize="14sp" />
+
+		<TextView
+            android:id="@+id/tvValorReceita"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="R$ 0,00"
+            android:textColor="#388E3C"
+            android:textStyle="bold"
+            android:textSize="14sp" />
+	</LinearLayout>
+
+	<!-- Botão EDITAR -->
+	<Button
+        android:id="@+id/btnEditarReceita"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EDITAR"
+        android:backgroundTint="#2196F3"
+        android:textColor="#FFFFFF"
+        android:padding="8dp"
+        android:minWidth="80dp"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        android:clickable="true"/>
+</LinearLayout>
