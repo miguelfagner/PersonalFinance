@@ -1,6 +1,13 @@
-﻿using PersonalFinance.Resources.Models;
+﻿using Android.App;
+using Android.OS;
+using Android.Widget;
+using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
 using PersonalFinance.Resources.ViewModels;
+using System;
+using System.Globalization;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace PersonalFinance.Resources.Activities
 {
@@ -8,10 +15,11 @@ namespace PersonalFinance.Resources.Activities
     public class DespesaCreateActivity : Activity
     {
         private Spinner _spinnerReceita;
-        private EditText _edtDescricao, _edtCategoria, _edtValor, _edtNParcela;
+        private EditText _edtDescricao, _edtCategoria, _edtValor, _edtNParcela, _edtData;
         private Button _btnSalvar;
         private DespesaViewModel _viewModel;
         private List<Receita> _receitas;
+        private DateTime _dataSelecionada = DateTime.Today;
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
@@ -25,6 +33,7 @@ namespace PersonalFinance.Resources.Activities
             _edtCategoria = FindViewById<EditText>(Resource.Id.edtCategoria);
             _edtValor = FindViewById<EditText>(Resource.Id.edtValor);
             _edtNParcela = FindViewById<EditText>(Resource.Id.edtNParcela);
+            _edtData = FindViewById<EditText>(Resource.Id.edtVencimento);
             _btnSalvar = FindViewById<Button>(Resource.Id.btnSalvar);
 
             // Carregar receitas do banco
@@ -36,6 +45,26 @@ namespace PersonalFinance.Resources.Activities
             adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
             _spinnerReceita.Adapter = adapter;
 
+            // Mostrar a data de hoje como padrão
+            _edtData.Text = _dataSelecionada.ToString("dd/MM/yyyy");
+
+            // Abrir o DatePicker ao clicar no campo
+            _edtData.Click += (s, e) =>
+            {
+                DatePickerDialog dialog = new DatePickerDialog(this,
+                    (sender, args) =>
+                    {
+                        _dataSelecionada = args.Date;
+                        _edtData.Text = _dataSelecionada.ToString("dd/MM/yyyy");
+                    },
+                    _dataSelecionada.Year,
+                    _dataSelecionada.Month - 1,
+                    _dataSelecionada.Day);
+
+                dialog.Show();
+            };
+
+            // Salvar despesa
             _btnSalvar.Click += async (s, e) =>
             {
                 var selectedIndex = _spinnerReceita.SelectedItemPosition;
@@ -48,8 +77,9 @@ namespace PersonalFinance.Resources.Activities
                 _viewModel.ReceitaId = _receitas[selectedIndex].Id;
                 _viewModel.Descricao = _edtDescricao.Text;
                 _viewModel.Categoria = _edtCategoria.Text;
-                _viewModel.Valor = decimal.TryParse(_edtValor.Text, out decimal val) ? val : 0;
+                _viewModel.Valor = decimal.TryParse(_edtValor.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out decimal val) ? val : 0;
                 _viewModel.NParcela = int.TryParse(_edtNParcela.Text, out int parcela) ? parcela : 0;
+                _viewModel.Vencimento = _dataSelecionada; // <-- salva a data escolhida
 
                 bool sucesso = await _viewModel.SalvarDespesa();
                 if (sucesso)
@@ -61,6 +91,17 @@ namespace PersonalFinance.Resources.Activities
                 _edtCategoria.Text = "";
                 _edtValor.Text = "";
                 _edtNParcela.Text = "";
+                _edtData.Text = DateTime.Today.ToString("dd/MM/yyyy");
+            };
+
+            // Configuração do EditText para aceitar apenas números e vírgulas
+            _edtValor.TextChanged += (s, e) =>
+            {
+                if (_edtValor.Text.Contains("."))
+                {
+                    _edtValor.Text = _edtValor.Text.Replace(".", ",");
+                    _edtValor.SetSelection(_edtValor.Text.Length);
+                }
             };
         }
     }

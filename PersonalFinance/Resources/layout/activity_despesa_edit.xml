@@ -1,0 +1,128 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="20dp"
+    android:background="#F5F5F5">
+
+	<LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+		<!-- Receita (Spinner) -->
+		<TextView
+            android:text="Receita"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+		<Spinner
+            android:id="@+id/spinnerReceita"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+		<!-- Vencimento (DatePicker simplificado via EditText) -->
+		<TextView
+            android:text="Vencimento"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+		<EditText
+            android:id="@+id/edtVencimento"
+            android:hint="Selecione a data"
+            android:focusable="false"
+            android:clickable="true"
+            android:inputType="date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+		<!-- Número da parcela -->
+		<TextView
+            android:text="Número da Parcela"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+		<EditText
+            android:id="@+id/edtNParcela"
+            android:hint="Ex: 1"
+            android:inputType="number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+		<!-- Descrição -->
+		<TextView
+            android:text="Descrição"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+		<EditText
+            android:id="@+id/edtDescricao"
+            android:hint="Descrição da despesa"
+            android:inputType="textCapSentences"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+		<!-- Categoria -->
+		<TextView
+            android:text="Categoria"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+		<EditText
+            android:id="@+id/edtCategoria"
+            android:hint="Ex: Alimentação, Transporte..."
+            android:inputType="textCapWords"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+		<!-- Valor -->
+		<TextView
+            android:text="Valor"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+		<EditText
+            android:id="@+id/edtValor"
+            android:hint="0,00"
+            android:inputType="numberDecimal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+		<!-- Botão Salvar -->
+		<Button
+            android:id="@+id/btnSalvar"
+            android:text="Salvar"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/holo_green_dark"
+            android:textColor="@android:color/white"
+            android:padding="12dp"
+            android:textStyle="bold" />
+
+		<!-- Botão Salvar -->
+		<Button
+            android:id="@+id/btnExcluirDespesa"
+            android:text="Excluir"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@android:color/holo_red_light"
+            android:textColor="@android:color/white"
+            android:padding="12dp"
+            android:textStyle="bold" />
+
+	</LinearLayout>
+</ScrollView>

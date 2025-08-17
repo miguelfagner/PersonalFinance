@@ -12,6 +12,7 @@ namespace PersonalFinance.Resources.Activities
         Button btnAddDespesa;
         List<Despesa> despesas;
         private DatabaseService _db;
+        private DespesaAdapter adapter;
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
@@ -23,17 +24,16 @@ namespace PersonalFinance.Resources.Activities
 
             _db = new DatabaseService();
 
-            var lista = await _db.ListaDespesasAsync();
-            despesas = lista;
-
-            var adapter = new DespesaAdapter(this, despesas);
+            // Carrega a lista inicial
+            despesas = await _db.ListaDespesasAsync();
+            adapter = new DespesaAdapter(this, despesas);
             listView.Adapter = adapter;
 
             // Clique no item da lista abre detalhes
             listView.ItemClick += (s, e) =>
             {
                 var despesa = despesas[e.Position];
-                var intent = new Intent(this, typeof(DespesaDetailActivity));
+                var intent = new Intent(this, typeof(DespesaEditActivity));
                 intent.PutExtra("DespesaId", despesa.Id);
                 StartActivity(intent);
             };
@@ -41,17 +41,20 @@ namespace PersonalFinance.Resources.Activities
             btnAddDespesa.Click += (s, e) =>
             {
                 var intent = new Intent(this, typeof(DespesaCreateActivity));
-                //intent.PutExtra("tipo", "Despesa");
                 StartActivity(intent);
             };
         }
 
-        //private List<Despesa> CarregarDespesas()
-        //{
-        //    var dbPath = Path.Combine(System.Environment.GetFolderPath(System.Environment.SpecialFolder.Personal), "personalfinance.db");
-        //    using var db = new SQLiteConnection(dbPath);
-        //    db.CreateTable<Despesa>();
-        //    return db.Table<Despesa>().ToList();
-        //}
+        protected override async void OnResume()
+        {
+            base.OnResume();
+
+            // Atualiza a lista sempre que voltar para a Activity
+            despesas = await _db.ListaDespesasAsync();
+
+            // Atualiza o adapter
+            adapter = new DespesaAdapter(this, despesas);
+            listView.Adapter = adapter;
+        }
     }
 }

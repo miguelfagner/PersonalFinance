@@ -1,6 +1,7 @@
 ﻿using Android.Content;
 using Android.Views;
 using PersonalFinance.Resources.Models;
+using System.Globalization;
 
 namespace PersonalFinance.Resources.Adapters
 {
@@ -27,7 +28,7 @@ namespace PersonalFinance.Resources.Adapters
 
             view.FindViewById<TextView>(Resource.Id.tvDescricao).Text = despesa.Descricao;
             view.FindViewById<TextView>(Resource.Id.tvCategoria).Text = despesa.Categoria;
-            view.FindViewById<TextView>(Resource.Id.tvValor).Text = $"R$ {despesa.Valor:N2}";
+            view.FindViewById<TextView>(Resource.Id.tvValor).Text = $"R$ {despesa.Valor.ToString("N2", new CultureInfo("pt-BR"))}";
 
             var btnQuitar = view.FindViewById<Button>(Resource.Id.btnQuitar);
             btnQuitar.Click += (s, e) =>

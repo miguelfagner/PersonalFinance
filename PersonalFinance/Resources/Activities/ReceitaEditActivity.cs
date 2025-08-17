@@ -5,6 +5,7 @@ using Android.Widget;
 using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
 using System;
+using System.Globalization;
 
 namespace PersonalFinance.Resources.Activities
 {
@@ -68,7 +69,18 @@ namespace PersonalFinance.Resources.Activities
             _edtFonte.Text = _receita.FontePagadora;
             _edtDescricao.Text = _receita.Descricao;
             _edtTipo.Text = _receita.Tipo;
-            _edtValor.Text = _receita.Valor.ToString("F2");
+            _edtValor.Text = _receita.Valor.ToString("F2", new CultureInfo("pt-BR"));
+
+
+            // ajustar o valor decimal
+            _edtValor.TextChanged += (s, e) =>
+            {
+                if (_edtValor.Text.Contains("."))
+                {
+                    _edtValor.Text = _edtValor.Text.Replace(".", ",");
+                    _edtValor.SetSelection(_edtValor.Text.Length); // mantém cursor no fim
+                }
+            };
 
             // Clique no botão Salvar
             _btnSalvar.Click += async (s, e) =>

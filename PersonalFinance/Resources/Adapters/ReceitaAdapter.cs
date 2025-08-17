@@ -1,6 +1,7 @@
 ﻿using Android.Content;
 using Android.Views;
 using PersonalFinance.Resources.Models;
+using System.Globalization;
 
 namespace PersonalFinance.Resources.Adapters
 {
@@ -29,7 +30,7 @@ namespace PersonalFinance.Resources.Adapters
             view.FindViewById<TextView>(Resource.Id.tvFontePagadora).Text = receita.FontePagadora;
             view.FindViewById<TextView>(Resource.Id.tvDescricaoReceita).Text = receita.Descricao;
             view.FindViewById<TextView>(Resource.Id.tvTipoReceita).Text = receita.Tipo;
-            view.FindViewById<TextView>(Resource.Id.tvValorReceita).Text = $"R$ {receita.Valor:N2}";
+            view.FindViewById<TextView>(Resource.Id.tvValorReceita).Text = $"R$ {receita.Valor.ToString("N2", new CultureInfo("pt-BR"))}";
 
             //// Botão de editar (se você quiser implementar ação depois)
             //var btnEditar = view.FindViewById<Button>(Resource.Id.btnEditarReceita);
