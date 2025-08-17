@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="50dp"
+    android:fitsSystemWindows="true">
+
+
+	<LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+		<!-- Título -->
+		<TextView
+            android:id="@+id/tvTituloEditar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Editar Receita"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#4CAF50"
+            android:layout_marginBottom="16dp" />
+
+		<!-- Label + Campo Mês Referência -->
+		<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mês de Referência"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
+		<EditText
+            android:id="@+id/edtMesReferenciaEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="MM/AAAA"
+            android:inputType="date"
+            android:layout_marginBottom="12dp" />
+
+		<!-- Label + Campo Fonte Pagadora -->
+		<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fonte Pagadora"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
+		<EditText
+            android:id="@+id/edtFonteEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Digite a fonte"
+            android:inputType="text"
+            android:layout_marginBottom="12dp" />
+
+		<!-- Label + Campo Descrição -->
+		<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Descrição"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
+		<EditText
+            android:id="@+id/edtDescricaoEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Descrição da receita"
+            android:inputType="textMultiLine"
+            android:layout_marginBottom="12dp" />
+
+		<!-- Label + Campo Tipo -->
+		<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tipo"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
+		<EditText
+            android:id="@+id/edtTipoEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ex: Fixa, Variável..."
+            android:inputType="text"
+            android:layout_marginBottom="12dp" />
+
+		<!-- Label + Campo Valor -->
+		<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Valor"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp" />
+
+		<EditText
+            android:id="@+id/edtValorEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="0,00"
+            android:inputType="numberDecimal"
+            android:layout_marginBottom="20dp" />
+
+		<!-- Botão Salvar -->
+		<Button
+            android:id="@+id/btnSalvarEdit"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Salvar"
+            android:backgroundTint="#4CAF50"
+            android:textColor="#FFFFFF"
+            android:layout_marginBottom="12dp" />
+
+		<!-- Botão Excluir -->
+		<Button
+            android:id="@+id/btnExcluirReceita"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Excluir"
+            android:backgroundTint="#F44336"
+            android:textColor="#FFFFFF" />
+
+	</LinearLayout>
+</ScrollView>
+

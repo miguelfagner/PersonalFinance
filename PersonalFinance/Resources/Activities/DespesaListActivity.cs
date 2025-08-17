@@ -9,6 +9,7 @@ namespace PersonalFinance.Resources.Activities
     public class DespesaListActivity : Activity
     {
         ListView listView;
+        Button btnAddDespesa;
         List<Despesa> despesas;
         private DatabaseService _db;
 
@@ -18,6 +19,7 @@ namespace PersonalFinance.Resources.Activities
             SetContentView(Resource.Layout.activity_despesa_list);
 
             listView = FindViewById<ListView>(Resource.Id.listDespesas);
+            btnAddDespesa = FindViewById<Button>(Resource.Id.btnAddDespesa);
 
             _db = new DatabaseService();
 
@@ -33,6 +35,13 @@ namespace PersonalFinance.Resources.Activities
                 var despesa = despesas[e.Position];
                 var intent = new Intent(this, typeof(DespesaDetailActivity));
                 intent.PutExtra("DespesaId", despesa.Id);
+                StartActivity(intent);
+            };
+
+            btnAddDespesa.Click += (s, e) =>
+            {
+                var intent = new Intent(this, typeof(DespesaCreateActivity));
+                //intent.PutExtra("tipo", "Despesa");
                 StartActivity(intent);
             };
         }

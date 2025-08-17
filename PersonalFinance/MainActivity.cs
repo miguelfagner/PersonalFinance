@@ -12,28 +12,13 @@ namespace PersonalFinance
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
 
-            var btnReceita = FindViewById<Button>(Resource.Id.btnAdicionarReceita);
-            var btnDespesa = FindViewById<Button>(Resource.Id.btnAdicionarDespesa);
             var btnReceitaLista = FindViewById<Button>(Resource.Id.btnListarReceitas);
             var btnDespesaLista = FindViewById<Button>(Resource.Id.btnListarDespesas);
 
-            btnReceita.Click += (s, e) =>
-            {
-                var intent = new Intent(this, typeof(ReceitaCadastroActivity));
-                intent.PutExtra("tipo", "Receita");
-                StartActivity(intent);
-            };
-
-            btnDespesa.Click += (s, e) =>
-            {
-                var intent = new Intent(this, typeof(DespesaCadastroActivity));
-                intent.PutExtra("tipo", "Despesa");
-                StartActivity(intent);
-            };
-
-            //btnListar.Click += (s, e) =>
+            //btnDespesa.Click += (s, e) =>
             //{
-            //    var intent = new Intent(this, typeof(ExtratoActivity));
+            //    var intent = new Intent(this, typeof(DespesaCreateActivity));
+            //    intent.PutExtra("tipo", "Despesa");
             //    StartActivity(intent);
             //};
 

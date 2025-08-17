@@ -5,7 +5,7 @@ using PersonalFinance.Resources.ViewModels;
 namespace PersonalFinance.Resources.Activities
 {
     [Activity(Label = "Cadastro de Despesa")]
-    public class DespesaCadastroActivity : Activity
+    public class DespesaCreateActivity : Activity
     {
         private Spinner _spinnerReceita;
         private EditText _edtDescricao, _edtCategoria, _edtValor, _edtNParcela;

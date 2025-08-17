@@ -19,10 +19,38 @@ namespace PersonalFinance.Resources.Services
             _db.CreateTableAsync<Transacao>().Wait();
         }
 
-        //public Task<int> DeletarTransacaoAsync(Transacao transacao)
-        //{
-        //    return _db.DeleteAsync(transacao);
-        //}
+        //DESPESA
+        internal Task<List<Despesa>> ListaDespesasAsync()
+        {
+            var ls = _db.Table<Despesa>().ToListAsync();
+
+            return ls;
+        }
+        internal Task<int> SalvarDespesaAsync(Despesa despesa)
+        {
+            if (despesa.Id != 0)
+                return _db.UpdateAsync(despesa);
+            else
+                return _db.InsertAsync(despesa);
+        }
+
+        internal Task<Despesa> PegarDespesaAsync(int despesaId)
+        {
+            return _db.FindAsync<Despesa>(despesaId);
+        }
+
+        public Task<int> DeletarDespesaAsync(Despesa despesa)
+        {
+            return _db.DeleteAsync(despesa);
+        }
+
+        //RECEITA
+        internal Task<List<Receita>> ListaReceitasAsync()
+        {
+            var ls = _db.Table<Receita>().OrderByDescending(r => r.MesReferencia).ToListAsync();
+
+            return ls;
+        }
 
         internal Task<int> SalvarReceitaAsync(Receita receita)
         {
@@ -32,36 +60,14 @@ namespace PersonalFinance.Resources.Services
                 return _db.InsertAsync(receita);
         }
 
-        internal Task<int> SalvarDespesaAsync(Despesa despesa)
+        internal Task<Receita> PegarReceitaAsync(int receitaId)
         {
-            if (despesa.Id != 0)
-                return _db.UpdateAsync(despesa);
-            else
-                return _db.InsertAsync(despesa);
+            return _db.FindAsync<Receita>(receitaId);
         }
 
-        internal Task<List<Receita>> ListaReceitasAsync()
+        public Task<int> DeletarReceitaAsync(Receita receita)
         {
-            var ls = _db.Table<Receita>().OrderByDescending(r => r.MesReferencia).ToListAsync();
-
-            return ls;
-        }
-
-        internal Task<List<Despesa>> ListaDespesasAsync()
-        {
-            var ls = _db.Table<Despesa>().ToListAsync();
-
-            return ls;
-        }
-
-        internal Task<Despesa> PegarDespesaAsync(int despesaId)
-        {
-            return _db.FindAsync<Despesa>(despesaId);
-        }
-
-        internal Task<Despesa> PegarReceitaAsync(int receitaId)
-        {
-            return _db.FindAsync<Despesa>(receitaId);
+            return _db.DeleteAsync(receita);
         }
     }
 }

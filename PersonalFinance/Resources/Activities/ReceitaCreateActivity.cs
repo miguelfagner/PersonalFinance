@@ -3,7 +3,7 @@
 namespace PersonalFinance.Resources.Activities
 {
     [Activity(Label = "Cadastro de Receita")]
-    public class ReceitaCadastroActivity : Activity
+    public class ReceitaCreateActivity : Activity
     {
         private EditText _edtMesReferencia, _edtFonte, _edtDescricao, _edtTipo, _edtValor;
         private Button _btnSalvar;

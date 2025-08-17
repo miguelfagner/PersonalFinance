@@ -31,13 +31,13 @@ namespace PersonalFinance.Resources.Adapters
             view.FindViewById<TextView>(Resource.Id.tvTipoReceita).Text = receita.Tipo;
             view.FindViewById<TextView>(Resource.Id.tvValorReceita).Text = $"R$ {receita.Valor:N2}";
 
-            // Botão de editar (se você quiser implementar ação depois)
-            var btnEditar = view.FindViewById<Button>(Resource.Id.btnEditarReceita);
-            btnEditar.Click += (s, e) =>
-            {
-                Toast.MakeText(_context, $"Editar: {receita.Descricao}", ToastLength.Short).Show();
-                // Aqui você pode abrir outra Activity para edição
-            };
+            //// Botão de editar (se você quiser implementar ação depois)
+            //var btnEditar = view.FindViewById<Button>(Resource.Id.btnEditarReceita);
+            //btnEditar.Click += (s, e) =>
+            //{
+            //    Toast.MakeText(_context, $"Editar: {receita.Descricao}", ToastLength.Short).Show();
+            //    // Aqui você pode abrir outra Activity para edição
+            //};
 
             return view;
         }

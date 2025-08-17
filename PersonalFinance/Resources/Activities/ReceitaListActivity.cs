@@ -1,4 +1,6 @@
-﻿using PersonalFinance.Resources.Adapters;
+﻿using Android.Content;
+using PersonalFinance.Resources.Adapters;
+using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
 
 namespace PersonalFinance.Resources.Activities
@@ -8,22 +10,62 @@ namespace PersonalFinance.Resources.Activities
     {
         private ListView _listView;
         private DatabaseService _db;
+        private ReceitaAdapter _adapter;
+        private List<Receita> _receitas;
+        private Button _addReceita;
 
-        protected override async void OnCreate(Bundle savedInstanceState)
+        protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_receita_list);
 
             _listView = FindViewById<ListView>(Resource.Id.listReceitas);
+            _addReceita = FindViewById<Button>(Resource.Id.btnAddReceita);
+
 
             _db = new DatabaseService();
 
-            // Carregar receitas do banco
-            var lista = await _db.ListaReceitasAsync();
+            // Clique no item da lista → abre edição
+            _listView.ItemClick += (s, e) =>
+            {
+                var receitaSelecionada = _receitas[e.Position];
+                var intent = new Intent(this, typeof(ReceitaEditActivity));
+                intent.PutExtra("ReceitaId", receitaSelecionada.Id);
+                StartActivity(intent);
+            };
 
-            // Usar o adapter customizado em vez de ArrayAdapter<string>
-            var adapter = new ReceitaAdapter(this, lista);
-            _listView.Adapter = adapter;
+            _addReceita.Click += (s, e) =>
+            {
+                var intent = new Intent(this, typeof(ReceitaCreateActivity));
+                intent.PutExtra("tipo", "Receita");
+                StartActivity(intent);
+            };
+
+            // Carrega na primeira vez
+            _ = CarregarReceitasAsync();
+        }
+
+        protected override void OnResume()
+        {
+            base.OnResume();
+            // Sempre que voltar, recarrega a lista
+            _ = CarregarReceitasAsync();
+        }
+
+        private async Task CarregarReceitasAsync()
+        {
+            _receitas = await _db.ListaReceitasAsync();
+
+            if (_adapter == null)
+            {
+                _adapter = new ReceitaAdapter(this, _receitas);
+                _listView.Adapter = _adapter;
+            }
+            else
+            {
+                _adapter = new ReceitaAdapter(this, _receitas);
+                _listView.Adapter = _adapter;
+            }
         }
     }
 }

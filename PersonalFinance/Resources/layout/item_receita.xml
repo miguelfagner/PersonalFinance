@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="10dp"
+    android:padding="12dp"
     android:background="#FFFFFF"
     android:gravity="center_vertical">
 
@@ -12,7 +12,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingEnd="8dp">
 
 		<TextView
             android:id="@+id/tvFontePagadora"
@@ -49,17 +50,40 @@
             android:textSize="14sp" />
 	</LinearLayout>
 
-	<!-- Botão EDITAR -->
-	<Button
-        android:id="@+id/btnEditarReceita"
+	<!-- Ações: EDITAR e EXCLUIR --><!--
+	<LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="EDITAR"
-        android:backgroundTint="#2196F3"
-        android:textColor="#FFFFFF"
-        android:padding="8dp"
-        android:minWidth="80dp"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:clickable="true"/>
+        android:orientation="horizontal"
+        android:gravity="end|center_vertical"
+        android:spacing="8dp">
+
+		--><!-- Botão EDITAR --><!--
+		<Button
+            android:id="@+id/btnEditarReceita"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EDITAR"
+            android:backgroundTint="#2196F3"
+            android:textColor="#FFFFFF"
+            android:padding="8dp"
+            android:minWidth="80dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:clickable="true"/>--><!--
+
+		--><!-- Botão EXCLUIR --><!--
+		<Button
+            android:id="@+id/btnExcluirReceita"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EXCLUIR"
+            android:backgroundTint="#F44336"
+            android:textColor="#FFFFFF"
+            android:padding="8dp"
+            android:minWidth="80dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:clickable="true"/>--><!--
+	</LinearLayout>-->
 </LinearLayout>

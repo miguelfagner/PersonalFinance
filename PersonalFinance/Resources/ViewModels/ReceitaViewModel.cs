@@ -14,12 +14,19 @@ namespace PersonalFinance.Resources.ViewModels
         private string _descricao;
         private string _tipo;
         private decimal _valor;
+        private int _id;
         private readonly DatabaseService _db;
 
         public DateTime MesReferencia
         {
             get => _mesReferencia;
             set { _mesReferencia = value; OnPropertyChanged(); }
+        }
+
+        public int Id
+        {
+            get => _id;
+            set { _id = value; OnPropertyChanged(); }
         }
 
         public string FontePagadora
@@ -78,6 +85,30 @@ namespace PersonalFinance.Resources.ViewModels
             Tipo = string.Empty;
             Valor = 0;
 
+            return true;
+        }
+
+        public async Task<Receita> BuscarReceitaPorId(int id)
+        {
+            return await _db.PegarReceitaAsync(id);
+        }
+
+        public async Task<bool> AtualizarReceita()
+        {
+            if (string.IsNullOrWhiteSpace(FontePagadora))
+                return false;
+
+            var receita = new Receita
+            {
+                Id = Id,
+                MesReferencia = MesReferencia,
+                FontePagadora = FontePagadora,
+                Descricao = Descricao,
+                Tipo = Tipo,
+                Valor = Valor
+            };
+
+            await _db.SalvarReceitaAsync(receita);
             return true;
         }
 
