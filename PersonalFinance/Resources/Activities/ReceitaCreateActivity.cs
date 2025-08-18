@@ -18,6 +18,7 @@ namespace PersonalFinance.Resources.Activities
         private Button _btnSalvar;
 
         private ReceitaViewModel _viewModel;
+        private DateTime _mesSelecionado = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -33,33 +34,62 @@ namespace PersonalFinance.Resources.Activities
             _edtValor = FindViewById<EditText>(Resource.Id.edtValor);
             _btnSalvar = FindViewById<Button>(Resource.Id.btnSalvar);
 
+            // Preenche mês atual
+            _edtMesReferencia.Text = _mesSelecionado.ToString("MM/yyyy");
+
+            // Abrir DatePicker ao clicar no campo
+            _edtMesReferencia.Click += (s, e) =>
+            {
+                var dialog = new DatePickerDialog(this,
+                    (sender, args) =>
+                    {
+                        // Pega apenas mês e ano
+                        _mesSelecionado = new DateTime(args.Date.Year, args.Date.Month, 1);
+                        _edtMesReferencia.Text = _mesSelecionado.ToString("MM/yyyy");
+                    },
+                    _mesSelecionado.Year,
+                    _mesSelecionado.Month - 1,
+                    1); // dia fixo 1
+
+                dialog.Show();
+            };
+
+
             _btnSalvar.Click += async (s, e) =>
             {
-                if (_viewModel.MesReferencia == default)
-                    _viewModel.MesReferencia = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                // Valida campos obrigatórios
+                if (string.IsNullOrWhiteSpace(_edtFonte.Text))
+                {
+                    Toast.MakeText(this, "Informe a fonte pagadora.", ToastLength.Short).Show();
+                    return;
+                }
 
-                _viewModel.FontePagadora = _edtFonte.Text;
-                _viewModel.Descricao = _edtDescricao.Text;
-                _viewModel.Tipo = _edtTipo.Text;
+                if (string.IsNullOrWhiteSpace(_edtValor.Text))
+                {
+                    Toast.MakeText(this, "Informe o valor.", ToastLength.Short).Show();
+                    return;
+                }
 
-                // 🔑 Aceita ponto OU vírgula
+                // Preenche ViewModel
+                _viewModel.MesReferencia = _mesSelecionado;
+                _viewModel.FontePagadora = _edtFonte.Text.Trim();
+                _viewModel.Descricao = _edtDescricao.Text?.Trim();
+                _viewModel.Tipo = _edtTipo.Text?.Trim();
+
                 string textoValor = _edtValor.Text.Replace(".", ",");
                 _viewModel.Valor = decimal.TryParse(textoValor, NumberStyles.Number, new CultureInfo("pt-BR"), out decimal val) ? val : 0;
 
+                // Salvar
                 bool sucesso = await _viewModel.SalvarReceita();
                 if (sucesso)
+                {
                     Toast.MakeText(this, "Receita cadastrada!", ToastLength.Short).Show();
+                    Finish(); // Volta para a lista de receitas
+                }
                 else
-                    Toast.MakeText(this, "Informe a fonte pagadora.", ToastLength.Short).Show();
-
-                // Limpa os campos
-                _edtMesReferencia.Text = "";
-                _edtFonte.Text = "";
-                _edtDescricao.Text = "";
-                _edtTipo.Text = "";
-                _edtValor.Text = "";
-
-                _viewModel.MesReferencia = default;
+                {
+                    Toast.MakeText(this, "Erro ao cadastrar receita.", ToastLength.Short).Show();
+                }
             };
         }
     }

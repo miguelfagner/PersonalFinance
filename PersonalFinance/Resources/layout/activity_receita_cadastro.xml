@@ -10,81 +10,91 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+		<!-- Fonte Pagadora -->
 		<TextView
             android:text="Fonte Pagadora"
             android:textStyle="bold"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
 		<EditText
-			android:id="@+id/edtFonte"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:hint="Digite a fonte pagadora"
-			android:inputType="text" />
+            android:id="@+id/edtFonte"
+            android:hint="Digite a fonte pagadora"
+            android:inputType="text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"/>
 
+		<!-- Descrição -->
 		<TextView
-			android:text="Descrição"
-			android:textStyle="bold"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="10dp" />
-
+            android:text="Descrição"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 		<EditText
-			android:id="@+id/edtDescricao"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:hint="Digite a descrição" />
+            android:id="@+id/edtDescricao"
+            android:hint="Digite a descrição"
+            android:inputType="text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"/>
 
+		<!-- Tipo -->
 		<TextView
-			android:text="Tipo"
-			android:textStyle="bold"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="10dp" />
-
+            android:text="Tipo"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 		<EditText
-			android:id="@+id/edtTipo"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:hint="Ex: Salário, Freelance" />
+            android:id="@+id/edtTipo"
+            android:hint="Ex: Salário, Freelance"
+            android:inputType="text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"/>
 
+		<!-- Valor -->
 		<TextView
-			android:text="Valor"
-			android:textStyle="bold"
-			android:layout_marginTop="10dp"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"/>
+            android:text="Valor"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 		<EditText
-			android:id="@+id/edtValor"
-			android:hint="Valor"
-			android:inputType="numberDecimal"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"/>
+            android:id="@+id/edtValor"
+            android:hint="Valor"
+            android:inputType="numberDecimal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"/>
 
 		<!-- Mês de Referência -->
 		<TextView
             android:text="Mês de Referência"
             android:textStyle="bold"
+            android:layout_marginTop="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
-
 		<EditText
             android:id="@+id/edtMesReferencia"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:hint="MM/AAAA"
             android:inputType="date"
             android:focusable="false"
-            android:clickable="true" />
+            android:clickable="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp" />
 
+		<!-- Botão Salvar -->
 		<Button
-			android:id="@+id/btnSalvar"
-			android:text="Salvar Receita"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_marginTop="20dp"
-			android:background="#4CAF50"
-			android:textColor="#FFFFFF" />
+            android:id="@+id/btnSalvar"
+            android:text="Salvar Receita"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="#4CAF50"
+            android:textColor="#FFFFFF" />
+
 	</LinearLayout>
 </ScrollView>

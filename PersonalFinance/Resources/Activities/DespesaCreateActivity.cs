@@ -41,7 +41,8 @@ namespace PersonalFinance.Resources.Activities
             _receitas = await db.ListaReceitasAsync();
 
             // Adapter do Spinner
-            var adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleSpinnerItem, _receitas.Select(r => r.FontePagadora).ToList());
+            var adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleSpinnerItem,
+                _receitas.Select(r => r.FontePagadora).ToList());
             adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
             _spinnerReceita.Adapter = adapter;
 
@@ -51,7 +52,7 @@ namespace PersonalFinance.Resources.Activities
             // Abrir o DatePicker ao clicar no campo
             _edtData.Click += (s, e) =>
             {
-                DatePickerDialog dialog = new DatePickerDialog(this,
+                var dialog = new DatePickerDialog(this,
                     (sender, args) =>
                     {
                         _dataSelecionada = args.Date;
@@ -75,26 +76,27 @@ namespace PersonalFinance.Resources.Activities
                 }
 
                 _viewModel.ReceitaId = _receitas[selectedIndex].Id;
-                _viewModel.Descricao = _edtDescricao.Text;
-                _viewModel.Categoria = _edtCategoria.Text;
-                _viewModel.Valor = decimal.TryParse(_edtValor.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out decimal val) ? val : 0;
+                _viewModel.Descricao = _edtDescricao.Text?.Trim();
+                _viewModel.Categoria = _edtCategoria.Text?.Trim();
+                string valorTexto = _edtValor.Text?.Replace(",", ".") ?? "0";
+                _viewModel.Valor = decimal.TryParse(valorTexto, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal val) ? val : 0;
                 _viewModel.NParcela = int.TryParse(_edtNParcela.Text, out int parcela) ? parcela : 0;
-                _viewModel.Vencimento = _dataSelecionada; // <-- salva a data escolhida
+                _viewModel.Vencimento = _dataSelecionada;
 
                 bool sucesso = await _viewModel.SalvarDespesa();
                 if (sucesso)
+                {
                     Toast.MakeText(this, "Despesa cadastrada!", ToastLength.Short).Show();
+                    // Fecha a Activity e volta para a lista atualizada
+                    Finish();
+                }
                 else
+                {
                     Toast.MakeText(this, "Erro ao cadastrar despesa.", ToastLength.Short).Show();
-
-                _edtDescricao.Text = "";
-                _edtCategoria.Text = "";
-                _edtValor.Text = "";
-                _edtNParcela.Text = "";
-                _edtData.Text = DateTime.Today.ToString("dd/MM/yyyy");
+                }
             };
 
-            // Configuração do EditText para aceitar apenas números e vírgulas
+            // Corrigir vírgula no campo de valor em tempo real
             _edtValor.TextChanged += (s, e) =>
             {
                 if (_edtValor.Text.Contains("."))
@@ -104,5 +106,16 @@ namespace PersonalFinance.Resources.Activities
                 }
             };
         }
+
+        //private void LimparCampos()
+        //{
+        //    _edtDescricao.Text = "";
+        //    _edtCategoria.Text = "";
+        //    _edtValor.Text = "";
+        //    _edtNParcela.Text = "";
+        //    _edtData.Text = DateTime.Today.ToString("dd/MM/yyyy");
+        //    _spinnerReceita.SetSelection(0);
+        //    _dataSelecionada = DateTime.Today;
+        //}
     }
 }
