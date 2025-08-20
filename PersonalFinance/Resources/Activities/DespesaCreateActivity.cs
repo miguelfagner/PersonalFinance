@@ -1,13 +1,7 @@
-﻿using Android.App;
-using Android.OS;
-using Android.Widget;
-using PersonalFinance.Resources.Models;
+﻿using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
 using PersonalFinance.Resources.ViewModels;
-using System;
 using System.Globalization;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace PersonalFinance.Resources.Activities
 {
@@ -78,8 +72,10 @@ namespace PersonalFinance.Resources.Activities
                 _viewModel.ReceitaId = _receitas[selectedIndex].Id;
                 _viewModel.Descricao = _edtDescricao.Text?.Trim();
                 _viewModel.Categoria = _edtCategoria.Text?.Trim();
+                
                 string valorTexto = _edtValor.Text?.Replace(",", ".") ?? "0";
                 _viewModel.Valor = decimal.TryParse(valorTexto, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal val) ? val : 0;
+                
                 _viewModel.NParcela = int.TryParse(_edtNParcela.Text, out int parcela) ? parcela : 0;
                 _viewModel.Vencimento = _dataSelecionada;
 

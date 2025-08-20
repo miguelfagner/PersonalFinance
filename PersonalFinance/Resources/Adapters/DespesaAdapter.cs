@@ -1,6 +1,8 @@
 ﻿using Android.Content;
 using Android.Views;
+using Android.Widget;
 using PersonalFinance.Resources.Models;
+using PersonalFinance.Resources.Services;
 using System.Globalization;
 
 namespace PersonalFinance.Resources.Adapters
@@ -9,11 +11,13 @@ namespace PersonalFinance.Resources.Adapters
     {
         private readonly Context _context;
         private readonly List<Despesa> _despesas;
+        private readonly DatabaseService _db;
 
         public DespesaAdapter(Context context, List<Despesa> despesas)
         {
             _context = context;
             _despesas = despesas ?? new List<Despesa>();
+            _db = new DatabaseService();
         }
 
         public override Despesa this[int position] => _despesas[position];
@@ -31,27 +35,39 @@ namespace PersonalFinance.Resources.Adapters
             view.FindViewById<TextView>(Resource.Id.tvValor).Text = $"R$ {despesa.Valor.ToString("N2", new CultureInfo("pt-BR"))}";
 
             var btnQuitar = view.FindViewById<Button>(Resource.Id.btnQuitar);
-            btnQuitar.Click += (s, e) =>
+
+            // remove handlers antigos para evitar múltiplos cliques acumulados
+            btnQuitar.Click -= (s, e) => { };
+            btnQuitar.Click += async (s, e) =>
             {
-                QuitarDespesa(despesa);
+                await QuitarDespesaAsync(despesa);
             };
 
             return view;
         }
 
-        private void QuitarDespesa(Despesa despesa)
+        private async Task QuitarDespesaAsync(Despesa despesa)
         {
-            // Exemplo simples: mostrar Toast e remover da lista
+            // Mostra mensagem
             Toast.MakeText(_context, $"Despesa '{despesa.Descricao}' quitada!", ToastLength.Short).Show();
 
-            // Opcional: remover da lista e atualizar adapter
-            _despesas.Remove(despesa);
+            // Remove a despesa da lista e atualiza a tela
+            //_despesas.Remove(despesa);
             NotifyDataSetChanged();
 
-            // Aqui você também pode atualizar no banco de dados:
-            // using var db = new SQLiteConnection(dbPath);
-            // despesa.Pago = true; // se tiver campo Pago
-            // db.Update(despesa);
+            // Cria a transação no banco
+            var transacao = new Transacao
+            {
+                DespesaId = despesa.Id,
+                Valor = despesa.Valor,
+                Data = DateTime.Now
+            };
+
+            await _db.SalvarTransacoesAsync(transacao);
+
+            // Opcional: atualizar o status da própria despesa
+            // despesa.Paga = true;
+            // await _db.UpdateDespesaAsync(despesa);
         }
     }
 }

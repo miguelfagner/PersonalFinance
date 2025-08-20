@@ -9,11 +9,11 @@ namespace PersonalFinance.Resources.Models
         public int Id { get; set; }
 
         
-        [ForeignKey(nameof(Banco))]
-        public int BancoId { get; set; } // Referência ao banco
+        //[ForeignKey(nameof(Banco))]
+        //public int BancoId { get; set; } // Referência ao banco
 
-        [Ignore]
-        public Banco Banco { get; set; }
+        //[Ignore]
+        //public Banco Banco { get; set; }
 
 
         [ForeignKey(nameof(Despesa))]
@@ -23,11 +23,11 @@ namespace PersonalFinance.Resources.Models
         public Despesa Despesa { get; set; }
 
 
-        [ForeignKey(nameof(Receita))]
-        public int ReceitaId { get; set; } // Referência ao banco
+        //[ForeignKey(nameof(Receita))]
+        //public int ReceitaId { get; set; } // Referência ao banco
 
-        [Ignore]
-        public Receita Receita { get; set; }
+        //[Ignore]
+        //public Receita Receita { get; set; }
 
         [MaxLength(100)]
         public string Observacao { get; set; }

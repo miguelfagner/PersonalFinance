@@ -69,5 +69,31 @@ namespace PersonalFinance.Resources.Services
         {
             return _db.DeleteAsync(receita);
         }
+
+        //RECEITA
+        internal Task<List<Transacao>> ListaTransacoesAsync()
+        {
+            var ls = _db.Table<Transacao>().OrderByDescending(r => r.Data).ToListAsync();
+
+            return ls;
+        }
+
+        internal Task<int> SalvarTransacoesAsync(Transacao transacao)
+        {
+            if (transacao.Id != 0)
+                return _db.UpdateAsync(transacao);
+            else
+                return _db.InsertAsync(transacao);
+        }
+
+        internal Task<Transacao> PegartransacaoAsync(int transacaoId)
+        {
+            return _db.FindAsync<Transacao>(transacaoId);
+        }
+
+        public Task<int> DeletarTransacaoAsync(Transacao transacao)
+        {
+            return _db.DeleteAsync(transacao);
+        }
     }
 }
