@@ -6,7 +6,7 @@ using PersonalFinance.Resources.Services;
 namespace PersonalFinance.Resources.Activities
 {
     [Activity(Label = "Despesas")]
-    public class DespesaListActivity : Activity
+    public class TransacaoListActivity : Activity
     {
         ListView listView;
         Button btnAddDespesa;
