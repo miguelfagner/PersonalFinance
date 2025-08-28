@@ -1,46 +1,51 @@
-﻿using Android.Content;
-using PersonalFinance.Resources.Adapters;
+﻿using Android.App;
+using Android.Content;
+using Android.OS;
+using Android.Widget;
 using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
 
 namespace PersonalFinance.Resources.Activities
 {
-    [Activity(Label = "Despesas")]
+    [Activity(Label = "Transações")]
     public class TransacaoListActivity : Activity
     {
-        ListView listView;
-        Button btnAddDespesa;
-        List<Despesa> despesas;
+        private ListView _listView;
+        private Button _btnNova;
         private DatabaseService _db;
-        private DespesaAdapter adapter;
+        private List<Transacao> _transacoes;
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.activity_despesa_list);
 
-            listView = FindViewById<ListView>(Resource.Id.listDespesas);
-            btnAddDespesa = FindViewById<Button>(Resource.Id.btnAddDespesa);
+            if (ActionBar != null)
+                ActionBar.Hide();
+
+            SetContentView(Resource.Layout.activity_transacao_list);
 
             _db = new DatabaseService();
 
-            // Carrega a lista inicial
-            despesas = await _db.ListaDespesasAsync();
-            adapter = new DespesaAdapter(this, despesas);
-            listView.Adapter = adapter;
+            // Vincular componentes
+            _listView = FindViewById<ListView>(Resource.Id.listViewTransacoes);
+            _btnNova = FindViewById<Button>(Resource.Id.btnNovaTransacao);
 
-            // Clique no item da lista abre detalhes
-            listView.ItemClick += (s, e) =>
+            // Carregar transações
+            await CarregarTransacoes();
+
+            // Clique em item da lista → abrir edição
+            _listView.ItemClick += (s, e) =>
             {
-                var despesa = despesas[e.Position];
-                var intent = new Intent(this, typeof(DespesaEditActivity));
-                intent.PutExtra("DespesaId", despesa.Id);
+                var transacao = _transacoes[e.Position];
+                var intent = new Intent(this, typeof(TransacaoEditActivity));
+                intent.PutExtra("TransacaoId", transacao.Id);
                 StartActivity(intent);
             };
 
-            btnAddDespesa.Click += (s, e) =>
+            // Clique no botão nova transação
+            _btnNova.Click += (s, e) =>
             {
-                var intent = new Intent(this, typeof(DespesaCreateActivity));
+                var intent = new Intent(this, typeof(TransacaoEditActivity));
                 StartActivity(intent);
             };
         }
@@ -48,13 +53,20 @@ namespace PersonalFinance.Resources.Activities
         protected override async void OnResume()
         {
             base.OnResume();
+            await CarregarTransacoes();
+        }
 
-            // Atualiza a lista sempre que voltar para a Activity
-            despesas = await _db.ListaDespesasAsync();
+        private async Task CarregarTransacoes()
+        {
+            _transacoes = await _db.ListaTransacoesAsync();
 
-            // Atualiza o adapter
-            adapter = new DespesaAdapter(this, despesas);
-            listView.Adapter = adapter;
+            var adapter = new ArrayAdapter<string>(
+                this,
+                Android.Resource.Layout.SimpleListItem1,
+                _transacoes.Select(t => $"{t.Data:dd/MM/yyyy} - R$ {t.Valor:F2} - {t.Observacao}").ToList()
+            );
+
+            _listView.Adapter = adapter;
         }
     }
 }

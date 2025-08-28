@@ -78,7 +78,7 @@ namespace PersonalFinance.Resources.Services
             return ls;
         }
 
-        internal Task<int> SalvarTransacoesAsync(Transacao transacao)
+        internal Task<int> SalvarTransacaoAsync(Transacao transacao)
         {
             if (transacao.Id != 0)
                 return _db.UpdateAsync(transacao);
@@ -86,7 +86,7 @@ namespace PersonalFinance.Resources.Services
                 return _db.InsertAsync(transacao);
         }
 
-        internal Task<Transacao> PegartransacaoAsync(int transacaoId)
+        internal Task<Transacao> PegarTransacaoAsync(int transacaoId)
         {
             return _db.FindAsync<Transacao>(transacaoId);
         }

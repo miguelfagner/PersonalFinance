@@ -1,60 +1,46 @@
 ﻿using Android.Content;
-using PersonalFinance.Resources.Adapters;
-using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
 
 namespace PersonalFinance.Resources.Activities
 {
     [Activity(Label = "Transacoes")]
-    public class TransacaoListActivity : Activity
+    public class TransacaoDetailActivity : Activity
     {
-        ListView listView;
-        Button btnAddDespesa;
-        List<Despesa> despesas;
         private DatabaseService _db;
-        private DespesaAdapter adapter;
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.activity_despesa_list);
+            SetContentView(Resource.Layout.activity_transacao_detail);
 
-            listView = FindViewById<ListView>(Resource.Id.listDespesas);
-            btnAddDespesa = FindViewById<Button>(Resource.Id.btnAddDespesa);
+            // Receber a transacao enviada pela lista
+            var transacaoId = Intent.GetIntExtra("TransacaoId", -1);
 
+            if (transacaoId == -1)
+            {
+                Toast.MakeText(this, "Transacao inválida", ToastLength.Short).Show();
+                Finish();
+                return;
+            }
+
+            // Buscar transacao no banco
             _db = new DatabaseService();
-
-            // Carrega a lista inicial
-            despesas = await _db.ListaDespesasAsync();
-            adapter = new DespesaAdapter(this, despesas);
-            listView.Adapter = adapter;
-
-            // Clique no item da lista abre detalhes
-            listView.ItemClick += (s, e) =>
+            var transacao = await _db.PegarTransacaoAsync(transacaoId);
+            if (transacao == null)
             {
-                var despesa = despesas[e.Position];
-                var intent = new Intent(this, typeof(DespesaEditActivity));
-                intent.PutExtra("DespesaId", despesa.Id);
-                StartActivity(intent);
-            };
+                Toast.MakeText(this, "Transacao não encontrada", ToastLength.Short).Show();
+                Finish();
+                return;
+            }
 
-            btnAddDespesa.Click += (s, e) =>
-            {
-                var intent = new Intent(this, typeof(DespesaCreateActivity));
-                StartActivity(intent);
-            };
-        }
-
-        protected override async void OnResume()
-        {
-            base.OnResume();
-
-            // Atualiza a lista sempre que voltar para a Activity
-            despesas = await _db.ListaDespesasAsync();
-
-            // Atualiza o adapter
-            adapter = new DespesaAdapter(this, despesas);
-            listView.Adapter = adapter;
+            // Preencher campos
+            //FindViewById<TextView>(Resource.Id.tvDescricao).Text = transacao.Descricao;
+            //FindViewById<TextView>(Resource.Id.tvCategoria).Text = transacao.Categoria;
+            //FindViewById<TextView>(Resource.Id.tvValor).Text = $"R$ {transacao.Valor:N2}";
+            //FindViewById<TextView>(Resource.Id.tvDataCadastro).Text = transacao.DataCadastro.ToString("dd/MM/yyyy");
+            //FindViewById<TextView>(Resource.Id.tvVencimento).Text = transacao.Vencimento.ToString("dd/MM/yyyy");
+            //FindViewById<TextView>(Resource.Id.tvNParcela).Text = transacao.NParcela.ToString();
+            //FindViewById<TextView>(Resource.Id.tvReceitaId).Text = transacao.ReceitaId.ToString();
         }
     }
 }

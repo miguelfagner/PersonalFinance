@@ -1,60 +1,100 @@
-﻿using Android.Content;
-using PersonalFinance.Resources.Adapters;
+﻿using Android.App;
+using Android.OS;
+using Android.Views;
+using Android.Widget;
 using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
+using System.Globalization;
 
 namespace PersonalFinance.Resources.Activities
 {
-    [Activity(Label = "Transacoes")]
-    public class TransacaoEditctivity : Activity
+    [Activity(Label = "Editar Transação")]
+    public class TransacaoEditActivity : Activity
     {
-        ListView listView;
-        Button btnAddDespesa;
-        List<Despesa> despesas;
+        private EditText _edtData, _edtValor, _edtObservacao;
+        private Button _btnSalvar, _btnExcluir;
+
         private DatabaseService _db;
-        private DespesaAdapter adapter;
+        private Transacao _transacao;
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-            SetContentView(Resource.Layout.activity_despesa_list);
 
-            listView = FindViewById<ListView>(Resource.Id.listDespesas);
-            btnAddDespesa = FindViewById<Button>(Resource.Id.btnAddDespesa);
+            if (ActionBar != null)
+                ActionBar.Hide();
+
+            Window.DecorView.SystemUiVisibility = (StatusBarVisibility)SystemUiFlags.LightStatusBar;
+
+            SetContentView(Resource.Layout.activity_transacao_edit);
 
             _db = new DatabaseService();
 
-            // Carrega a lista inicial
-            despesas = await _db.ListaDespesasAsync();
-            adapter = new DespesaAdapter(this, despesas);
-            listView.Adapter = adapter;
+            // Obter ID da transação
+            int transacaoId = Intent.GetIntExtra("TransacaoId", 0);
 
-            // Clique no item da lista abre detalhes
-            listView.ItemClick += (s, e) =>
+            if (transacaoId > 0)
+                _transacao = await _db.PegarTransacaoAsync(transacaoId);
+
+            if (_transacao == null)
             {
-                var despesa = despesas[e.Position];
-                var intent = new Intent(this, typeof(DespesaEditActivity));
-                intent.PutExtra("DespesaId", despesa.Id);
-                StartActivity(intent);
+                // Nova transação
+                _transacao = new Transacao { Data = DateTime.Today };
+            }
+
+            // Vincular componentes
+            _edtData = FindViewById<EditText>(Resource.Id.edtData);
+            _edtValor = FindViewById<EditText>(Resource.Id.edtValor);
+            _edtObservacao = FindViewById<EditText>(Resource.Id.edtObservacao);
+            _btnSalvar = FindViewById<Button>(Resource.Id.btnSalvarTransacao);
+            _btnExcluir = FindViewById<Button>(Resource.Id.btnExcluirTransacao);
+
+            // Preencher campos
+            _edtData.Text = _transacao.Data.ToString("dd/MM/yyyy");
+            _edtValor.Text = _transacao.Valor.ToString("F2", new CultureInfo("pt-BR"));
+            _edtObservacao.Text = _transacao.Observacao;
+
+            // DatePicker
+            _edtData.Click += (s, e) =>
+            {
+                DateTime hoje = _transacao.Data != default ? _transacao.Data : DateTime.Today;
+
+                var dialog = new DatePickerDialog(this, (sender, args) =>
+                {
+                    _edtData.Text = args.Date.ToString("dd/MM/yyyy");
+                }, hoje.Year, hoje.Month - 1, hoje.Day);
+
+                dialog.Show();
             };
 
-            btnAddDespesa.Click += (s, e) =>
+            // Corrigir separador decimal
+            _edtValor.TextChanged += (s, e) =>
             {
-                var intent = new Intent(this, typeof(DespesaCreateActivity));
-                StartActivity(intent);
+                if (_edtValor.Text.Contains("."))
+                {
+                    _edtValor.Text = _edtValor.Text.Replace(".", ",");
+                    _edtValor.SetSelection(_edtValor.Text.Length);
+                }
             };
-        }
 
-        protected override async void OnResume()
-        {
-            base.OnResume();
+            // Salvar
+            _btnSalvar.Click += async (s, e) =>
+            {
+                try
+                {
+                    if (DateTime.TryParseExact(_edtData.Text, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime data))
+                        _transacao.Data = data;
 
-            // Atualiza a lista sempre que voltar para a Activity
-            despesas = await _db.ListaDespesasAsync();
+                    _transacao.Valor = decimal.TryParse(_edtValor.Text, NumberStyles.Any, new CultureInfo("pt-BR"), out decimal valor) ? valor : 0;
+                    _transacao.Observacao = _edtObservacao.Text;
 
-            // Atualiza o adapter
-            adapter = new DespesaAdapter(this, despesas);
-            listView.Adapter = adapter;
-        }
-    }
-}
+                    await _db.SalvarTransacaoAsync(_transacao);
+
+                    Toast.MakeText(this, "Transação salva!", ToastLength.Short).Show();
+                    Finish();
+                }
+                catch (Exception ex)
+                {
+                    Toast.MakeText(this, "Erro ao salvar: " + ex.Message, ToastLength.Long).Show();
+                }
+            };

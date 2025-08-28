@@ -1,59 +1,47 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
-    android:fitsSystemWindows="true">
+    android:padding="16dp">
 
-	<!-- Barra fixa no topo (AppBar) -->
 	<LinearLayout
-        android:id="@+id/appBar"
         android:layout_width="match_parent"
-        android:layout_height="56dp"
-        android:background="#4CAF50"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:elevation="4dp"
-        android:paddingHorizontal="16dp">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-		<TextView
-            android:id="@+id/tvTituloReceitas"
-            android:layout_width="wrap_content"
+		<EditText
+            android:id="@+id/edtData"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Minhas Receitas"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="#FFFFFF" />
+            android:hint="Data"
+            android:focusable="false"
+            android:clickable="true" />
+
+		<EditText
+            android:id="@+id/edtValor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Valor"
+            android:inputType="numberDecimal" />
+
+		<EditText
+            android:id="@+id/edtObservacao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Observação"
+            android:maxLength="100" />
+
+		<Button
+            android:id="@+id/btnSalvarTransacao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Salvar" />
+
+		<Button
+            android:id="@+id/btnExcluirTransacao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Excluir"
+            android:backgroundTint="@android:color/holo_red_light" />
 	</LinearLayout>
-
-	<!-- Lista de receitas -->
-	<ListView
-        android:id="@+id/listReceitas"
-        android:layout_below="@id/appBar"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@android:color/darker_gray"
-        android:dividerHeight="1dp"
-        android:padding="8dp"
-        android:clipToPadding="false"
-        android:layout_marginBottom="72dp"/>
-	<!-- espaço para FAB -->
-
-	<!-- Botão flutuante (Adicionar Receita) -->
-	<Button
-		android:id="@+id/btnAddReceita"
-		android:layout_width="56dp"
-		android:layout_height="56dp"
-		android:layout_alignParentBottom="true"
-		android:layout_alignParentEnd="true"
-		android:layout_margin="16dp"
-		android:backgroundTint="#4CAF50"
-		android:text="+"
-		android:textColor="#FFFFFF"
-		android:textSize="24sp"
-		android:elevation="6dp"
-		android:gravity="center"
-		android:stateListAnimator="@null"
-		android:background="@android:drawable/btn_default_small" />
-	
-</RelativeLayout>
+</ScrollView>
