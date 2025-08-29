@@ -1,12 +1,7 @@
-﻿using Android.App;
-using Android.Content;
-using Android.OS;
-using Android.Widget;
+﻿using Android.Content;
+using PersonalFinance.Resources.Adapters;
 using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
-using PersonalFinance.Resources.Adapters;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace PersonalFinance.Resources.Activities
 {

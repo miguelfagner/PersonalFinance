@@ -97,6 +97,8 @@ namespace PersonalFinance.Resources.Activities
                         try
                         {
                             await _db.DeletarTransacaoAsync(_transacao);
+                            await _db.AtualizaStatusAsync(_transacao.DespesaId);
+                            
                             Toast.MakeText(this, "Transação excluída!", ToastLength.Short).Show();
                             Finish();
                         }
@@ -158,6 +160,7 @@ namespace PersonalFinance.Resources.Activities
                 _transacao.Observacao = _edtObservacao.Text;
 
                 await _db.SalvarTransacaoAsync(_transacao);
+                await _db.AtualizaStatusAsync(_transacao.DespesaId);
 
                 Toast.MakeText(this, "Transação salva!", ToastLength.Short).Show();
                 Finish();

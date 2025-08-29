@@ -22,7 +22,7 @@ namespace PersonalFinance.Resources.Services
         //DESPESA
         internal Task<List<Despesa>> ListaDespesasAsync()
         {
-            var ls = _db.Table<Despesa>().ToListAsync();
+            var ls = _db.Table<Despesa>().OrderByDescending(x=>x.Valor).ToListAsync();
 
             return ls;
         }
@@ -42,6 +42,34 @@ namespace PersonalFinance.Resources.Services
         public Task<int> DeletarDespesaAsync(Despesa despesa)
         {
             return _db.DeleteAsync(despesa);
+        }
+
+        public async Task<int> AtualizaStatusAsync(int IdDespesa)
+        {
+            var despesa = await _db.FindAsync<Despesa>(IdDespesa);
+            if (despesa == null)
+                throw new ArgumentException("Despesa not found");
+
+            var transacoes = await _db.Table<Transacao>()
+                                       .Where(t => t.DespesaId == IdDespesa)
+                                       .ToListAsync();
+
+            var totalPago = transacoes.Sum(x => x.Valor);
+
+            if (totalPago == despesa.Valor)
+            {
+                despesa.Sttatus = true; // quitado
+            }
+            else if (totalPago > 0 && totalPago < despesa.Valor)
+            {
+                despesa.Sttatus = false; // parcialmente quitado
+            }
+            else
+            {
+                despesa.Sttatus = null; // pendente
+            }
+
+            return await _db.UpdateAsync(despesa);
         }
 
         //RECEITA
@@ -93,7 +121,28 @@ namespace PersonalFinance.Resources.Services
             return transacoes;
         }
 
+        internal async Task<List<Transacao>> ListaTransacoesAsync(int id)
+        {
+            // Busca todas as transações
+            var transacoes = await _db.Table<Transacao>()
+                                      .Where(x=>x.DespesaId == id)
+                                      .OrderByDescending(t => t.Data)
+                                      .ToListAsync();
 
+            foreach (var t in transacoes)
+            {
+                // Busca a despesa
+                t.Despesa = await _db.FindAsync<Despesa>(t.DespesaId);
+
+                if (t.Despesa != null)
+                {
+                    // Busca a receita vinculada à despesa
+                    t.Despesa.Receita = await _db.FindAsync<Receita>(t.Despesa.ReceitaId);
+                }
+            }
+
+            return transacoes;
+        }
 
         internal Task<int> SalvarTransacaoAsync(Transacao transacao)
         {

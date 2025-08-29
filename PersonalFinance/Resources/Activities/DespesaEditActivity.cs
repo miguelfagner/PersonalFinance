@@ -123,6 +123,9 @@ namespace PersonalFinance.Resources.Activities
                     _despesa.Valor = decimal.TryParse(_edtValor.Text, NumberStyles.Any, new CultureInfo("pt-BR"), out decimal valor) ? valor : 0;
 
                     await _db.SalvarDespesaAsync(_despesa);
+                    
+                    //atualiza o status da despesa com base nas transações associadas
+                    await _db.AtualizaStatusAsync(_despesa.Id);
 
                     Toast.MakeText(this, "Despesa atualizada!", ToastLength.Short).Show();
                     Finish();
@@ -144,6 +147,8 @@ namespace PersonalFinance.Resources.Activities
                         try
                         {
                             await _db.DeletarDespesaAsync(_despesa);
+                            await _db.AtualizaStatusAsync(_despesa.Id); // Atualiza status após exclusão
+
                             Toast.MakeText(this, "Despesa excluída!", ToastLength.Short).Show();
                             Finish();
                         }
