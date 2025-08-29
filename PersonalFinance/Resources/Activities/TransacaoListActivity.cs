@@ -61,14 +61,8 @@ namespace PersonalFinance.Resources.Activities
 
         private async Task CarregarTransacoes()
         {
+            // ListaTransacoesAsync já carrega Despesa e Receita
             _transacoes = await _db.ListaTransacoesAsync();
-
-            // Pré-carregar despesas e receitas para cada transação
-            foreach (var t in _transacoes)
-            {
-                if (t.DespesaId > 0)
-                    t.Despesa = await _db.PegarDespesaAsync(t.DespesaId);
-            }
 
             _adapter = new TransacaoAdapter(this, _transacoes);
             _listView.Adapter = _adapter;

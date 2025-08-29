@@ -2,7 +2,6 @@
 using Android.Views;
 using Android.Widget;
 using PersonalFinance.Resources.Models;
-using PersonalFinance.Resources.Services;
 using System.Globalization;
 using System.Collections.Generic;
 
@@ -12,13 +11,11 @@ namespace PersonalFinance.Resources.Adapters
     {
         private readonly Context _context;
         private readonly List<Transacao> _transacoes;
-        private readonly DatabaseService _db;
 
         public TransacaoAdapter(Context context, List<Transacao> transacoes)
         {
             _context = context;
             _transacoes = transacoes ?? new List<Transacao>();
-            _db = new DatabaseService();
         }
 
         public override Transacao this[int position] => _transacoes[position];
@@ -37,8 +34,15 @@ namespace PersonalFinance.Resources.Adapters
             var textInfo = view.FindViewById<TextView>(Resource.Id.textTransacaoInfo);
             var textDetalhe = view.FindViewById<TextView>(Resource.Id.textTransacaoDetalhe);
 
-            string despesaDesc = transacao.Despesa != null ? transacao.Despesa.Descricao : "Sem despesa";
-            string receitaDesc = transacao.Despesa?.Receita != null ? transacao.Despesa.Receita.FontePagadora : "Sem receita";
+            // Descrição da despesa
+            string despesaDesc = transacao.Despesa != null
+                ? transacao.Despesa.Descricao
+                : "Sem despesa";
+
+            // Fonte pagadora da receita
+            string receitaDesc = transacao.Despesa?.Receita != null
+                ? transacao.Despesa.Receita.FontePagadora
+                : "Sem receita";
 
             textInfo.Text = $"{transacao.Data:dd/MM/yyyy} - R$ {transacao.Valor.ToString("N2", new CultureInfo("pt-BR"))}";
             textDetalhe.Text = $"Despesa: {despesaDesc} | Receita: {receitaDesc}\nObservação: {transacao.Observacao}";

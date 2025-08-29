@@ -15,6 +15,7 @@ namespace PersonalFinance.Resources.Activities
     {
         private EditText _edtData, _edtValor, _edtObservacao;
         private Button _btnSalvar, _btnExcluir;
+        private TextView _txtDespesa, _txtReceita;
         private DatabaseService _db;
         private Transacao _transacao;
 
@@ -46,11 +47,16 @@ namespace PersonalFinance.Resources.Activities
             _edtObservacao = FindViewById<EditText>(Resource.Id.edtObservacao);
             _btnSalvar = FindViewById<Button>(Resource.Id.btnSalvarTransacao);
             _btnExcluir = FindViewById<Button>(Resource.Id.btnExcluirTransacao);
+            _txtDespesa = FindViewById<TextView>(Resource.Id.txtDespesa);
+            _txtReceita = FindViewById<TextView>(Resource.Id.txtReceita);
 
             // Preencher campos
             _edtData.Text = _transacao.Data.ToString("dd/MM/yyyy");
             _edtValor.Text = _transacao.Valor.ToString("F2", new CultureInfo("pt-BR"));
             _edtObservacao.Text = _transacao.Observacao;
+
+            // Carregar despesa e receita relacionadas
+            await CarregarDespesaEReceita();
 
             // DatePicker
             _edtData.Click += (s, e) =>
@@ -102,6 +108,43 @@ namespace PersonalFinance.Resources.Activities
                     .SetNegativeButton("Cancelar", (senderAlert, args) => { })
                     .Show();
             };
+        }
+
+        private async Task CarregarDespesaEReceita()
+        {
+            if (_transacao?.DespesaId > 0)
+            {
+                _transacao.Despesa = await _db.PegarDespesaAsync(_transacao.DespesaId);
+
+                if (_transacao.Despesa != null)
+                {
+                    _txtDespesa.Text = $"Despesa: {_transacao.Despesa.Descricao} (R$ {_transacao.Despesa.Valor:F2})";
+
+                    if (_transacao.Despesa.ReceitaId > 0)
+                    {
+                        _transacao.Despesa.Receita = await _db.PegarReceitaAsync(_transacao.Despesa.ReceitaId);
+
+                        if (_transacao.Despesa.Receita != null)
+                        {
+                            _txtReceita.Text = $"Receita: {_transacao.Despesa.Receita.FontePagadora} (R$ {_transacao.Despesa.Receita.Valor:F2})";
+                        }
+                        else
+                        {
+                            _txtReceita.Text = "Receita: não vinculada";
+                        }
+                    }
+                }
+                else
+                {
+                    _txtDespesa.Text = "Despesa: não vinculada";
+                    _txtReceita.Text = "Receita: -";
+                }
+            }
+            else
+            {
+                _txtDespesa.Text = "Despesa: não vinculada";
+                _txtReceita.Text = "Receita: -";
+            }
         }
 
         private async Task SalvarTransacaoAsync()

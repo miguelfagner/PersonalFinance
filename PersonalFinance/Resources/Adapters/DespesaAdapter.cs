@@ -56,6 +56,7 @@ namespace PersonalFinance.Resources.Adapters
         {
             try
             {
+              
                 // Cria a transação no banco
                 var transacao = new Transacao
                 {
