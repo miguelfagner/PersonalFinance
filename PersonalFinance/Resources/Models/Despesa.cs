@@ -26,8 +26,9 @@ namespace PersonalFinance.Resources.Models
         public string Categoria { get; set; } // Ex: Alimentação, Transporte, etc
 
         public decimal Valor { get; set; }
-        
+
         public bool? Sttatus { get; set; } //true quitado, null pendente, false parcialmente quitado
+        public bool replicavel { get; set; }
 
     }
 }

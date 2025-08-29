@@ -5,15 +5,6 @@
     android:layout_height="match_parent"
     android:background="#F5F5F5">
 
-	<Button
-        android:id="@+id/btnNovaTransacao"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Nova Transação"
-        android:background="@android:color/holo_blue_light"
-        android:textColor="@android:color/white"
-        android:layout_margin="8dp" />
-
 	<ListView
         android:id="@+id/listViewTransacoes"
         android:layout_width="match_parent"
