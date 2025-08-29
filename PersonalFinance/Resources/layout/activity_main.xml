@@ -7,14 +7,6 @@
     android:layout_height="match_parent">
 
 	<Button
-    android:id="@+id/btnExtrato"
-    android:text="Ver Transações"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="20dp" />
-
-
-	<Button
         android:id="@+id/btnListarReceitas"
         android:text="Lista Receitas"
         android:layout_width="match_parent"
