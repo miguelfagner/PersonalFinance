@@ -2,46 +2,88 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="#F5F5F5"
+    android:padding="16dp"
+    android:fitsSystemWindows="true">
 
 	<LinearLayout
+        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="wrap_content">
 
+		<!-- Data da transação -->
+		<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Data"
+            android:textStyle="bold"
+            android:textColor="#222"
+            android:textSize="14sp"
+            android:paddingTop="8dp"/>
 		<EditText
             android:id="@+id/edtData"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Data"
-            android:focusable="false"
-            android:clickable="true" />
+            android:inputType="date"
+            android:background="@android:drawable/edit_text"
+            android:padding="10dp"/>
 
+		<!-- Valor -->
+		<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Valor"
+            android:textStyle="bold"
+            android:textColor="#222"
+            android:textSize="14sp"
+            android:paddingTop="8dp"/>
 		<EditText
             android:id="@+id/edtValor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Valor"
-            android:inputType="numberDecimal" />
+            android:inputType="numberDecimal"
+            android:background="@android:drawable/edit_text"
+            android:padding="10dp"/>
 
+		<!-- Observação -->
+		<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Observação"
+            android:textStyle="bold"
+            android:textColor="#222"
+            android:textSize="14sp"
+            android:paddingTop="8dp"/>
 		<EditText
             android:id="@+id/edtObservacao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Observação"
-            android:maxLength="100" />
+            android:inputType="text"
+            android:background="@android:drawable/edit_text"
+            android:padding="10dp"
+            android:lines="3"
+            android:gravity="top|start"/>
 
+		<!-- Botão Salvar -->
 		<Button
             android:id="@+id/btnSalvarTransacao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Salvar" />
+            android:text="Salvar"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#EED202"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"/>
 
+		<!-- Botão Excluir -->
 		<Button
             android:id="@+id/btnExcluirTransacao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Excluir"
-            android:backgroundTint="@android:color/holo_red_light" />
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#E53935"
+            android:textStyle="bold"
+            android:layout_marginTop="8dp"/>
 	</LinearLayout>
 </ScrollView>

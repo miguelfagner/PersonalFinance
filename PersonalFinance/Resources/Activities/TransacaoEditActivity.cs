@@ -4,7 +4,9 @@ using Android.Views;
 using Android.Widget;
 using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
+using System;
 using System.Globalization;
+using System.Threading.Tasks;
 
 namespace PersonalFinance.Resources.Activities
 {
@@ -13,7 +15,6 @@ namespace PersonalFinance.Resources.Activities
     {
         private EditText _edtData, _edtValor, _edtObservacao;
         private Button _btnSalvar, _btnExcluir;
-
         private DatabaseService _db;
         private Transacao _transacao;
 
@@ -37,10 +38,7 @@ namespace PersonalFinance.Resources.Activities
                 _transacao = await _db.PegarTransacaoAsync(transacaoId);
 
             if (_transacao == null)
-            {
-                // Nova transação
                 _transacao = new Transacao { Data = DateTime.Today };
-            }
 
             // Vincular componentes
             _edtData = FindViewById<EditText>(Resource.Id.edtData);
@@ -77,24 +75,54 @@ namespace PersonalFinance.Resources.Activities
                 }
             };
 
-            // Salvar
-            _btnSalvar.Click += async (s, e) =>
+            // Salvar transação
+            _btnSalvar.Click += async (s, e) => await SalvarTransacaoAsync();
+
+            // Excluir transação
+            _btnExcluir.Click += async (s, e) =>
             {
-                try
-                {
-                    if (DateTime.TryParseExact(_edtData.Text, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime data))
-                        _transacao.Data = data;
+                if (_transacao.Id == 0) return; // não existe no banco
 
-                    _transacao.Valor = decimal.TryParse(_edtValor.Text, NumberStyles.Any, new CultureInfo("pt-BR"), out decimal valor) ? valor : 0;
-                    _transacao.Observacao = _edtObservacao.Text;
-
-                    await _db.SalvarTransacaoAsync(_transacao);
-
-                    Toast.MakeText(this, "Transação salva!", ToastLength.Short).Show();
-                    Finish();
-                }
-                catch (Exception ex)
-                {
-                    Toast.MakeText(this, "Erro ao salvar: " + ex.Message, ToastLength.Long).Show();
-                }
+                new AlertDialog.Builder(this)
+                    .SetTitle("Excluir Transação")
+                    .SetMessage("Deseja realmente excluir esta transação?")
+                    .SetPositiveButton("Sim", async (senderAlert, args) =>
+                    {
+                        try
+                        {
+                            await _db.DeletarTransacaoAsync(_transacao);
+                            Toast.MakeText(this, "Transação excluída!", ToastLength.Short).Show();
+                            Finish();
+                        }
+                        catch (Exception ex)
+                        {
+                            Toast.MakeText(this, "Erro ao excluir: " + ex.Message, ToastLength.Long).Show();
+                        }
+                    })
+                    .SetNegativeButton("Cancelar", (senderAlert, args) => { })
+                    .Show();
             };
+        }
+
+        private async Task SalvarTransacaoAsync()
+        {
+            try
+            {
+                if (DateTime.TryParseExact(_edtData.Text, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime data))
+                    _transacao.Data = data;
+
+                _transacao.Valor = decimal.TryParse(_edtValor.Text, NumberStyles.Any, new CultureInfo("pt-BR"), out decimal valor) ? valor : 0;
+                _transacao.Observacao = _edtObservacao.Text;
+
+                await _db.SalvarTransacaoAsync(_transacao);
+
+                Toast.MakeText(this, "Transação salva!", ToastLength.Short).Show();
+                Finish();
+            }
+            catch (Exception ex)
+            {
+                Toast.MakeText(this, "Erro ao salvar: " + ex.Message, ToastLength.Long).Show();
+            }
+        }
+    }
+}
