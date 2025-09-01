@@ -1,4 +1,5 @@
-﻿using Android.Views;
+﻿using Android.Content;
+using Android.Views;
 using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
 using System.Globalization;
@@ -10,7 +11,7 @@ namespace PersonalFinance.Resources.Activities
     {
         private Spinner _spinnerReceita;
         private EditText _edtVencimento, _edtNParcela, _edtDescricao, _edtCategoria, _edtValor;
-        private Button _btnSalvar, _btnExcluir;
+        private Button _btnSalvar, _btnExcluir, _btnQuitar;
 
         private DatabaseService _db;
         private Despesa _despesa;
@@ -58,6 +59,7 @@ namespace PersonalFinance.Resources.Activities
             _edtValor = FindViewById<EditText>(Resource.Id.edtValor);
             _btnSalvar = FindViewById<Button>(Resource.Id.btnSalvar);
             _btnExcluir = FindViewById<Button>(Resource.Id.btnExcluirDespesa);
+            _btnQuitar = FindViewById<Button>(Resource.Id.btnQuitarDespesa);
 
             // Carregar receitas no spinner
             _receitas = await _db.ListaReceitasAsync();
@@ -80,7 +82,7 @@ namespace PersonalFinance.Resources.Activities
             // Abrir DatePicker ao clicar no vencimento
             _edtVencimento.Click += (s, e) =>
             {
-                DateTime hoje = _despesa.Vencimento != default ? _despesa.Vencimento : DateTime.Today;
+                DateTime hoje = _despesa.Vencimento != default ? _despesa.Vencimento : DateTime.Now;
 
                 DatePickerDialog dialog = new DatePickerDialog(this, (sender, args) =>
                 {
@@ -123,7 +125,7 @@ namespace PersonalFinance.Resources.Activities
                     _despesa.Valor = decimal.TryParse(_edtValor.Text, NumberStyles.Any, new CultureInfo("pt-BR"), out decimal valor) ? valor : 0;
 
                     await _db.SalvarDespesaAsync(_despesa);
-                    
+
                     //atualiza o status da despesa com base nas transações associadas
                     await _db.AtualizaStatusAsync(_despesa.Id);
 
@@ -160,6 +162,53 @@ namespace PersonalFinance.Resources.Activities
                     .SetNegativeButton("Cancelar", (senderAlert, args) => { })
                     .Show();
             };
+
+            // Clique no botão Quitar
+            _btnQuitar.Click += async (s, e) =>
+            {
+                await QuitarDespesaAsync(_despesa);
+                Finish();
+            };
+        }
+
+        private async Task QuitarDespesaAsync(Despesa despesa)
+        {
+            try
+            {
+                var transacoes = await _db.ListaTransacoesAsync(despesa.Id);
+                var pago = transacoes.Sum(x => x.Valor);
+
+                if (pago >= despesa.Valor)
+                {
+                    Toast.MakeText(this, "Despesa já está quitada!", ToastLength.Short).Show();
+                    return;
+                }
+
+                var valorRestante = despesa.Valor - pago;
+
+                // Cria a transação no banco
+                var transacao = new Transacao
+                {
+                    DespesaId = despesa.Id,
+                    Valor = valorRestante,
+                    Data = DateTime.Now,
+                    Observacao = "Quitação automática"
+                };
+
+                await _db.SalvarTransacaoAsync(transacao);
+
+                // Atualiza o status da despesa no banco
+                await _db.AtualizaStatusAsync(despesa.Id);
+
+                // Atualiza o status local
+                despesa.Sttatus = true;
+
+                Toast.MakeText(this, $"Despesa '{despesa.Descricao}' quitada!", ToastLength.Short).Show();
+            }
+            catch (System.Exception ex)
+            {
+                Toast.MakeText(this, $"Erro ao quitar: {ex.Message}", ToastLength.Long).Show();
+            }
         }
     }
 }

@@ -30,15 +30,13 @@ namespace PersonalFinance.Resources.Adapters
 
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
-            var view = convertView ?? LayoutInflater.From(_context)
-                .Inflate(Resource.Layout.item_despesa, parent, false);
+            var view = convertView ?? LayoutInflater.From(_context).Inflate(Resource.Layout.item_despesa, parent, false);
             var despesa = _despesas[position];
 
             // Atualiza textos
             view.FindViewById<TextView>(Resource.Id.tvDescricao).Text = despesa.Descricao;
             view.FindViewById<TextView>(Resource.Id.tvCategoria).Text = despesa.Categoria;
-            view.FindViewById<TextView>(Resource.Id.tvValor).Text =
-                $"R$ {despesa.Valor.ToString("N2", new CultureInfo("pt-BR"))}";
+            view.FindViewById<TextView>(Resource.Id.tvValor).Text = $"R$ {despesa.Valor.ToString("N2", new CultureInfo("pt-BR"))}";
 
             var btnQuitar = view.FindViewById<Button>(Resource.Id.btnQuitar);
 

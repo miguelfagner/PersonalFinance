@@ -9,7 +9,7 @@ namespace PersonalFinance.Resources.Activities
     public class TransacaoListActivity : Activity
     {
         private ListView _listView;
-        private Button _btnNova;
+        //private Button _btnNova;
         private DatabaseService _db;
         private List<Transacao> _transacoes;
         private TransacaoAdapter _adapter;
@@ -27,7 +27,7 @@ namespace PersonalFinance.Resources.Activities
 
             // Vincular componentes
             _listView = FindViewById<ListView>(Resource.Id.listViewTransacoes);
-            _btnNova = FindViewById<Button>(Resource.Id.btnNovaTransacao);
+            //_btnNova = FindViewById<Button>(Resource.Id.btnNovaTransacao);
 
             await CarregarTransacoes();
 
@@ -40,12 +40,12 @@ namespace PersonalFinance.Resources.Activities
                 StartActivity(intent);
             };
 
-            // Nova transação
-            _btnNova.Click += (s, e) =>
-            {
-                var intent = new Intent(this, typeof(TransacaoEditActivity));
-                StartActivity(intent);
-            };
+            //// Nova transação
+            //_btnNova.Click += (s, e) =>
+            //{
+            //    var intent = new Intent(this, typeof(TransacaoEditActivity));
+            //    StartActivity(intent);
+            //};
         }
 
         protected override async void OnResume()

@@ -36,7 +36,7 @@ namespace PersonalFinance.Resources.Activities
 
             // Adapter do Spinner
             var adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleSpinnerItem,
-                _receitas.Select(r => r.FontePagadora).ToList());
+                _receitas.Select(r => r.Descricao).ToList());
             adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
             _spinnerReceita.Adapter = adapter;
 
@@ -70,8 +70,8 @@ namespace PersonalFinance.Resources.Activities
                 }
 
                 _viewModel.ReceitaId = _receitas[selectedIndex].Id;
-                _viewModel.Descricao = _edtDescricao.Text?.Trim();
-                _viewModel.Categoria = _edtCategoria.Text?.Trim();
+                _viewModel.Descricao = _edtDescricao.Text?.Trim().ToUpper();
+                _viewModel.Categoria = _edtCategoria.Text?.Trim().ToUpper();
                 
                 string valorTexto = _edtValor.Text?.Replace(",", ".") ?? "0";
                 _viewModel.Valor = decimal.TryParse(valorTexto, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal val) ? val : 0;
