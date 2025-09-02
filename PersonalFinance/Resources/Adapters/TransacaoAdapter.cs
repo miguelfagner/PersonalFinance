@@ -2,8 +2,8 @@
 using Android.Views;
 using Android.Widget;
 using PersonalFinance.Resources.Models;
-using System.Globalization;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace PersonalFinance.Resources.Adapters
 {
@@ -31,8 +31,11 @@ namespace PersonalFinance.Resources.Adapters
 
             var transacao = _transacoes[position];
 
-            var textInfo = view.FindViewById<TextView>(Resource.Id.textTransacaoInfo);
-            var textDetalhe = view.FindViewById<TextView>(Resource.Id.textTransacaoDetalhe);
+            var tvDataValor = view.FindViewById<TextView>(Resource.Id.tvDataValor);
+            var tvDespesa = view.FindViewById<TextView>(Resource.Id.tvDespesa);
+            var tvReceita = view.FindViewById<TextView>(Resource.Id.tvReceita);
+            var tvObservacao = view.FindViewById<TextView>(Resource.Id.tvObservacao);
+            var tvValorDestaque = view.FindViewById<TextView>(Resource.Id.tvValorDestaque);
 
             // Descrição da despesa
             string despesaDesc = transacao.Despesa != null
@@ -44,8 +47,21 @@ namespace PersonalFinance.Resources.Adapters
                 ? transacao.Despesa.Receita.FontePagadora
                 : "Sem receita";
 
-            textInfo.Text = $"{transacao.Data:dd/MM/yyyy} - R$ {transacao.Valor.ToString("N2", new CultureInfo("pt-BR"))}";
-            textDetalhe.Text = $"Despesa: {despesaDesc} | Receita: {receitaDesc}\nObservação: {transacao.Observacao}";
+            // Exibe Data + Valor
+            tvDataValor.Text = $"{transacao.Data:dd/MM/yyyy} - R$ {transacao.Valor.ToString("N2", new CultureInfo("pt-BR"))}";
+
+            // Exibe detalhes
+            tvDespesa.Text = $"Despesa: {despesaDesc}";
+            tvReceita.Text = $"Receita: {receitaDesc}";
+            tvObservacao.Text = $"Observação: {transacao.Observacao ?? "Nenhuma"}";
+
+            // Valor destacado → verde para crédito, vermelho para débito
+            tvValorDestaque.Text = $"R$ {transacao.Valor.ToString("N2", new CultureInfo("pt-BR"))}";
+            tvValorDestaque.SetTextColor(
+                transacao.Valor >= 0
+                    ? Android.Graphics.Color.ParseColor("#388E3C") // Verde
+                    : Android.Graphics.Color.ParseColor("#D32F2F") // Vermelho
+            );
 
             return view;
         }

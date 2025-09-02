@@ -18,8 +18,8 @@ namespace PersonalFinance.Resources.Activities
         {
             base.OnCreate(savedInstanceState);
 
-            if (ActionBar != null)
-                ActionBar.Hide();
+            //if (ActionBar != null)
+            //    ActionBar.Hide();
 
             SetContentView(Resource.Layout.activity_transacao_list);
 
@@ -39,13 +39,6 @@ namespace PersonalFinance.Resources.Activities
                 intent.PutExtra("TransacaoId", transacao.Id);
                 StartActivity(intent);
             };
-
-            //// Nova transação
-            //_btnNova.Click += (s, e) =>
-            //{
-            //    var intent = new Intent(this, typeof(TransacaoEditActivity));
-            //    StartActivity(intent);
-            //};
         }
 
         protected override async void OnResume()

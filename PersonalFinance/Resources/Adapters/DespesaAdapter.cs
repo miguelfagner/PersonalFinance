@@ -36,7 +36,8 @@ namespace PersonalFinance.Resources.Adapters
             // Atualiza textos
             view.FindViewById<TextView>(Resource.Id.tvDescricao).Text = despesa.Descricao;
             view.FindViewById<TextView>(Resource.Id.tvCategoria).Text = despesa.Categoria;
-            view.FindViewById<TextView>(Resource.Id.tvValor).Text = $"R$ {despesa.Valor.ToString("N2", new CultureInfo("pt-BR"))}";
+            view.FindViewById<TextView>(Resource.Id.tvValor).Text =
+                $"R$ {despesa.Valor.ToString("N2", new CultureInfo("pt-BR"))}";
 
             var btnQuitar = view.FindViewById<Button>(Resource.Id.btnQuitar);
 
@@ -47,7 +48,7 @@ namespace PersonalFinance.Resources.Adapters
             if (despesa.Sttatus == null) // pendente
             {
                 btnQuitar.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(
-                    Android.Graphics.Color.ParseColor("#198754")); // azul
+                    Android.Graphics.Color.ParseColor("#198754")); // verde
             }
             else if (despesa.Sttatus == false) // parcialmente quitado
             {
@@ -55,8 +56,8 @@ namespace PersonalFinance.Resources.Adapters
                     Android.Graphics.Color.ParseColor("#ffc107")); // amarelo
             }
 
-            // Limpa handlers antigos
-            btnQuitar.SetOnClickListener(null);
+            // Remove handlers antigos para evitar múltiplos eventos
+            btnQuitar.Click -= async (s, e) => { };
 
             // Adiciona clique para quitar apenas se estiver visível
             if (btnQuitar.Visibility == ViewStates.Visible)
@@ -64,15 +65,11 @@ namespace PersonalFinance.Resources.Adapters
                 btnQuitar.Click += async (s, e) =>
                 {
                     await QuitarDespesaAsync(despesa);
-                    // Atualiza visual do botão sem recarregar toda a lista
-                    btnQuitar.Visibility = ViewStates.Gone;
                 };
             }
 
             return view;
         }
-
-
 
         private async Task QuitarDespesaAsync(Despesa despesa)
         {
@@ -102,7 +99,7 @@ namespace PersonalFinance.Resources.Adapters
                 // Atualiza o status local para true (quitado)
                 despesa.Sttatus = true;
 
-                // Atualiza a lista, assim o GetView será chamado e o botão sumirá
+                // Atualiza a lista (GetView será chamado de novo)
                 NotifyDataSetChanged();
 
                 Toast.MakeText(_context, $"Despesa '{despesa.Descricao}' quitada!", ToastLength.Short).Show();
@@ -112,6 +109,5 @@ namespace PersonalFinance.Resources.Adapters
                 Toast.MakeText(_context, $"Erro ao quitar: {ex.Message}", ToastLength.Long).Show();
             }
         }
-
     }
 }

@@ -2,28 +2,69 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:padding="12dp"
-    android:layout_margin="8dp"
     android:background="#FFFFFF"
-    android:elevation="4dp"
-    android:clipToOutline="true"
-    android:radius="12dp">
+    android:gravity="center_vertical"
+    android:elevation="2dp"
+    android:layout_marginBottom="8dp">
 
-	<TextView
-        android:id="@+id/textTransacaoInfo"
-        android:layout_width="match_parent"
+	<!-- Conteúdo principal -->
+	<LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:paddingEnd="8dp">
+
+		<!-- Data e Valor -->
+		<TextView
+            android:id="@+id/tvDataValor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="01/09/2025 - R$ 0,00"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            android:textColor="#222" />
+
+		<!-- Despesa -->
+		<TextView
+            android:id="@+id/tvDespesa"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Despesa: X"
+            android:textColor="#666"
+            android:textSize="14sp" />
+
+		<!-- Receita -->
+		<TextView
+            android:id="@+id/tvReceita"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Receita: Y"
+            android:textColor="#666"
+            android:textSize="14sp" />
+
+		<!-- Observação -->
+		<TextView
+            android:id="@+id/tvObservacao"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Observação: Nenhuma"
+            android:textColor="#888"
+            android:textSize="13sp"
+            android:layout_marginTop="4dp" />
+	</LinearLayout>
+
+	<!-- Valor destacado (positivo = verde, negativo = vermelho) -->
+	<TextView
+        android:id="@+id/tvValorDestaque"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="R$ 0,00"
         android:textSize="16sp"
         android:textStyle="bold"
-        android:textColor="#000000" />
-
-	<TextView
-        android:id="@+id/textTransacaoDetalhe"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:textColor="#444444"
-        android:layout_marginTop="4dp" />
+        android:textColor="#388E3C"
+        android:gravity="end" />
 
 </LinearLayout>
