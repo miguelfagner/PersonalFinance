@@ -9,7 +9,6 @@ namespace PersonalFinance.Resources.Activities
     public class TransacaoListActivity : Activity
     {
         private ListView _listView;
-        //private Button _btnNova;
         private DatabaseService _db;
         private List<Transacao> _transacoes;
         private TransacaoAdapter _adapter;
@@ -18,26 +17,27 @@ namespace PersonalFinance.Resources.Activities
         {
             base.OnCreate(savedInstanceState);
 
-            //if (ActionBar != null)
-            //    ActionBar.Hide();
-
             SetContentView(Resource.Layout.activity_transacao_list);
 
             _db = new DatabaseService();
 
             // Vincular componentes
             _listView = FindViewById<ListView>(Resource.Id.listViewTransacoes);
-            //_btnNova = FindViewById<Button>(Resource.Id.btnNovaTransacao);
 
             await CarregarTransacoes();
 
-            // Clique em item → editar
+            // Clique em item → editar (ignora cabeçalhos)
             _listView.ItemClick += (s, e) =>
             {
-                var transacao = _transacoes[e.Position];
-                var intent = new Intent(this, typeof(TransacaoEditActivity));
-                intent.PutExtra("TransacaoId", transacao.Id);
-                StartActivity(intent);
+                var item = _adapter[e.Position];
+
+                if (!item.IsHeader) // só abre se for transação
+                {
+                    var transacao = item.Transacao;
+                    var intent = new Intent(this, typeof(TransacaoEditActivity));
+                    intent.PutExtra("TransacaoId", transacao.Id);
+                    StartActivity(intent);
+                }
             };
         }
 

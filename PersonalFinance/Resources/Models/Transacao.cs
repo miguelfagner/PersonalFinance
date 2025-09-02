@@ -22,4 +22,11 @@ namespace PersonalFinance.Resources.Models
         public DateTime Data { get; set; }
 
     }
+
+    public class TransacaoItem
+    {
+        public bool IsHeader { get; set; }
+        public string HeaderTitle { get; set; }
+        public Transacao Transacao { get; set; }
+    }
 }
