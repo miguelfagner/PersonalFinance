@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+			  android:fitsSystemWindows="true">
+
+	<!-- Totais -->
+	<TextView
+        android:id="@+id/tvTotalReceita"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Receitas: R$0,00"
+        android:textStyle="bold"
+        android:textSize="18sp" />
+
+	<TextView
+        android:id="@+id/tvTotalDespesa"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Despesas: R$0,00"
+        android:textStyle="bold"
+        android:textSize="18sp" />
+
+	<TextView
+        android:id="@+id/tvSaldo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Saldo: R$0,00"
+        android:textStyle="bold"
+        android:textSize="18sp"
+        android:paddingBottom="10dp" />
+
+	<!-- Lista de Despesas -->
+	<ListView
+        android:id="@+id/lvDespesas"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:dividerHeight="8dp" />
+
+</LinearLayout>
