@@ -24,6 +24,23 @@
         android:textSize="18sp" />
 
 	<TextView
+        android:id="@+id/tvTotalQuitado"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Quitado: R$0,00"
+        android:textStyle="bold"
+        android:textSize="18sp" />
+
+	
+	<TextView
+        android:id="@+id/tvFaltaQuitar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Quitado: R$0,00"
+        android:textStyle="bold"
+        android:textSize="18sp" />
+
+	<TextView
         android:id="@+id/tvSaldo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
