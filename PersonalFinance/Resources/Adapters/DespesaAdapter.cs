@@ -1,11 +1,8 @@
 ﻿using Android.Content;
 using Android.Views;
-using Android.Widget;
 using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
-using System.Collections.Generic;
 using System.Globalization;
-using System.Threading.Tasks;
 
 namespace PersonalFinance.Resources.Adapters
 {
