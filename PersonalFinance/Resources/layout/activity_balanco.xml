@@ -1,169 +1,189 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:fitsSystemWindows="true"
-    android:fillViewport="true"
-    android:background="#F5F5F5">
+    android:background="#F5F5F5"
+			  android:fitsSystemWindows="true">
 
-	<LinearLayout
+	<ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal"
-        android:paddingBottom="16dp">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
 
-		<!-- Card Saldo -->
 		<LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:background="@android:color/white"
-            android:elevation="4dp"
-            android:layout_marginBottom="12dp"
-            android:gravity="center">
+            android:gravity="center_horizontal"
+            android:paddingBottom="16dp">
 
-			<TextView
-                android:id="@+id/tvSaldo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="POUPADO: R$0,00"
-                android:textSize="22sp"
-                android:textStyle="bold"
-                android:textColor="#333333"
-                android:layout_marginBottom="6dp" />
-
-			<TextView
-                android:id="@+id/tvResumo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Situação financeira"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="#666666"
-                android:layout_marginBottom="20dp" />
-
-			<TextView
-                android:id="@+id/tvTotalDespesa"
+			<!-- Card Saldo -->
+			<LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="DESPESAS: R$0,00"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:textColor="#F44336"
-                android:layout_marginBottom="6dp"
-                android:gravity="center" />
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:background="@android:color/white"
+                android:elevation="4dp"
+                android:layout_marginBottom="12dp"
+                android:gravity="center">
 
-			<ProgressBar
-                android:id="@+id/progDespesa"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="16dp"
-                android:max="100"
-                android:progress="0"
-                android:progressTint="#F44336"
-                android:backgroundTint="#E0E0E0"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="12dp" />
+				<TextView
+                    android:id="@+id/tvSaldo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="POUPADO: R$0,00"
+                    android:textSize="22sp"
+                    android:textStyle="bold"
+                    android:textColor="#333333"
+                    android:layout_marginBottom="6dp" />
 
-			<!-- PROGRESS DE GASTOS PESSOAIS -->
-			<TextView
-                android:id="@+id/tvGastosPessoais"
+				<TextView
+                    android:id="@+id/tvResumo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Situação financeira"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:textColor="#666666"
+                    android:layout_marginBottom="20dp" />
+
+				<TextView
+                    android:id="@+id/tvTotalDespesa"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="DESPESAS: R$0,00"
+                    android:textStyle="bold"
+                    android:textSize="18sp"
+                    android:textColor="#F44336"
+                    android:layout_marginBottom="6dp"
+                    android:gravity="center" />
+
+				<ProgressBar
+                    android:id="@+id/progDespesa"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressTint="#F44336"
+                    android:backgroundTint="#E0E0E0"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="12dp" />
+
+				<!-- PROGRESS DE GASTOS PESSOAIS -->
+				<TextView
+                    android:id="@+id/tvGastosPessoais"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Gastos pessoais: R$0,00"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:textColor="#FF9800"
+                    android:layout_marginBottom="6dp"
+                    android:gravity="center" />
+
+				<ProgressBar
+                    android:id="@+id/progGastosPessoais"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressTint="#FF9800"
+                    android:backgroundTint="#E0E0E0"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="12dp" />
+
+				<!-- PROGRESS DE GASTOS DOMÉSTICOS -->
+				<TextView
+                    android:id="@+id/tvGastosDomesticos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Gastos domésticos: R$0,00"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:textColor="#2196F3"
+                    android:layout_marginBottom="6dp"
+                    android:gravity="center" />
+
+				<ProgressBar
+                    android:id="@+id/progGastosDomesticos"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressTint="#2196F3"
+                    android:backgroundTint="#E0E0E0"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="6dp" />
+
+			</LinearLayout>
+
+			<!-- Card Indicadores -->
+			<LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Gastos pessoais: R$0,00"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="#FF9800"
-                android:layout_marginBottom="6dp"
-                android:gravity="center" />
+                android:orientation="vertical"
+                android:background="@android:color/white"
+                android:elevation="4dp"
+                android:padding="16dp"
+                android:layout_marginBottom="12dp">
 
-			<ProgressBar
-                android:id="@+id/progGastosPessoais"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="16dp"
-                android:max="100"
-                android:progress="0"
-                android:progressTint="#FF9800"
-                android:backgroundTint="#E0E0E0"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="12dp" />
+				<TextView
+                    android:id="@+id/tvTotalReceita"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Receitas: R$0,00"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:textColor="#4CAF50"
+                    android:layout_marginBottom="8dp" />
 
-			<!-- PROGRESS DE GASTOS DOMÉSTICOS -->
-			<TextView
-                android:id="@+id/tvGastosDomesticos"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Gastos domésticos: R$0,00"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="#2196F3"
-                android:layout_marginBottom="6dp"
-                android:gravity="center" />
+				<View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#DDDDDD"
+                    android:layout_marginBottom="12dp" />
 
-			<ProgressBar
-                android:id="@+id/progGastosDomesticos"
-                style="?android:attr/progressBarStyleHorizontal"
+				<TextView
+                    android:id="@+id/tvTotalQuitado"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Quitado: R$0,00"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:textColor="#2196F3"
+                    android:layout_marginBottom="6dp" />
+
+				<TextView
+                    android:id="@+id/tvFaltaQuitar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Falta quitar: R$0,00"
+                    android:textStyle="bold"
+                    android:textSize="14sp"
+                    android:textColor="#FF9800"
+                    android:layout_marginBottom="6dp" />
+
+			</LinearLayout>
+
+			<!-- PieChart -->
+			<com.github.mikephil.charting.charts.PieChart
+                android:id="@+id/pieChartDespesas"
                 android:layout_width="match_parent"
-                android:layout_height="16dp"
-                android:max="100"
-                android:progress="0"
-                android:progressTint="#2196F3"
-                android:backgroundTint="#E0E0E0"
-                android:layout_marginTop="4dp"
-                android:layout_marginBottom="6dp" />
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
+                android:background="@android:color/white"
+                android:elevation="4dp" />
 
 		</LinearLayout>
+	</ScrollView>
 
-		<!-- Card Indicadores -->
-		<LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:background="@android:color/white"
-            android:elevation="4dp"
-            android:padding="16dp">
-
-			<TextView
-                android:id="@+id/tvTotalReceita"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Receitas: R$0,00"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="#4CAF50"
-                android:layout_marginBottom="8dp" />
-
-			<View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="#DDDDDD"
-                android:layout_marginBottom="12dp" />
-
-			<TextView
-                android:id="@+id/tvTotalQuitado"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Quitado: R$0,00"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="#2196F3"
-                android:layout_marginBottom="6dp" />
-
-			<TextView
-                android:id="@+id/tvFaltaQuitar"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Falta quitar: R$0,00"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="#FF9800"
-                android:layout_marginBottom="6dp" />
-
-		</LinearLayout>
-
-	</LinearLayout>
-</ScrollView>
+</LinearLayout>

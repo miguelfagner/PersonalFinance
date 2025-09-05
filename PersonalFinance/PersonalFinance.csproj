@@ -18,6 +18,7 @@
     <EmbedAssembliesIntoApk>False</EmbedAssembliesIntoApk>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="MPAndroidChart" Version="3.1.0" />
     <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
   </ItemGroup>
 </Project>

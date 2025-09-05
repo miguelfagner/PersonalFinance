@@ -1,12 +1,9 @@
-﻿using Android.App;
-using Android.OS;
-using Android.Widget;
+﻿using MikePhil.Charting.Animation;
+using MikePhil.Charting.Charts;
+using MikePhil.Charting.Data;
 using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using MikePhil.Charting.Listener;
 
 namespace PersonalFinance.Resources.Activities
 {
@@ -15,6 +12,7 @@ namespace PersonalFinance.Resources.Activities
     {
         private TextView tvTotalReceita, tvTotalDespesa, tvSaldo, tvTotalQuitado, tvFaltaQuitar, tvResumo, tvGastosPessoais, tvGastosDomesticos;
         private ProgressBar progDespesa, progGastosDomesticos, progGastosPessoais;
+        private PieChart pieChartDespesas;
 
         private DatabaseService _db;
 
@@ -38,11 +36,14 @@ namespace PersonalFinance.Resources.Activities
             progGastosPessoais = FindViewById<ProgressBar>(Resource.Id.progGastosPessoais);
             progGastosDomesticos = FindViewById<ProgressBar>(Resource.Id.progGastosDomesticos);
 
+            //GRAFICOS
+            pieChartDespesas = FindViewById<PieChart>(Resource.Id.pieChartDespesas);
+
+
             _db = new DatabaseService();
 
             await CarregarDadosAsync();
         }
-
         private async Task CarregarDadosAsync()
         {
             var despesas = await _db.ListaDespesasAsync() ?? new List<Despesa>();
@@ -65,26 +66,22 @@ namespace PersonalFinance.Resources.Activities
                 .Where(r => r?.Data != null && r.Data.Month == mes && r.Data.Year == ano)
                 .Sum(r => r?.Valor ?? 0);
 
-            //total de gastos pessoais planejado
+            // Gastos pessoais e domésticos
             decimal gastoPlanejado = despesas
                 .Where(r => string.Equals(r?.Categoria, "PESSOAL", StringComparison.OrdinalIgnoreCase))
                 .Sum(r => r?.Valor ?? 0);
 
-            //total de gastos pessoais gasto
             decimal gastoPessoal = transacoes
                 .Where(r => string.Equals(r?.Despesa?.Categoria, "PESSOAL", StringComparison.OrdinalIgnoreCase))
                 .Sum(r => r?.Valor ?? 0);
 
-            //total de gastos domésticos planejado
             decimal gastoDomesticoPlanejado = despesas
                 .Where(r => string.Equals(r?.Categoria, "GASTOS DOMESTICOS", StringComparison.OrdinalIgnoreCase))
                 .Sum(r => r?.Valor ?? 0);
 
-            //total de gastos domésticos gasto
             decimal gastoDomestico = transacoes
                 .Where(r => string.Equals(r?.Despesa?.Categoria, "GASTOS DOMESTICOS", StringComparison.OrdinalIgnoreCase))
                 .Sum(r => r?.Valor ?? 0);
-
 
             var saldo = totalReceita - totalDespesa;
             var faltaQuitar = totalDespesa - totalQuitado;
@@ -94,8 +91,8 @@ namespace PersonalFinance.Resources.Activities
             tvTotalDespesa.Text = $"DESPESAS: R${totalDespesa:N2}";
             tvTotalQuitado.Text = $"DESPESAS QUITADAS: R${totalQuitado:N2}";
             tvFaltaQuitar.Text = $"AGUARDANDO QUITAR: R${faltaQuitar:N2}";
-            tvGastosPessoais.Text = $"GASTOS PESSOAIS R${gastoPlanejado:N2}";
-            tvGastosDomesticos.Text = $"GASTOS DOMESTICOS R${gastoDomesticoPlanejado:N2}";
+            tvGastosPessoais.Text = $"GASTOS PESSOAIS: R${(gastoPlanejado - gastoPessoal):N2} DISPONÍVEIS DE R${gastoPlanejado:N2}";
+            tvGastosDomesticos.Text = $"GASTOS DOMESTICOS: R${(gastoDomesticoPlanejado - gastoDomestico):N2} DISPONÍVEIS DE R${gastoDomesticoPlanejado:N2}";
             tvSaldo.Text = $"POUPADO: R$ {saldo:N2}";
 
             // Atualiza indicadores
@@ -103,8 +100,7 @@ namespace PersonalFinance.Resources.Activities
             progGastosPessoais.Progress = gastoPlanejado > 0 ? (int)((gastoPessoal / gastoPlanejado) * 100) : 0;
             progGastosDomesticos.Progress = gastoDomesticoPlanejado > 0 ? (int)((gastoDomestico / gastoDomesticoPlanejado) * 100) : 0;
 
-
-            // Resumo de desempenho
+            // Resumo
             if (saldo > 0)
             {
                 tvResumo.Text = "Você está no positivo! 👏";
@@ -120,6 +116,66 @@ namespace PersonalFinance.Resources.Activities
                 tvResumo.Text = "Atenção! Saldo negativo.";
                 tvResumo.SetTextColor(Android.Graphics.Color.ParseColor("#F44336"));
             }
+
+            //---------------------------------------------------------
+            // Gráfico de despesas por categoria com "Outras" e clique
+
+            var despesasPorCategoria = despesas
+                .Where(d => d.Vencimento.Month == mes && d.Vencimento.Year == ano)
+                .GroupBy(d => d.Categoria ?? "Outros")
+                .Select(g => new { Categoria = g.Key, Total = g.Sum(x => x.Valor) })
+                .ToList();
+
+            var totalDespesaMes = despesasPorCategoria.Sum(d => d.Total);
+
+            // Separar categorias maiores e menores que 5%
+            var maiores = despesasPorCategoria.Where(d => d.Total / totalDespesaMes >= 0.1m).ToList();
+            var menores = despesasPorCategoria.Where(d => d.Total / totalDespesaMes < 0.1m).ToList();
+
+            var entries = new List<PieEntry>();
+
+            // Adiciona categorias maiores
+            foreach (var item in maiores)
+                entries.Add(new PieEntry((float)item.Total, item.Categoria));
+
+            // Adiciona "Outras"
+            if (menores.Any())
+                entries.Add(new PieEntry((float)menores.Sum(x => x.Total), "OUTRAS"));
+
+            var dataSet = new PieDataSet(entries, "Despesas por Categoria");
+
+            // 10 cores contrastantes
+            dataSet.SetColors(new int[]
+            {
+        Android.Graphics.Color.ParseColor("#F44336"),
+        Android.Graphics.Color.ParseColor("#2196F3"),
+        Android.Graphics.Color.ParseColor("#4CAF50"),
+        Android.Graphics.Color.ParseColor("#FF9800"),
+        Android.Graphics.Color.ParseColor("#9C27B0"),
+        Android.Graphics.Color.ParseColor("#009688"),
+        Android.Graphics.Color.ParseColor("#E91E63"),
+        Android.Graphics.Color.ParseColor("#3F51B5"),
+        Android.Graphics.Color.ParseColor("#CDDC39"),
+        Android.Graphics.Color.ParseColor("#FF5722")
+            });
+
+            dataSet.ValueTextSize = 12f;
+            dataSet.ValueTextColor = Android.Graphics.Color.Black;
+
+            var data = new PieData(dataSet);
+            pieChartDespesas.Data = data;
+
+            pieChartDespesas.Description.Enabled = false;
+            pieChartDespesas.SetUsePercentValues(true);
+            pieChartDespesas.SetDrawEntryLabels(true);
+            pieChartDespesas.Legend.ResetCustom();
+
+            // Desabilita a legenda
+            pieChartDespesas.Legend.Enabled = false;
+
+            pieChartDespesas.AnimateY(1400, Easing.EaseInOutQuad);
+            pieChartDespesas.Invalidate();
+
         }
     }
 }
