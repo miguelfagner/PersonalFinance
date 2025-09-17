@@ -76,24 +76,14 @@ namespace PersonalFinance.Resources.Adapters
 
                 var transacao = item.Transacao;
 
-                var tvDataValor = view.FindViewById<TextView>(Resource.Id.tvDataValor);
+                var tvDataCategoria = view.FindViewById<TextView>(Resource.Id.tvDataCategoria);
                 var tvDespesa = view.FindViewById<TextView>(Resource.Id.tvDespesa);
-                var tvReceita = view.FindViewById<TextView>(Resource.Id.tvReceita);
-                var tvObservacao = view.FindViewById<TextView>(Resource.Id.tvObservacao);
                 var tvValorDestaque = view.FindViewById<TextView>(Resource.Id.tvValorDestaque);
 
-                string despesaDesc = transacao.Despesa != null
-                    ? transacao.Despesa.Descricao
-                    : "Sem despesa";
+                var textoDespesa = transacao.Observacao == "Quitação automática" ? transacao.Despesa.Descricao?.ToUpper() : transacao.Observacao.ToUpper();
 
-                string receitaDesc = transacao.Despesa?.Receita != null
-                    ? transacao.Despesa.Receita.FontePagadora
-                    : "Sem receita";
-
-                tvDataValor.Text = $"{transacao.Data:dd/MM/yyyy} - R$ {transacao.Valor.ToString("N2", new CultureInfo("pt-BR"))}";
-                tvDespesa.Text = $"Despesa: {despesaDesc}";
-                tvReceita.Text = $"Receita: {receitaDesc}";
-                tvObservacao.Text = $"Observação: {transacao.Observacao ?? "Nenhuma"}";
+                tvDataCategoria.Text = $"{textoDespesa }";
+                tvDespesa.Text = $"DESPESA DE {transacao.Despesa.Descricao?.ToUpper() + " PAGA EM " + transacao.Data.ToString("dd/MM/yy")}";
 
                 tvValorDestaque.Text = $"R$ {transacao.Valor.ToString("N2", new CultureInfo("pt-BR"))}";
                 tvValorDestaque.SetTextColor(

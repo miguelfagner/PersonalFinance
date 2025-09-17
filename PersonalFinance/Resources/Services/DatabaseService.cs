@@ -73,47 +73,6 @@ namespace PersonalFinance.Resources.Services
             return await _db.UpdateAsync(despesa);
         }
 
-        //private async Task QuitarDespesaAsync(Despesa despesa)
-        //{
-        //    try
-        //    {
-        //        var transacoes = await _db.ListaTransacoesAsync(despesa.Id);
-        //        var pago = transacoes.Sum(x => x.Valor);
-        //        var valor = despesa.Valor;
-
-        //        if (pago > 0)
-        //            valor = despesa.Valor - pago;
-
-        //        // Cria a transação no banco
-        //        var transacao = new Transacao
-        //        {
-        //            DespesaId = despesa.Id,
-        //            Valor = valor,
-        //            Data = DateTime.Now,
-        //            Observacao = "Quitação automática"
-        //        };
-
-        //        await _db.SalvarTransacaoAsync(transacao);
-
-        //        // Atualiza o status da despesa no banco
-        //        await _db.AtualizaStatusAsync(despesa.Id);
-
-        //        // Atualiza o status local para true (quitado)
-        //        despesa.Sttatus = true;
-
-        //        // Atualiza a lista, assim o GetView será chamado e o botão sumirá
-        //        NotifyDataSetChanged();
-
-        //        Toast.MakeText(_context, $"Despesa '{despesa.Descricao}' quitada!", ToastLength.Short).Show();
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        Toast.MakeText(_context, $"Erro ao quitar: {ex.Message}", ToastLength.Long).Show();
-        //    }
-        //}
-
-
-
         //RECEITA
         internal Task<List<Receita>> ListaReceitasAsync()
         {

@@ -49,8 +49,26 @@ namespace PersonalFinance.Resources.Activities
 
         private async Task CarregarTransacoes()
         {
-            // ListaTransacoesAsync já carrega Despesa e Receita
+            //// ListaTransacoesAsync já carrega Despesa e Receita
+            //_transacoes = await _db.ListaTransacoesAsync();
+
+            //_adapter = new TransacaoAdapter(this, _transacoes);
+            //_listView.Adapter = _adapter;
+
+            // Carrega todas as transações
             _transacoes = await _db.ListaTransacoesAsync();
+
+            // Verifica se veio uma categoria do Intent
+            string? categoria = Intent.GetStringExtra("Categoria");
+
+            if (!string.IsNullOrEmpty(categoria))
+            {
+                // Filtra transações pela categoria da despesa
+                _transacoes = _transacoes
+                    .Where(t => t.Despesa != null &&
+                                string.Equals(t.Despesa.Categoria, categoria, StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+            }
 
             _adapter = new TransacaoAdapter(this, _transacoes);
             _listView.Adapter = _adapter;

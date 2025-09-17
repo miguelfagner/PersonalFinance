@@ -211,31 +211,43 @@ namespace PersonalFinance.Resources.Activities
 
         public void OnValueSelected(Entry e, Highlight h)
         {
+
+            //if (e is PieEntry pieEntry)
+            //{
+            //    string categoria = pieEntry.Label;
+
+            //    // Filtrar despesas
+            //    var filtradas = _despesas
+            //        .Where(d => d.Vencimento.Month == _mes && d.Vencimento.Year == _ano)
+            //        .Where(d =>
+            //            (categoria == "OUTRAS" && (string.IsNullOrEmpty(d.Categoria) || d.Categoria == "Outros")) ||
+            //            (categoria != "OUTRAS" && string.Equals(d.Categoria, categoria, StringComparison.OrdinalIgnoreCase))
+            //        )
+            //        .ToList();
+
+            //    // Montar lista em string
+            //    string msg = string.Join("\n", filtradas.Select(d => $"{d.Descricao}: R${d.Valor:N2}"));
+
+            //    if (string.IsNullOrEmpty(msg))
+            //        msg = "Nenhuma despesa encontrada.";
+
+            //    // Exibir em AlertDialog
+            //    new AlertDialog.Builder(_context)
+            //        .SetTitle($"Despesas - {categoria}")
+            //        .SetMessage(msg)
+            //        .SetPositiveButton("OK", (s, ev) => { })
+            //        .Show();
+            //}
+
             if (e is PieEntry pieEntry)
             {
                 string categoria = pieEntry.Label;
 
-                // Filtrar despesas
-                var filtradas = _despesas
-                    .Where(d => d.Vencimento.Month == _mes && d.Vencimento.Year == _ano)
-                    .Where(d =>
-                        (categoria == "OUTRAS" && (string.IsNullOrEmpty(d.Categoria) || d.Categoria == "Outros")) ||
-                        (categoria != "OUTRAS" && string.Equals(d.Categoria, categoria, StringComparison.OrdinalIgnoreCase))
-                    )
-                    .ToList();
+                // Abre a tela de listagem filtrada
+                var intent = new Intent(_context, typeof(TransacaoListActivity));
+                intent.PutExtra("Categoria", categoria);
+                _context.StartActivity(intent);
 
-                // Montar lista em string
-                string msg = string.Join("\n", filtradas.Select(d => $"{d.Descricao}: R${d.Valor:N2}"));
-
-                if (string.IsNullOrEmpty(msg))
-                    msg = "Nenhuma despesa encontrada.";
-
-                // Exibir em AlertDialog
-                new AlertDialog.Builder(_context)
-                    .SetTitle($"Despesas - {categoria}")
-                    .SetMessage(msg)
-                    .SetPositiveButton("OK", (s, ev) => { })
-                    .Show();
             }
         }
     }

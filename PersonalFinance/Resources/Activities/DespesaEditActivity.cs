@@ -192,7 +192,7 @@ namespace PersonalFinance.Resources.Activities
                     DespesaId = despesa.Id,
                     Valor = valorRestante,
                     Data = DateTime.Now,
-                    Observacao = "Quitação automática"
+                    Observacao = "DESPESA DE: " + despesa.Categoria
                 };
 
                 await _db.SalvarTransacaoAsync(transacao);
