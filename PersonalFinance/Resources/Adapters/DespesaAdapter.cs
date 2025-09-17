@@ -85,7 +85,7 @@ namespace PersonalFinance.Resources.Adapters
                     DespesaId = despesa.Id,
                     Valor = valor,
                     Data = DateTime.Now,
-                    Observacao = "DESPESA DE: " + despesa.Categoria
+                    Observacao = "DESPESA DE " + despesa.Categoria
                 };
 
                 await _db.SalvarTransacaoAsync(transacao);
