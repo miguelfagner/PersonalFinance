@@ -10,7 +10,7 @@ namespace PersonalFinance.Resources.Activities
     [Activity(Label = "Balanço Mensal")]
     public class BalancoDetailActivity : Activity
     {
-        private TextView tvTotalReceita, tvTotalDespesa, tvSaldo, tvTotalQuitado, tvFaltaQuitar, tvResumo, tvGastosPessoais, tvGastosDomesticos;
+        private TextView tvTotalReceita, tvTotalDespesa, tvSaldo, tvTotalQuitado, tvFaltaQuitar, tvResumo, tvGastosPessoais, tvGastosDomesticos, tvDespesaFixa, tvDespesaFixaQuitada, tvDespFixaAberta;
         private ProgressBar progDespesa, progGastosDomesticos, progGastosPessoais;
         private PieChart pieChartDespesas;
 
@@ -22,6 +22,9 @@ namespace PersonalFinance.Resources.Activities
             SetContentView(Resource.Layout.activity_balanco);
 
             // TextViews
+            tvDespesaFixa = FindViewById<TextView>(Resource.Id.tvDespesaFixa);
+            tvDespFixaAberta = FindViewById<TextView>(Resource.Id.tvDespFixaAberta);
+            tvDespesaFixaQuitada = FindViewById<TextView>(Resource.Id.tvDespesaFixaQuitada);
             tvTotalReceita = FindViewById<TextView>(Resource.Id.tvTotalReceita);
             tvTotalDespesa = FindViewById<TextView>(Resource.Id.tvTotalDespesa);
             tvTotalQuitado = FindViewById<TextView>(Resource.Id.tvTotalQuitado);
@@ -83,17 +86,25 @@ namespace PersonalFinance.Resources.Activities
                 .Where(r => string.Equals(r?.Despesa?.Categoria, "GASTOS DOMESTICOS", StringComparison.OrdinalIgnoreCase))
                 .Sum(r => r?.Valor ?? 0);
 
+            decimal despesaFixaQuitada = transacoes.Where(x => !x.Despesa.Categoria.Equals("PESSOAL")
+                                                && !x.Despesa.Categoria.Equals("GASTOS DOMESTICOS")).Sum(x => x?.Valor ?? 0);
+
             var saldo = totalReceita - totalDespesa;
-            var faltaQuitar = totalDespesa - totalQuitado;
 
             // Atualiza textos
             tvTotalReceita.Text = $"RECEITA: R${totalReceita:N2}";
             tvTotalDespesa.Text = $"DESPESAS: R${totalDespesa:N2}";
             tvTotalQuitado.Text = $"DESPESAS QUITADAS: R${totalQuitado:N2}";
-            tvFaltaQuitar.Text = $"AGUARDANDO QUITAR: R${faltaQuitar:N2}";
+            tvFaltaQuitar.Text = $"DESPESAS PREVISTAS EM ABERTO: R${(totalDespesa - totalQuitado):N2}";
             tvGastosPessoais.Text = $"GASTOS PESSOAIS: R${(gastoPlanejado - gastoPessoal):N2} DISPONÍVEIS DE R${gastoPlanejado:N2}";
             tvGastosDomesticos.Text = $"GASTOS DOMESTICOS: R${(gastoDomesticoPlanejado - gastoDomestico):N2} DISPONÍVEIS DE R${gastoDomesticoPlanejado:N2}";
             tvSaldo.Text = $"POUPADO: R$ {saldo:N2}";
+
+            //novos indicadores
+            var despesaFixa = totalDespesa - gastoPlanejado;
+            tvDespesaFixa.Text = $"DESPESA FIXA: {despesaFixa:N2}";
+            tvDespesaFixaQuitada.Text = $"DESPESA FIXA QUITADA: {despesaFixaQuitada:N2}";
+            tvDespFixaAberta.Text = $"DESPESA FIXA ABERTA: {(despesaFixa - despesaFixaQuitada):N2}";
 
             // Atualiza indicadores
             progDespesa.Progress = totalDespesa > 0 ? (int)((totalQuitado / totalDespesa) * 100) : 0;
@@ -103,17 +114,17 @@ namespace PersonalFinance.Resources.Activities
             // Resumo
             if (saldo > 0)
             {
-                tvResumo.Text = "Você está no positivo! 👏";
+                tvResumo.Text = "VOCÊ ESTÁ POSITIVO! 👏";
                 tvResumo.SetTextColor(Android.Graphics.Color.ParseColor("#4CAF50"));
             }
             else if (saldo == 0)
             {
-                tvResumo.Text = "Suas contas estão equilibradas.";
+                tvResumo.Text = "VOCÊ ESTÁ ZERADO!";
                 tvResumo.SetTextColor(Android.Graphics.Color.ParseColor("#FF9800"));
             }
             else
             {
-                tvResumo.Text = "Atenção! Saldo negativo.";
+                tvResumo.Text = "VOCÊ ESTÁ NEGATIVO!";
                 tvResumo.SetTextColor(Android.Graphics.Color.ParseColor("#F44336"));
             }
 
