@@ -1,5 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+﻿<!--<?xml version="1.0" encoding="utf-8"?>-->
+
+<!--<TextView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/tvHeaderTransacao"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -8,4 +9,29 @@
     android:textStyle="bold"
     android:textSize="16sp"
     android:background="#EEEEEE"
-    android:textColor="#333" />
+    android:textColor="#333" />-->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="12dp"
+    android:background="#EEEEEE">
+
+	<TextView
+        android:id="@+id/tvHeaderMesTransacao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Transações Julho/25"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:textColor="#333" />
+
+	<TextView
+        android:id="@+id/tvHeaderTransacao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Total: R$ 12.345,67"
+        android:textSize="14sp"
+        android:textColor="#666" />
+</LinearLayout>

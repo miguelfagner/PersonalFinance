@@ -9,7 +9,7 @@ namespace PersonalFinance.Resources.Adapters
     {
         private readonly Context _context;
         private readonly List<TransacaoItem> _items;
-
+         
         public TransacaoAdapter(Context context, List<Transacao> transacoes)
         {
             _context = context;
@@ -31,7 +31,8 @@ namespace PersonalFinance.Resources.Adapters
                 _items.Add(new TransacaoItem
                 {
                     IsHeader = true,
-                    HeaderTitle = titulo
+                    HeaderTitle = titulo,
+                    HeaderTotal = transacoes.Sum(x=>x.Valor)
                 });
 
                 // adiciona transações do mês
@@ -63,8 +64,11 @@ namespace PersonalFinance.Resources.Adapters
                 var headerView = convertView ?? LayoutInflater.From(_context)
                     .Inflate(Resource.Layout.item_transacao_header, parent, false);
 
-                var tvHeader = headerView.FindViewById<TextView>(Resource.Id.tvHeaderTransacao);
-                tvHeader.Text = item.HeaderTitle;
+                var tvHeader = headerView.FindViewById<TextView>(Resource.Id.tvHeaderMesTransacao);
+                tvHeader.Text = item.HeaderTitle;    
+
+                var tvMesTransacao = headerView.FindViewById<TextView>(Resource.Id.tvHeaderTransacao);
+                tvMesTransacao.Text = $"TOTAL: R$ {item.HeaderTotal.ToString("N2", new CultureInfo("pt-BR"))}";
 
                 return headerView;
             }

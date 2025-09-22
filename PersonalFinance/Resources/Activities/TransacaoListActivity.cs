@@ -49,16 +49,10 @@ namespace PersonalFinance.Resources.Activities
 
         private async Task CarregarTransacoes()
         {
-            //// ListaTransacoesAsync já carrega Despesa e Receita
-            //_transacoes = await _db.ListaTransacoesAsync();
-
-            //_adapter = new TransacaoAdapter(this, _transacoes);
-            //_listView.Adapter = _adapter;
-
             // Carrega todas as transações
             _transacoes = await _db.ListaTransacoesAsync();
 
-            // Verifica se veio uma categoria do Intent
+            // Verifica se veio uma categoria (PieChart)
             string? categoria = Intent.GetStringExtra("Categoria");
 
             if (!string.IsNullOrEmpty(categoria))
@@ -66,12 +60,73 @@ namespace PersonalFinance.Resources.Activities
                 // Filtra transações pela categoria da despesa
                 _transacoes = _transacoes
                     .Where(t => t.Despesa != null &&
-                                string.Equals(t.Despesa.Categoria, categoria, StringComparison.OrdinalIgnoreCase))
+                                string.Equals(t.Despesa.Categoria, categoria, StringComparison.OrdinalIgnoreCase) &&
+                                t.Despesa.Categoria == categoria)
                     .ToList();
+
+                // Define título amigável
+                Title = $"Transações - {categoria}";
+            }
+
+            // Verifica se veio uma semana (BarChart)
+            int mes = Intent.GetIntExtra("Mes", 0);
+            int ano = Intent.GetIntExtra("Ano", 0);
+            int semana = Intent.GetIntExtra("Semana", 0);
+
+            if (mes > 0 && ano > 0 && semana > 0)
+            {
+                int GetWeekOfMonth(DateTime date)
+                {
+                    var firstDay = new DateTime(date.Year, date.Month, 1);
+                    int firstWeekOffset = (int)firstDay.DayOfWeek;
+                    return ((date.Day + firstWeekOffset - 1) / 7) + 1;
+                }
+
+                _transacoes = _transacoes
+                    .Where(t => t.Despesa.Categoria.Equals("PESSOAL") &&
+                                t.Data.Month == mes &&
+                                t.Data.Year == ano &&
+                                GetWeekOfMonth(t.Data) == semana)
+                    .ToList();
+
+                // Define título amigável
+                var nomeMes = new DateTime(ano, mes, 1).ToString("MMMM"); // exemplo: "setembro"
+                Title = $"Semana {semana} - {nomeMes}/{ano}";
             }
 
             _adapter = new TransacaoAdapter(this, _transacoes);
             _listView.Adapter = _adapter;
         }
+
+
+
+        //private async Task CarregarTransacoes()
+        //{
+        //    //// ListaTransacoesAsync já carrega Despesa e Receita
+        //    //_transacoes = await _db.ListaTransacoesAsync();
+
+        //    //_adapter = new TransacaoAdapter(this, _transacoes);
+        //    //_listView.Adapter = _adapter;
+
+        //    // Carrega todas as transações
+        //    _transacoes = await _db.ListaTransacoesAsync();
+
+        //    // Verifica se veio uma categoria do Intent
+        //    string? categoria = Intent.GetStringExtra("Categoria");
+
+        //    if (!string.IsNullOrEmpty(categoria))
+        //    {
+        //        // Filtra transações pela categoria da despesa
+        //        _transacoes = _transacoes
+        //            .Where(t => t.Despesa != null &&
+        //                        string.Equals(t.Despesa.Categoria, categoria, StringComparison.OrdinalIgnoreCase))
+        //            .ToList();
+        //    }
+
+        //    _adapter = new TransacaoAdapter(this, _transacoes);
+        //    _listView.Adapter = _adapter;
+        //}
+
+
     }
 }
