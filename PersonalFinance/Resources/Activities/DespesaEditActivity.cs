@@ -92,16 +92,6 @@ namespace PersonalFinance.Resources.Activities
                 dialog.Show();
             };
 
-            // ajustar o valor decimal
-            _edtValor.TextChanged += (s, e) =>
-            {
-                if (_edtValor.Text.Contains("."))
-                {
-                    _edtValor.Text = _edtValor.Text.Replace(".", ",");
-                    _edtValor.SetSelection(_edtValor.Text.Length); // mantém cursor no fim
-                }
-            };
-
             // Clique no botão Salvar
             _btnSalvar.Click += async (s, e) =>
             {
@@ -126,7 +116,7 @@ namespace PersonalFinance.Resources.Activities
 
                     await _db.SalvarDespesaAsync(_despesa);
 
-                    //atualiza o status da despesa com base nas transações associadas
+                    // Atualiza o status da despesa com base nas transações associadas
                     await _db.AtualizaStatusAsync(_despesa.Id);
 
                     Toast.MakeText(this, "Despesa atualizada!", ToastLength.Short).Show();
@@ -149,7 +139,6 @@ namespace PersonalFinance.Resources.Activities
                         try
                         {
                             await _db.DeletarDespesaAsync(_despesa);
-                            await _db.AtualizaStatusAsync(_despesa.Id); // Atualiza status após exclusão
 
                             Toast.MakeText(this, "Despesa excluída!", ToastLength.Short).Show();
                             Finish();
@@ -167,7 +156,6 @@ namespace PersonalFinance.Resources.Activities
             _btnQuitar.Click += async (s, e) =>
             {
                 await QuitarDespesaAsync(_despesa);
-                Finish();
             };
         }
 

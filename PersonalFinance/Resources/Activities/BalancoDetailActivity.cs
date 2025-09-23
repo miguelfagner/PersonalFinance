@@ -113,18 +113,6 @@ namespace PersonalFinance.Resources.Activities
             decimal despesaFixaQuitada = transacoes.Where(x => !x.Despesa.Categoria.Equals("PESSOAL")
                                     && !x.Despesa.Categoria.Equals("GASTOS DOMESTICOS")).Sum(x => x?.Valor ?? 0);
 
-            //tvTotalReceita.Text = $"Receitas: R${totalReceita:N2}";
-            //tvTotalDespesa.Text = $"Despesas: R${totalDespesa:N2}";
-            //tvTotalQuitado.Text = $"Quitado: R${totalQuitado:N2}";
-            //tvSaldo.Text = $"POUPADO: R${totalReceita - totalDespesa:N2}";
-            //tvFaltaQuitar.Text = $"Falta quitar: R${totalDespesa - totalQuitado:N2}";
-            //tvGastosPessoais.Text = $"Gastos pessoais: R${gastoPessoalReal:N2}";
-            //tvGastosDomesticos.Text = $"Gastos domésticos: R${gastoDomesticoReal:N2}";
-
-            //progDespesa.Progress = totalDespesa > 0 ? (int)((totalQuitado / totalDespesa) * 100) : 0;
-            //progGastosPessoais.Progress = gastoPessoalPlanejado > 0 ? (int)((gastoPessoalReal / gastoPessoalPlanejado) * 100) : 0;
-            //progGastosDomesticos.Progress = gastoDomesticoPlanejado > 0 ? (int)((gastoDomesticoReal / gastoDomesticoPlanejado) * 100) : 0;
-
 
             var saldo = totalReceita - totalDespesa;
 
@@ -132,7 +120,7 @@ namespace PersonalFinance.Resources.Activities
             tvTotalReceita.Text = $"RECEITA: R${totalReceita:N2}";
             tvTotalDespesa.Text = $"DESPESAS: R${totalDespesa:N2}";
             tvTotalQuitado.Text = $"DESPESAS QUITADAS: R${totalQuitado:N2}";
-            tvFaltaQuitar.Text = $"DESPESAS PREVISTAS EM ABERTO: R${(totalDespesa - totalQuitado):N2}";
+            tvFaltaQuitar.Text = $"GASTOS PREVISTOS EM ABERTO: R${(totalDespesa - totalQuitado):N2}";
             tvGastosPessoais.Text = $"GASTOS PESSOAIS: R${(gastoPessoalPlanejado - gastoPessoal):N2} DISPONÍVEIS DE R${gastoPessoalPlanejado:N2}";
             tvGastosDomesticos.Text = $"GASTOS DOMESTICOS: R${(gastoDomesticoPlanejado - gastoDomestico):N2} DISPONÍVEIS DE R${gastoDomesticoPlanejado:N2}";
             tvSaldo.Text = $"POUPADO: R$ {saldo:N2}";

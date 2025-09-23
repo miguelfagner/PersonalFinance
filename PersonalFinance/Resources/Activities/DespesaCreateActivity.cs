@@ -1,7 +1,13 @@
-﻿using PersonalFinance.Resources.Models;
+﻿using Android.App;
+using Android.OS;
+using Android.Widget;
+using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
 using PersonalFinance.Resources.ViewModels;
+using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 
 namespace PersonalFinance.Resources.Activities
 {
@@ -20,8 +26,10 @@ namespace PersonalFinance.Resources.Activities
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_despesa_cadastro);
 
+            // Inicializa ViewModel
             _viewModel = new DespesaViewModel();
 
+            // Vincular componentes
             _spinnerReceita = FindViewById<Spinner>(Resource.Id.spinnerReceita);
             _edtDescricao = FindViewById<EditText>(Resource.Id.edtDescricao);
             _edtCategoria = FindViewById<EditText>(Resource.Id.edtCategoria);
@@ -36,14 +44,39 @@ namespace PersonalFinance.Resources.Activities
 
             // Adapter do Spinner
             var adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleSpinnerItem,
-                _receitas.Select(r => r.Descricao).ToList());
+                _receitas.Select(r => r.FontePagadora).ToList());
             adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
             _spinnerReceita.Adapter = adapter;
 
-            // Mostrar a data de hoje como padrão
-            _edtData.Text = _dataSelecionada.ToString("dd/MM/yyyy");
+            // Receber dados passados via intent (se houver)
+            var descricao = Intent.GetStringExtra("Descricao");
+            var categoria = Intent.GetStringExtra("Categoria");
+            var valor = Intent.GetDoubleExtra("Valor", 0);
+            var nParcela = Intent.GetIntExtra("NParcela", 0);
+            var ticks = Intent.GetLongExtra("Vencimento", 0);
+            var receitaId = Intent.GetIntExtra("ReceitaId", 0);
 
-            // Abrir o DatePicker ao clicar no campo
+            if (!string.IsNullOrEmpty(descricao)) _edtDescricao.Text = descricao;
+            if (!string.IsNullOrEmpty(categoria)) _edtCategoria.Text = categoria;
+            _edtValor.Text = valor.ToString("N2", CultureInfo.InvariantCulture);
+            _edtNParcela.Text = nParcela.ToString();
+            if (ticks > 0)
+            {
+                _dataSelecionada = new DateTime(ticks);
+                _edtData.Text = _dataSelecionada.ToString("dd/MM/yyyy");
+            }
+
+            // Selecionar receita no spinner, se necessário
+            if (receitaId > 0)
+            {
+                int index = _receitas.FindIndex(r => r.Id == receitaId);
+                if (index >= 0) _spinnerReceita.SetSelection(index);
+            }
+
+            // Mostrar a data de hoje como padrão se não veio do intent
+            if (_edtData.Text == "") _edtData.Text = _dataSelecionada.ToString("dd/MM/yyyy");
+
+            // Abrir DatePicker ao clicar no campo de data
             _edtData.Click += (s, e) =>
             {
                 var dialog = new DatePickerDialog(this,
@@ -59,6 +92,16 @@ namespace PersonalFinance.Resources.Activities
                 dialog.Show();
             };
 
+            // Corrigir vírgula no campo de valor em tempo real
+            _edtValor.TextChanged += (s, e) =>
+            {
+                if (_edtValor.Text.Contains("."))
+                {
+                    _edtValor.Text = _edtValor.Text.Replace(".", ",");
+                    _edtValor.SetSelection(_edtValor.Text.Length);
+                }
+            };
+
             // Salvar despesa
             _btnSalvar.Click += async (s, e) =>
             {
@@ -72,10 +115,10 @@ namespace PersonalFinance.Resources.Activities
                 _viewModel.ReceitaId = _receitas[selectedIndex].Id;
                 _viewModel.Descricao = _edtDescricao.Text?.Trim().ToUpper();
                 _viewModel.Categoria = _edtCategoria.Text?.Trim().ToUpper();
-                
+
                 string valorTexto = _edtValor.Text?.Replace(",", ".") ?? "0";
                 _viewModel.Valor = decimal.TryParse(valorTexto, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal val) ? val : 0;
-                
+
                 _viewModel.NParcela = int.TryParse(_edtNParcela.Text, out int parcela) ? parcela : 0;
                 _viewModel.Vencimento = _dataSelecionada;
 
@@ -83,35 +126,13 @@ namespace PersonalFinance.Resources.Activities
                 if (sucesso)
                 {
                     Toast.MakeText(this, "Despesa cadastrada!", ToastLength.Short).Show();
-                    // Fecha a Activity e volta para a lista atualizada
-                    Finish();
+                    Finish(); // fecha Activity e volta para a lista
                 }
                 else
                 {
                     Toast.MakeText(this, "Erro ao cadastrar despesa.", ToastLength.Short).Show();
                 }
             };
-
-            // Corrigir vírgula no campo de valor em tempo real
-            _edtValor.TextChanged += (s, e) =>
-            {
-                if (_edtValor.Text.Contains("."))
-                {
-                    _edtValor.Text = _edtValor.Text.Replace(".", ",");
-                    _edtValor.SetSelection(_edtValor.Text.Length);
-                }
-            };
         }
-
-        //private void LimparCampos()
-        //{
-        //    _edtDescricao.Text = "";
-        //    _edtCategoria.Text = "";
-        //    _edtValor.Text = "";
-        //    _edtNParcela.Text = "";
-        //    _edtData.Text = DateTime.Today.ToString("dd/MM/yyyy");
-        //    _spinnerReceita.SetSelection(0);
-        //    _dataSelecionada = DateTime.Today;
-        //}
     }
 }

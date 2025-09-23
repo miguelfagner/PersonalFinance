@@ -18,6 +18,12 @@ namespace PersonalFinance.Resources.Services
             _db.CreateTableAsync<Despesa>().Wait();
             _db.CreateTableAsync<Banco>().Wait();
             _db.CreateTableAsync<Transacao>().Wait();
+
+    //        // limpa transações órfãs
+    //        _db.ExecuteAsync(@"
+    //    DELETE FROM Transacao
+    //    WHERE DespesaId NOT IN (SELECT Id FROM Despesa);
+    //").Wait();
         }
 
         //DESPESA
@@ -40,9 +46,25 @@ namespace PersonalFinance.Resources.Services
             return _db.FindAsync<Despesa>(despesaId);
         }
 
-        public Task<int> DeletarDespesaAsync(Despesa despesa)
+        public async Task<int> DeletarDespesaAsync(Despesa despesa)
         {
-            return _db.DeleteAsync(despesa);
+            // Pega todas as transações da despesa
+            var transacoes = await ListaTransacoesAsync();
+            var transacoesDaDespesa = transacoes
+                .Where(x => x.DespesaId == despesa.Id)
+                .ToList(); // converte para lista
+
+            // Deleta todas as transações relacionadas
+            if (transacoesDaDespesa.Any())
+            {
+                foreach (var transacao in transacoesDaDespesa)
+                {
+                    await _db.DeleteAsync(transacao);
+                }
+            }
+
+            // Deleta a despesa
+            return await _db.DeleteAsync(despesa);
         }
 
         public async Task<int> AtualizaStatusAsync(int IdDespesa)
