@@ -33,4 +33,14 @@
 	    android:layout_width="match_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_marginTop="20dp" />
+
+v    <!-- Novo botão para exportar o backup -->
+    <Button
+        android:id="@+id/btnExportarBackup"
+        android:text="Exportar Backup para Downloads"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp" />
+	
+	s
 </LinearLayout>

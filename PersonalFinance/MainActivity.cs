@@ -16,13 +16,14 @@ namespace PersonalFinance
             var btnDespesaLista = FindViewById<Button>(Resource.Id.btnListarDespesas);
             var btnTransacaoLista = FindViewById<Button>(Resource.Id.btnListarTransacoes);
             var btnBalanco = FindViewById<Button>(Resource.Id.btnBalanco);
+            var btnExportar = FindViewById<Button>(Resource.Id.btnExportarBackup);
 
-            //btnDespesa.Click += (s, e) =>
-            //{
-            //    var intent = new Intent(this, typeof(DespesaCreateActivity));
-            //    intent.PutExtra("tipo", "Despesa");
-            //    StartActivity(intent);
-            //};
+
+            btnExportar.Click += (s, e) =>
+            {
+                var intent = new Intent(this, typeof(BackupExportActivity));
+                StartActivity(intent);
+            };
 
             var btnListaReceitas = FindViewById<Button>(Resource.Id.btnListarReceitas);
             btnReceitaLista.Click += (s, e) =>

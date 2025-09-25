@@ -18,12 +18,6 @@ namespace PersonalFinance.Resources.Services
             _db.CreateTableAsync<Despesa>().Wait();
             _db.CreateTableAsync<Banco>().Wait();
             _db.CreateTableAsync<Transacao>().Wait();
-
-    //        // limpa transações órfãs
-    //        _db.ExecuteAsync(@"
-    //    DELETE FROM Transacao
-    //    WHERE DespesaId NOT IN (SELECT Id FROM Despesa);
-    //").Wait();
         }
 
         //DESPESA
