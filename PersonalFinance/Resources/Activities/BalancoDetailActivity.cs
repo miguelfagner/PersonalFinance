@@ -52,20 +52,21 @@ namespace PersonalFinance.Resources.Activities
 
             _db = new DatabaseService();
 
-            await CarregarDadosAsync();
+            var mesRef = new DateTime(2025,10,1);
+            await CarregarDadosAsync(mesRef);
         }
 
-        private async Task CarregarDadosAsync()
+        private async Task CarregarDadosAsync(DateTime mesRef)
         {
-            var despesas = await _db.ListaDespesasAsync() ?? new List<Despesa>();
-            var receitas = await _db.ListaReceitasAsync() ?? new List<Receita>();
-            var transacoes = await _db.ListaTransacoesAsync() ?? new List<Transacao>();
+            var despesas = await _db.ListaDespesasAsync(mesRef) ?? new List<Despesa>();
+            var receitas = await _db.ListaReceitasAsync(mesRef) ?? new List<Receita>();
+            var transacoes = await _db.ListaTransacoesAsync(mesRef) ?? new List<Transacao>();
 
             _despesas = despesas;
 
-            var hoje = DateTime.Today;
-            var mes = hoje.Month;
-            var ano = hoje.Year;
+            //var hoje = DateTime.Today;
+            var mes = mesRef.Month;
+            var ano = mesRef.Year;
 
             //---------------------------------------------------------
             // Atualizar indicadores

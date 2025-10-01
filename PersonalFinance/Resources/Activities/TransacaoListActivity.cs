@@ -50,7 +50,9 @@ namespace PersonalFinance.Resources.Activities
         private async Task CarregarTransacoes()
         {
             // Carrega todas as transações
-            _transacoes = await _db.ListaTransacoesAsync();
+            var mesRef = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+
+            _transacoes = await _db.ListaTransacoesAsync(mesRef);
 
             // Verifica se veio uma categoria (PieChart)
             string? categoria = Intent.GetStringExtra("Categoria");

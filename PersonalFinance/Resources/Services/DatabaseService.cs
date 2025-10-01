@@ -21,12 +21,15 @@ namespace PersonalFinance.Resources.Services
         }
 
         //DESPESA
-        internal Task<List<Despesa>> ListaDespesasAsync()
+        internal Task<List<Despesa>> ListaDespesasAsync(DateTime mesRef)
         {
-            var ls = _db.Table<Despesa>().OrderByDescending(x=>x.Valor).ToListAsync();
+            var ls = _db.Table<Despesa>()
+                .Where(x=>x.DataCadastro >= mesRef)
+                .OrderByDescending(x=>x.Valor).ToListAsync();
 
             return ls;
         }
+      
         internal Task<int> SalvarDespesaAsync(Despesa despesa)
         {
             if (despesa.Id != 0)
@@ -42,8 +45,9 @@ namespace PersonalFinance.Resources.Services
 
         public async Task<int> DeletarDespesaAsync(Despesa despesa)
         {
+            var dt = new DateTime(2025, 10, 01);
             // Pega todas as transações da despesa
-            var transacoes = await ListaTransacoesAsync();
+            var transacoes = await ListaTransacoesAsync(dt);
             var transacoesDaDespesa = transacoes
                 .Where(x => x.DespesaId == despesa.Id)
                 .ToList(); // converte para lista
@@ -90,9 +94,11 @@ namespace PersonalFinance.Resources.Services
         }
 
         //RECEITA
-        internal Task<List<Receita>> ListaReceitasAsync()
+        internal Task<List<Receita>> ListaReceitasAsync(DateTime mesRef)
         {
-            var ls = _db.Table<Receita>().OrderByDescending(r => r.MesReferencia).ToListAsync();
+            var ls = _db.Table<Receita>()
+                .Where(x => x.MesReferencia >= mesRef)
+                .OrderByDescending(r => r.MesReferencia).ToListAsync();
 
             return ls;
         }
@@ -116,10 +122,11 @@ namespace PersonalFinance.Resources.Services
         }
 
         //TRANSACOES
-        internal async Task<List<Transacao>> ListaTransacoesAsync()
+        internal async Task<List<Transacao>> ListaTransacoesAsync(DateTime mesRef)
         {
             // Busca todas as transações
             var transacoes = await _db.Table<Transacao>()
+                                      .Where(x => x.Data>= mesRef)
                                       .OrderByDescending(t => t.Data)
                                       .ToListAsync();
 

@@ -54,7 +54,9 @@ namespace PersonalFinance.Resources.Activities
 
         private async Task CarregarReceitasAsync()
         {
-            _receitas = await _db.ListaReceitasAsync();
+            var mesRef = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+
+            _receitas = await _db.ListaReceitasAsync(mesRef);
 
             if (_adapter == null)
             {

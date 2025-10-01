@@ -40,7 +40,8 @@ namespace PersonalFinance.Resources.Activities
 
             // Carregar receitas do banco
             var db = new DatabaseService();
-            _receitas = await db.ListaReceitasAsync();
+            var mesRef = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            _receitas = await db.ListaReceitasAsync(mesRef);
 
             // Adapter do Spinner
             var adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleSpinnerItem,

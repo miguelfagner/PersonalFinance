@@ -62,7 +62,8 @@ namespace PersonalFinance.Resources.Activities
             _btnQuitar = FindViewById<Button>(Resource.Id.btnQuitarDespesa);
 
             // Carregar receitas no spinner
-            _receitas = await _db.ListaReceitasAsync();
+            var mesRef = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            _receitas = await _db.ListaReceitasAsync(mesRef);
             var receitasNomes = _receitas.Select(r => r.FontePagadora).ToList();
             var adapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem, receitasNomes);
             adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
