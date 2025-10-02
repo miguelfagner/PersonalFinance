@@ -25,7 +25,9 @@ namespace PersonalFinance.Resources.Activities
             _db = new DatabaseService();
 
             // Carrega a lista inicial
-            despesas = await _db.ListaDespesasAsync();
+            var mesRef = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+
+            despesas = await _db.ListaDespesasAsync(mesRef);
             adapter = new DespesaAdapter(this, despesas);
             listView.Adapter = adapter;
 
@@ -50,7 +52,9 @@ namespace PersonalFinance.Resources.Activities
             base.OnResume();
 
             // Atualiza a lista sempre que voltar para a Activity
-            despesas = await _db.ListaDespesasAsync();
+            var mesRef = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+
+            despesas = await _db.ListaDespesasAsync(mesRef);
 
             // Atualiza o adapter
             adapter = new DespesaAdapter(this, despesas);

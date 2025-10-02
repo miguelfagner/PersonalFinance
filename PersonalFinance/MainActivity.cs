@@ -15,13 +15,15 @@ namespace PersonalFinance
             var btnReceitaLista = FindViewById<Button>(Resource.Id.btnListarReceitas);
             var btnDespesaLista = FindViewById<Button>(Resource.Id.btnListarDespesas);
             var btnTransacaoLista = FindViewById<Button>(Resource.Id.btnListarTransacoes);
+            var btnBalanco = FindViewById<Button>(Resource.Id.btnBalanco);
+            var btnExportar = FindViewById<Button>(Resource.Id.btnExportarBackup);
 
-            //btnDespesa.Click += (s, e) =>
-            //{
-            //    var intent = new Intent(this, typeof(DespesaCreateActivity));
-            //    intent.PutExtra("tipo", "Despesa");
-            //    StartActivity(intent);
-            //};
+
+            btnExportar.Click += (s, e) =>
+            {
+                var intent = new Intent(this, typeof(BackupExportActivity));
+                StartActivity(intent);
+            };
 
             var btnListaReceitas = FindViewById<Button>(Resource.Id.btnListarReceitas);
             btnReceitaLista.Click += (s, e) =>
@@ -41,6 +43,13 @@ namespace PersonalFinance
             btnTransacaoLista.Click += (s, e) =>
             {
                 var intent = new Android.Content.Intent(this, typeof(TransacaoListActivity));
+                StartActivity(intent);
+            };
+
+            var btnBalancoDados = FindViewById<Button>(Resource.Id.btnBalanco);
+            btnBalanco.Click += (s, e) =>
+            {
+                var intent = new Android.Content.Intent(this, typeof(BalancoDetailActivity));
                 StartActivity(intent);
             };
         }

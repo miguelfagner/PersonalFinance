@@ -21,12 +21,15 @@ namespace PersonalFinance.Resources.Services
         }
 
         //DESPESA
-        internal Task<List<Despesa>> ListaDespesasAsync()
+        internal Task<List<Despesa>> ListaDespesasAsync(DateTime mesRef)
         {
-            var ls = _db.Table<Despesa>().OrderByDescending(x=>x.Valor).ToListAsync();
+            var ls = _db.Table<Despesa>()
+                .Where(x=>x.DataCadastro >= mesRef)
+                .OrderByDescending(x=>x.Valor).ToListAsync();
 
             return ls;
         }
+      
         internal Task<int> SalvarDespesaAsync(Despesa despesa)
         {
             if (despesa.Id != 0)
@@ -40,9 +43,26 @@ namespace PersonalFinance.Resources.Services
             return _db.FindAsync<Despesa>(despesaId);
         }
 
-        public Task<int> DeletarDespesaAsync(Despesa despesa)
+        public async Task<int> DeletarDespesaAsync(Despesa despesa)
         {
-            return _db.DeleteAsync(despesa);
+            var dt = new DateTime(2025, 10, 01);
+            // Pega todas as transações da despesa
+            var transacoes = await ListaTransacoesAsync(dt);
+            var transacoesDaDespesa = transacoes
+                .Where(x => x.DespesaId == despesa.Id)
+                .ToList(); // converte para lista
+
+            // Deleta todas as transações relacionadas
+            if (transacoesDaDespesa.Any())
+            {
+                foreach (var transacao in transacoesDaDespesa)
+                {
+                    await _db.DeleteAsync(transacao);
+                }
+            }
+
+            // Deleta a despesa
+            return await _db.DeleteAsync(despesa);
         }
 
         public async Task<int> AtualizaStatusAsync(int IdDespesa)
@@ -73,51 +93,12 @@ namespace PersonalFinance.Resources.Services
             return await _db.UpdateAsync(despesa);
         }
 
-        //private async Task QuitarDespesaAsync(Despesa despesa)
-        //{
-        //    try
-        //    {
-        //        var transacoes = await _db.ListaTransacoesAsync(despesa.Id);
-        //        var pago = transacoes.Sum(x => x.Valor);
-        //        var valor = despesa.Valor;
-
-        //        if (pago > 0)
-        //            valor = despesa.Valor - pago;
-
-        //        // Cria a transação no banco
-        //        var transacao = new Transacao
-        //        {
-        //            DespesaId = despesa.Id,
-        //            Valor = valor,
-        //            Data = DateTime.Now,
-        //            Observacao = "Quitação automática"
-        //        };
-
-        //        await _db.SalvarTransacaoAsync(transacao);
-
-        //        // Atualiza o status da despesa no banco
-        //        await _db.AtualizaStatusAsync(despesa.Id);
-
-        //        // Atualiza o status local para true (quitado)
-        //        despesa.Sttatus = true;
-
-        //        // Atualiza a lista, assim o GetView será chamado e o botão sumirá
-        //        NotifyDataSetChanged();
-
-        //        Toast.MakeText(_context, $"Despesa '{despesa.Descricao}' quitada!", ToastLength.Short).Show();
-        //    }
-        //    catch (System.Exception ex)
-        //    {
-        //        Toast.MakeText(_context, $"Erro ao quitar: {ex.Message}", ToastLength.Long).Show();
-        //    }
-        //}
-
-
-
         //RECEITA
-        internal Task<List<Receita>> ListaReceitasAsync()
+        internal Task<List<Receita>> ListaReceitasAsync(DateTime mesRef)
         {
-            var ls = _db.Table<Receita>().OrderByDescending(r => r.MesReferencia).ToListAsync();
+            var ls = _db.Table<Receita>()
+                .Where(x => x.MesReferencia >= mesRef)
+                .OrderByDescending(r => r.MesReferencia).ToListAsync();
 
             return ls;
         }
@@ -141,10 +122,11 @@ namespace PersonalFinance.Resources.Services
         }
 
         //TRANSACOES
-        internal async Task<List<Transacao>> ListaTransacoesAsync()
+        internal async Task<List<Transacao>> ListaTransacoesAsync(DateTime mesRef)
         {
             // Busca todas as transações
             var transacoes = await _db.Table<Transacao>()
+                                      .Where(x => x.Data>= mesRef)
                                       .OrderByDescending(t => t.Data)
                                       .ToListAsync();
 

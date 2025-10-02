@@ -1,0 +1,73 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5"
+    android:fitsSystemWindows="true">
+
+	<LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+		<!-- Valor -->
+		<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Valor"
+            android:textStyle="bold"
+            android:paddingTop="8dp" />
+
+		<EditText
+            android:id="@+id/edtValor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="numberDecimal"
+            android:hint="0,00"
+            android:padding="8dp" />
+
+		<!-- Observação -->
+		<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Observação"
+            android:textStyle="bold"
+            android:paddingTop="16dp" />
+
+		<EditText
+            android:id="@+id/edtObservacao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Ex.: Pagamento de fatura"
+            android:padding="8dp" />
+
+		<!-- Data -->
+		<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Data"
+            android:textStyle="bold"
+            android:paddingTop="16dp" />
+
+		<EditText
+            android:id="@+id/edtData"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:focusable="false"
+            android:clickable="true"
+            android:hint="dd/MM/yyyy"
+            android:padding="8dp" />
+
+		<!-- Botão Salvar -->
+		<Button
+            android:id="@+id/btnSalvar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Salvar Transação"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="#198754"
+            android:textColor="#FFFFFF" />
+
+	</LinearLayout>
+
+</ScrollView>

@@ -27,6 +27,7 @@ namespace PersonalFinance.Resources.Models
     {
         public bool IsHeader { get; set; }
         public string HeaderTitle { get; set; }
+        public decimal HeaderTotal { get; set; }
         public Transacao Transacao { get; set; }
     }
 }

@@ -17,43 +17,27 @@
         android:orientation="vertical"
         android:paddingEnd="8dp">
 
-		<!-- Data e Valor -->
-		<TextView
-            android:id="@+id/tvDataValor"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="01/09/2025 - R$ 0,00"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:textColor="#222" />
 
-		<!-- Despesa -->
 		<TextView
-            android:id="@+id/tvDespesa"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Despesa: X"
-            android:textColor="#666"
-            android:textSize="14sp" />
+			android:id="@+id/tvDataCategoria"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="Despesa: X"
+			android:textColor="#ff4500"
+			android:textStyle="bold"
+			android:textSize="15sp" />
+		
+		<TextView
+	        android:id="@+id/tvDespesa"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:text="Observação: Nenhuma"
+	        android:textColor="#888"
+	        android:textSize="13sp"
+	        android:layout_marginTop="4dp" />
 
-		<!-- Receita -->
-		<TextView
-            android:id="@+id/tvReceita"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Receita: Y"
-            android:textColor="#666"
-            android:textSize="14sp" />
 
-		<!-- Observação -->
-		<TextView
-            android:id="@+id/tvObservacao"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Observação: Nenhuma"
-            android:textColor="#888"
-            android:textSize="13sp"
-            android:layout_marginTop="4dp" />
+
 	</LinearLayout>
 
 	<!-- Valor destacado (positivo = verde, negativo = vermelho) -->
