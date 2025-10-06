@@ -1,5 +1,6 @@
 ﻿using Android.Content;
 using Android.Graphics;
+using Android.Views;
 using MikePhil.Charting.Animation;
 using MikePhil.Charting.Charts;
 using MikePhil.Charting.Components;
@@ -15,7 +16,7 @@ namespace PersonalFinance.Resources.Activities
     [Activity(Label = "Balanço Mensal")]
     public class BalancoDetailActivity : Activity
     {
-        private TextView tvTotalReceita, tvTotalDespesa, tvSaldo, tvTotalQuitado, tvFaltaQuitar, tvResumo, tvGastosPessoais, tvGastosDomesticos, tvDespesaFixa, tvDespesaFixaQuitada, tvDespFixaAberta;
+        private TextView tvTotalReceita, tvTotalDespesa, tvSaldo, tvTotalQuitado, tvFaltaQuitar, tvResumo, tvGastosPessoais, tvGastosDomesticos, tvDespesaFixa, tvDespesaFixaQuitada, tvDespFixaAberta, tvMesAtual;
         private ProgressBar progDespesa, progGastosDomesticos, progGastosPessoais;
         private PieChart pieChartDespesas;
         private BarChart barChartSemanal;
@@ -23,12 +24,16 @@ namespace PersonalFinance.Resources.Activities
         private DatabaseService _db;
         private List<Despesa> _despesas;
 
+        private GestureDetector _gestureDetector;
+        private LinearLayout _rootLayout; // Layout raiz para capturar o toque
+
         protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_balanco);
 
             // Inicializar TextViews
+            tvMesAtual = FindViewById<TextView>(Resource.Id.tvMesAtual);
             tvDespesaFixa = FindViewById<TextView>(Resource.Id.tvDespesaFixa);
             tvDespFixaAberta = FindViewById<TextView>(Resource.Id.tvDespFixaAberta);
             tvDespesaFixaQuitada = FindViewById<TextView>(Resource.Id.tvDespesaFixaQuitada);
@@ -53,8 +58,39 @@ namespace PersonalFinance.Resources.Activities
             _db = new DatabaseService();
 
             var mesRef = new DateTime(2025,10,1);
+
+
+            // Gesture detector
+            _gestureDetector = new GestureDetector(this, new SwipeGestureListener(
+                onSwipeRight: async () =>
+                {
+                    mesRef = mesRef.AddMonths(-1);
+                    await CarregarDadosAsync(mesRef);
+                },
+                onSwipeLeft: async () =>
+                {
+                    mesRef = mesRef.AddMonths(1);
+                    await CarregarDadosAsync(mesRef);
+                }
+            ));
+
+            // Layout raiz para capturar toque
+            _rootLayout = FindViewById<LinearLayout>(Resource.Id.rootLayout);
+            _rootLayout.Touch += (s, e) =>
+            {
+                _gestureDetector.OnTouchEvent(e.Event);
+            };
+
+
             await CarregarDadosAsync(mesRef);
         }
+
+        public override bool OnTouchEvent(MotionEvent e)
+        {
+            _gestureDetector?.OnTouchEvent(e);
+            return base.OnTouchEvent(e);
+        }
+
 
         private async Task CarregarDadosAsync(DateTime mesRef)
         {
@@ -67,6 +103,8 @@ namespace PersonalFinance.Resources.Activities
             //var hoje = DateTime.Today;
             var mes = mesRef.Month;
             var ano = mesRef.Year;
+
+            tvMesAtual.Text = mesRef.ToString("MMMM 'de' yyyy").ToUpper();
 
             //---------------------------------------------------------
             // Atualizar indicadores
@@ -125,6 +163,8 @@ namespace PersonalFinance.Resources.Activities
             tvGastosPessoais.Text = $"GASTOS PESSOAIS: R${(gastoPessoalPlanejado - gastoPessoal):N2} DISPONÍVEIS DE R${gastoPessoalPlanejado:N2}";
             tvGastosDomesticos.Text = $"GASTOS DOMESTICOS: R${(gastoDomesticoPlanejado - gastoDomestico):N2} DISPONÍVEIS DE R${gastoDomesticoPlanejado:N2}";
             tvSaldo.Text = $"POUPADO: R$ {saldo:N2}";
+
+
 
             //novos indicadores
             var despesaFixa = totalDespesa - gastoPessoalPlanejado;
@@ -341,4 +381,39 @@ namespace PersonalFinance.Resources.Activities
         }
     }
 
+    public class SwipeGestureListener : GestureDetector.SimpleOnGestureListener
+    {
+        private readonly Func<Task> OnSwipeRight;
+        private readonly Func<Task> OnSwipeLeft;
+
+        private const int SWIPE_THRESHOLD = 100;
+        private const int SWIPE_VELOCITY_THRESHOLD = 100;
+
+        public SwipeGestureListener(Func<Task> onSwipeRight, Func<Task> onSwipeLeft)
+        {
+            OnSwipeRight = onSwipeRight;
+            OnSwipeLeft = onSwipeLeft;
+        }
+
+        public override bool OnFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
+        {
+            float diffX = e2.GetX() - e1.GetX();
+            float diffY = e2.GetY() - e1.GetY();
+
+            if (Math.Abs(diffX) > Math.Abs(diffY))
+            {
+                if (Math.Abs(diffX) > SWIPE_THRESHOLD && Math.Abs(velocityX) > SWIPE_VELOCITY_THRESHOLD)
+                {
+                    if (diffX > 0)
+                        OnSwipeRight?.Invoke();
+                    else
+                        OnSwipeLeft?.Invoke();
+
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
 }
+

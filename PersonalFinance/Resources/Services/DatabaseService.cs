@@ -45,9 +45,11 @@ namespace PersonalFinance.Resources.Services
 
         public async Task<int> DeletarDespesaAsync(Despesa despesa)
         {
-            var dt = new DateTime(2025, 10, 01);
             // Pega todas as transações da despesa
-            var transacoes = await ListaTransacoesAsync(dt);
+            var transacoes = await _db.Table<Transacao>()
+                                      .Where(x => x.DespesaId == despesa.Id)
+                                      .OrderByDescending(t => t.Data)
+                                      .ToListAsync(); 
             var transacoesDaDespesa = transacoes
                 .Where(x => x.DespesaId == despesa.Id)
                 .ToList(); // converte para lista

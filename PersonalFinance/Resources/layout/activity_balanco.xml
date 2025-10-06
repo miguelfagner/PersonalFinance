@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/rootLayout"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,21 +8,36 @@
     android:background="#F5F5F5"
     android:fitsSystemWindows="true">
 
-	<ScrollView
+    <!-- Título do Mês -->
+    <TextView
+        android:id="@+id/tvMesAtual"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Outubro 2025"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#333333"
+        android:gravity="center"
+        android:layout_marginBottom="12dp"
+        android:padding="8dp"
+        android:background="#FFFFFF"
+        android:elevation="4dp" />
+
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:fillViewport="true">
 
-		<LinearLayout
+        <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
             android:paddingBottom="16dp">
 
-			<!-- Card Saldo -->
-			<LinearLayout
+            <!-- Card Saldo -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -31,7 +47,7 @@
                 android:layout_marginBottom="12dp"
                 android:gravity="center">
 
-				<TextView
+                <TextView
                     android:id="@+id/tvSaldo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -41,7 +57,7 @@
                     android:textColor="#333333"
                     android:layout_marginBottom="6dp" />
 
-				<TextView
+                <TextView
                     android:id="@+id/tvResumo"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -51,7 +67,7 @@
                     android:textColor="#666666"
                     android:layout_marginBottom="20dp" />
 
-				<TextView
+                <TextView
                     android:id="@+id/tvTotalDespesa"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -62,7 +78,7 @@
                     android:layout_marginBottom="6dp"
                     android:gravity="center" />
 
-				<ProgressBar
+                <ProgressBar
                     android:id="@+id/progDespesa"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
@@ -74,8 +90,8 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="12dp" />
 
-				<!-- PROGRESS DE GASTOS PESSOAIS -->
-				<TextView
+                <!-- PROGRESS DE GASTOS PESSOAIS -->
+                <TextView
                     android:id="@+id/tvGastosPessoais"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -86,7 +102,7 @@
                     android:layout_marginBottom="6dp"
                     android:gravity="center" />
 
-				<ProgressBar
+                <ProgressBar
                     android:id="@+id/progGastosPessoais"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
@@ -98,8 +114,8 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="12dp" />
 
-				<!-- PROGRESS DE GASTOS DOMÉSTICOS -->
-				<TextView
+                <!-- PROGRESS DE GASTOS DOMÉSTICOS -->
+                <TextView
                     android:id="@+id/tvGastosDomesticos"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -110,7 +126,7 @@
                     android:layout_marginBottom="6dp"
                     android:gravity="center" />
 
-				<ProgressBar
+                <ProgressBar
                     android:id="@+id/progGastosDomesticos"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
@@ -122,10 +138,10 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="6dp" />
 
-			</LinearLayout>
+            </LinearLayout>
 
-			<!-- Card Indicadores -->
-			<LinearLayout
+            <!-- Card Indicadores -->
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
@@ -134,7 +150,7 @@
                 android:padding="16dp"
                 android:layout_marginBottom="12dp">
 
-				<TextView
+                <TextView
                     android:id="@+id/tvTotalReceita"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -144,7 +160,7 @@
                     android:textColor="#4CAF50"
                     android:layout_marginBottom="8dp" />
 
-				<TextView
+                <TextView
                     android:id="@+id/tvFaltaQuitar"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -154,7 +170,7 @@
                     android:textColor="#FF9800"
                     android:layout_marginBottom="6dp" />
 
-				<TextView
+                <TextView
                     android:id="@+id/tvTotalQuitado"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -164,23 +180,23 @@
                     android:textColor="#2196F3"
                     android:layout_marginBottom="6dp" />
 
-				<View
+                <View
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="#DDDDDD"
                     android:layout_marginBottom="12dp" />
 
-				<TextView
+                <TextView
                     android:id="@+id/tvDespesaFixa"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Receitas: R$0,00"
+                    android:text="Despesa fixa: R$0,00"
                     android:textStyle="bold"
                     android:textSize="14sp"
                     android:textColor="#2196F3"
                     android:layout_marginBottom="8dp" />
 
-				<TextView
+                <TextView
                     android:id="@+id/tvDespesaFixaQuitada"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -190,20 +206,20 @@
                     android:textColor="#2196F3"
                     android:layout_marginBottom="6dp" />
 
-				<TextView
+                <TextView
                     android:id="@+id/tvDespFixaAberta"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Quitado: R$0,00"
+                    android:text="Aberta: R$0,00"
                     android:textStyle="bold"
                     android:textSize="14sp"
                     android:textColor="#2196F3"
                     android:layout_marginBottom="6dp" />
 
-			</LinearLayout>
+            </LinearLayout>
 
-			<!-- PieChart -->
-			<com.github.mikephil.charting.charts.PieChart
+            <!-- PieChart -->
+            <com.github.mikephil.charting.charts.PieChart
                 android:id="@+id/pieChartDespesas"
                 android:layout_width="match_parent"
                 android:layout_height="300dp"
@@ -212,8 +228,8 @@
                 android:background="@android:color/white"
                 android:elevation="4dp" />
 
-			<!-- BarChart -->
-			<com.github.mikephil.charting.charts.BarChart
+            <!-- BarChart -->
+            <com.github.mikephil.charting.charts.BarChart
                 android:id="@+id/barChartSemanal"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
@@ -222,7 +238,7 @@
                 android:background="@android:color/white"
                 android:elevation="4dp" />
 
-		</LinearLayout>
-	</ScrollView>
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>
