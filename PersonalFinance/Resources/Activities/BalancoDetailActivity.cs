@@ -346,6 +346,9 @@ namespace PersonalFinance.Resources.Activities
                 string categoria = pieEntry.Label;
                 var intent = new Intent(_context, typeof(TransacaoListActivity));
                 intent.PutExtra("Categoria", categoria);
+                intent.PutExtra("Mes", _mes);
+                intent.PutExtra("Ano", _ano);
+
                 _context.StartActivity(intent);
             }
         }

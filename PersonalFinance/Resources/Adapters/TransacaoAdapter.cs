@@ -27,12 +27,17 @@ namespace PersonalFinance.Resources.Adapters
             {
                 string titulo = $"Transações {new DateTime(grupo.Key.Year, grupo.Key.Month, 1).ToString("MMMM/yy", new CultureInfo("pt-BR"))}";
 
+                var firstDay = new DateTime(grupo.Key.Year, grupo.Key.Month, 1);
+                var lastDay = firstDay.AddMonths(1).AddDays(-1);
+
                 // adiciona cabeçalho
                 _items.Add(new TransacaoItem
                 {
                     IsHeader = true,
                     HeaderTitle = titulo,
-                    HeaderTotal = transacoes.Sum(x=>x.Valor)
+                    HeaderTotal = transacoes
+                        .Where(x => x.Data >= firstDay && x.Data <= lastDay)
+                        .Sum(x => x.Valor)
                 });
 
                 // adiciona transações do mês
