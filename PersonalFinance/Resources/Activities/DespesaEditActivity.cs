@@ -63,7 +63,10 @@ namespace PersonalFinance.Resources.Activities
 
             // Carregar receitas no spinner
             var mesRef = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            _receitas = await _db.ListaReceitasAsync(mesRef);
+            var dtInicio = new DateTime(mesRef.Year, mesRef.Month, 1);
+            var dtFinal = new DateTime(mesRef.Year, mesRef.Month, DateTime.DaysInMonth(mesRef.Year, mesRef.Month));
+
+            _receitas = await _db.ListaReceitasAsync(dtInicio, dtFinal);
             var receitasNomes = _receitas.Select(r => r.FontePagadora).ToList();
             var adapter = new ArrayAdapter<string>(this, Android.Resource.Layout.SimpleSpinnerItem, receitasNomes);
             adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);

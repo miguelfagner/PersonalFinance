@@ -26,8 +26,10 @@ namespace PersonalFinance.Resources.ViewModels
         public async Task CarregarReceitasAsync()
         {
             var mesRef = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+            var dtInicio = new DateTime(mesRef.Year, mesRef.Month, 1);
+            var dtFinal = new DateTime(mesRef.Year, mesRef.Month, DateTime.DaysInMonth(mesRef.Year, mesRef.Month));
 
-            var lista = await _db.ListaReceitasAsync(mesRef);
+            var lista = await _db.ListaReceitasAsync(dtInicio, dtFinal);
            
             Receitas.Clear();
             foreach (var item in lista)

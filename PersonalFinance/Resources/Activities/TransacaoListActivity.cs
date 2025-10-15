@@ -59,7 +59,10 @@ namespace PersonalFinance.Resources.Activities
 
             // Base date (default = current month)
             var mesRef = new DateTime(ano, mes, 1);
-            _transacoes = await _db.ListaTransacoesAsync(mesRef);
+            var dtInicio = new DateTime(mesRef.Year, mesRef.Month, 1);
+            var dtFinal = new DateTime(mesRef.Year, mesRef.Month, DateTime.DaysInMonth(mesRef.Year, mesRef.Month));
+
+            _transacoes = await _db.ListaTransacoesAsync(dtInicio, dtFinal);
 
             // Apply filters dynamically
             IEnumerable<Transacao> query = _transacoes;
@@ -72,15 +75,6 @@ namespace PersonalFinance.Resources.Activities
                     string.Equals(t.Despesa.Categoria, categoria, StringComparison.OrdinalIgnoreCase)
                 );
             }
-
-            //// Filter by month/year
-            //if (mes > 0 && ano > 0)
-            //{
-            //    query = query.Where(t =>
-            //        t.Data.Month == mes &&
-            //        t.Data.Year == ano
-            //    );
-            //}
 
             _transacoes = query.ToList();
 

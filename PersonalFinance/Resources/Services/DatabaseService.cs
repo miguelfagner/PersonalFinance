@@ -13,7 +13,7 @@ namespace PersonalFinance.Resources.Services
             string dbPath = Path.Combine(Android.App.Application.Context.FilesDir.AbsolutePath, "financeiro.db");
 
             _db = new SQLiteAsyncConnection(dbPath);
-           
+
             _db.CreateTableAsync<Receita>().Wait();
             _db.CreateTableAsync<Despesa>().Wait();
             _db.CreateTableAsync<Banco>().Wait();
@@ -21,15 +21,15 @@ namespace PersonalFinance.Resources.Services
         }
 
         //DESPESA
-        internal Task<List<Despesa>> ListaDespesasAsync(DateTime mesRef)
+        internal Task<List<Despesa>> ListaDespesasAsync(DateTime dtInicio, DateTime dtFinal)
         {
             var ls = _db.Table<Despesa>()
-                .Where(x=>x.DataCadastro >= mesRef)
-                .OrderByDescending(x=>x.Valor).ToListAsync();
+                .Where(x => x.DataCadastro >= dtInicio && x.DataCadastro <= dtFinal)
+                .OrderByDescending(x => x.Valor).ToListAsync();
 
             return ls;
         }
-      
+
         internal Task<int> SalvarDespesaAsync(Despesa despesa)
         {
             if (despesa.Id != 0)
@@ -49,7 +49,7 @@ namespace PersonalFinance.Resources.Services
             var transacoes = await _db.Table<Transacao>()
                                       .Where(x => x.DespesaId == despesa.Id)
                                       .OrderByDescending(t => t.Data)
-                                      .ToListAsync(); 
+                                      .ToListAsync();
             var transacoesDaDespesa = transacoes
                 .Where(x => x.DespesaId == despesa.Id)
                 .ToList(); // converte para lista
@@ -96,10 +96,10 @@ namespace PersonalFinance.Resources.Services
         }
 
         //RECEITA
-        internal Task<List<Receita>> ListaReceitasAsync(DateTime mesRef)
+        internal Task<List<Receita>> ListaReceitasAsync(DateTime dtInicio, DateTime dtFinal)
         {
             var ls = _db.Table<Receita>()
-                .Where(x => x.MesReferencia >= mesRef)
+                .Where(x => x.MesReferencia >= dtInicio && x.MesReferencia <= dtFinal)
                 .OrderByDescending(r => r.MesReferencia).ToListAsync();
 
             return ls;
@@ -124,11 +124,11 @@ namespace PersonalFinance.Resources.Services
         }
 
         //TRANSACOES
-        internal async Task<List<Transacao>> ListaTransacoesAsync(DateTime mesRef)
+        internal async Task<List<Transacao>> ListaTransacoesAsync(DateTime dtInicio, DateTime dtFinal)
         {
             // Busca todas as transações
             var transacoes = await _db.Table<Transacao>()
-                                      .Where(x => x.Data>= mesRef)
+                                      .Where(x => x.Data >= dtInicio && x.Data <= dtFinal)
                                       .OrderByDescending(t => t.Data)
                                       .ToListAsync();
 
@@ -151,7 +151,7 @@ namespace PersonalFinance.Resources.Services
         {
             // Busca todas as transações
             var transacoes = await _db.Table<Transacao>()
-                                      .Where(x=>x.DespesaId == id)
+                                      .Where(x => x.DespesaId == id)
                                       .OrderByDescending(t => t.Data)
                                       .ToListAsync();
 

@@ -58,19 +58,24 @@ namespace PersonalFinance.Resources.Activities
             _db = new DatabaseService();
 
             var mesRef = new DateTime(2025,10,1);
-
+            var dtInicio = new DateTime(mesRef.Year, mesRef.Month, 1);
+            var dtFinal = new DateTime(mesRef.Year, mesRef.Month, DateTime.DaysInMonth(mesRef.Year, mesRef.Month));
 
             // Gesture detector
             _gestureDetector = new GestureDetector(this, new SwipeGestureListener(
                 onSwipeRight: async () =>
                 {
                     mesRef = mesRef.AddMonths(-1);
-                    await CarregarDadosAsync(mesRef);
+                    dtInicio = new DateTime(mesRef.Year, mesRef.Month, 1);
+                    dtFinal = new DateTime(mesRef.Year, mesRef.Month, DateTime.DaysInMonth(mesRef.Year, mesRef.Month));
+                    await CarregarDadosAsync(dtInicio, dtFinal);
                 },
                 onSwipeLeft: async () =>
                 {
                     mesRef = mesRef.AddMonths(1);
-                    await CarregarDadosAsync(mesRef);
+                    dtInicio = new DateTime(mesRef.Year, mesRef.Month, 1);
+                    dtFinal = new DateTime(mesRef.Year, mesRef.Month, DateTime.DaysInMonth(mesRef.Year, mesRef.Month));
+                    await CarregarDadosAsync(dtInicio, dtFinal);
                 }
             ));
 
@@ -82,7 +87,7 @@ namespace PersonalFinance.Resources.Activities
             };
 
 
-            await CarregarDadosAsync(mesRef);
+            await CarregarDadosAsync(dtInicio, dtFinal);
         }
 
         public override bool OnTouchEvent(MotionEvent e)
@@ -92,19 +97,19 @@ namespace PersonalFinance.Resources.Activities
         }
 
 
-        private async Task CarregarDadosAsync(DateTime mesRef)
+        private async Task CarregarDadosAsync(DateTime dtInicio, DateTime dtFinal)
         {
-            var despesas = await _db.ListaDespesasAsync(mesRef) ?? new List<Despesa>();
-            var receitas = await _db.ListaReceitasAsync(mesRef) ?? new List<Receita>();
-            var transacoes = await _db.ListaTransacoesAsync(mesRef) ?? new List<Transacao>();
+            var despesas = await _db.ListaDespesasAsync(dtInicio, dtFinal) ?? new List<Despesa>();
+            var receitas = await _db.ListaReceitasAsync(dtInicio, dtFinal) ?? new List<Receita>();
+            var transacoes = await _db.ListaTransacoesAsync(dtInicio, dtFinal) ?? new List<Transacao>();
 
             _despesas = despesas;
 
             //var hoje = DateTime.Today;
-            var mes = mesRef.Month;
-            var ano = mesRef.Year;
+            var mes = dtInicio.Month;
+            var ano = dtInicio.Year;
 
-            tvMesAtual.Text = mesRef.ToString("MMMM 'de' yyyy").ToUpper();
+            tvMesAtual.Text = dtInicio.ToString("MMMM 'de' yyyy").ToUpper();
 
             //---------------------------------------------------------
             // Atualizar indicadores
