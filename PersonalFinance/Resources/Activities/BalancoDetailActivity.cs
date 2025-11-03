@@ -57,7 +57,7 @@ namespace PersonalFinance.Resources.Activities
 
             _db = new DatabaseService();
 
-            var mesRef = new DateTime(2025,10,1);
+            var mesRef = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             var dtInicio = new DateTime(mesRef.Year, mesRef.Month, 1);
             var dtFinal = new DateTime(mesRef.Year, mesRef.Month, DateTime.DaysInMonth(mesRef.Year, mesRef.Month));
 
@@ -127,7 +127,7 @@ namespace PersonalFinance.Resources.Activities
         private void AtualizarIndicadores(List<Receita> receitas, List<Despesa> despesas, List<Transacao> transacoes, int mes, int ano)
         {
             var totalReceita = receitas
-                .Where(r => r.MesReferencia != null && r.MesReferencia.Month == mes && r.MesReferencia.Year == ano)
+                .Where(r => r.MesReferencia.Month == mes && r.MesReferencia.Year == ano)
                 .Sum(r => r?.Valor ?? 0);
 
             var totalDespesa = despesas
