@@ -354,8 +354,34 @@ namespace PersonalFinance.Resources.Activities
                 intent.PutExtra("Mes", _mes);
                 intent.PutExtra("Ano", _ano);
 
+                if (string.Equals(categoria, "OUTRAS", StringComparison.OrdinalIgnoreCase))
+                {
+                    intent.PutExtra("Categorias", ObterCategoriasOutras());
+                }
+
                 _context.StartActivity(intent);
             }
+        }
+
+        private string[] ObterCategoriasOutras()
+        {
+            var despesasPorCategoria = _despesas
+                .Where(d => d.Vencimento.Month == _mes && d.Vencimento.Year == _ano)
+                .GroupBy(d => d.Categoria ?? "Outros")
+                .Select(g => new { Categoria = g.Key, Total = g.Sum(x => x.Valor) })
+                .ToList();
+
+            var totalDespesaMes = despesasPorCategoria.Sum(d => d.Total);
+
+            if (totalDespesaMes == 0)
+            {
+                return Array.Empty<string>();
+            }
+
+            return despesasPorCategoria
+                .Where(d => d.Total / totalDespesaMes < 0.05m)
+                .Select(d => d.Categoria)
+                .ToArray();
         }
     }
 

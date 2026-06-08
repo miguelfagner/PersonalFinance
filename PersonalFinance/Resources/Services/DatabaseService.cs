@@ -30,6 +30,13 @@ namespace PersonalFinance.Resources.Services
             return ls;
         }
 
+        internal Task<List<Despesa>> ListaDespesasAsync()
+        {
+            return _db.Table<Despesa>()
+                .OrderByDescending(x => x.Vencimento)
+                .ToListAsync();
+        }
+
         internal Task<int> SalvarDespesaAsync(Despesa despesa)
         {
             if (despesa.Id != 0)
@@ -103,6 +110,13 @@ namespace PersonalFinance.Resources.Services
                 .OrderByDescending(r => r.MesReferencia).ToListAsync();
 
             return ls;
+        }
+
+        internal Task<List<Receita>> ListaReceitasAsync()
+        {
+            return _db.Table<Receita>()
+                .OrderByDescending(r => r.MesReferencia)
+                .ToListAsync();
         }
 
         internal Task<int> SalvarReceitaAsync(Receita receita)

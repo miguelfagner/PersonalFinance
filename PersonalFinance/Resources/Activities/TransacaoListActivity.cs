@@ -48,8 +48,10 @@ namespace PersonalFinance.Resources.Activities
 
             // ===== Intent filters =====
             string? categoria = Intent.GetStringExtra("Categoria");
+            string[]? categorias = Intent.GetStringArrayExtra("Categorias");
             int mes = Intent.GetIntExtra("Mes", 0);
             int ano = Intent.GetIntExtra("Ano", 0);
+            int semana = Intent.GetIntExtra("Semana", 0);
 
             if(mes == 0 || ano == 0)
             {
@@ -68,18 +70,39 @@ namespace PersonalFinance.Resources.Activities
             IEnumerable<Transacao> query = _transacoes;
 
             // Filter by category
-            if (!string.IsNullOrEmpty(categoria))
+            if (categorias?.Length > 0)
             {
                 query = query.Where(t =>
                     t.Despesa != null &&
-                    string.Equals(t.Despesa.Categoria, categoria, StringComparison.OrdinalIgnoreCase)
+                    categorias.Any(c => string.Equals(GetCategoria(t), c, StringComparison.OrdinalIgnoreCase))
+                );
+            }
+            else if (!string.IsNullOrEmpty(categoria))
+            {
+                query = query.Where(t =>
+                    t.Despesa != null &&
+                    string.Equals(GetCategoria(t), categoria, StringComparison.OrdinalIgnoreCase)
+                );
+            }
+
+            if (semana > 0)
+            {
+                query = query.Where(t =>
+                    t.Despesa != null &&
+                    string.Equals(t.Despesa.Categoria, "PESSOAL", StringComparison.OrdinalIgnoreCase) &&
+                    GetWeekOfMonth(t.Data) == semana
                 );
             }
 
             _transacoes = query.ToList();
 
             // ===== Set friendly title =====
-            if (!string.IsNullOrEmpty(categoria) && mes > 0 && ano > 0)
+            if (semana > 0 && mes > 0 && ano > 0)
+            {
+                var nomeMes = new DateTime(ano, mes, 1).ToString("MMMM");
+                Title = $"Semana {semana} - {nomeMes}/{ano}";
+            }
+            else if (!string.IsNullOrEmpty(categoria) && mes > 0 && ano > 0)
             {
                 var nomeMes = new DateTime(ano, mes, 1).ToString("MMMM");
                 Title = $"{categoria} - {nomeMes}/{ano}";
@@ -107,6 +130,18 @@ namespace PersonalFinance.Resources.Activities
             {
                 Toast.MakeText(this, "Nenhuma transação encontrada.", ToastLength.Short).Show();
             }
+        }
+
+        private static int GetWeekOfMonth(DateTime date)
+        {
+            var firstDay = new DateTime(date.Year, date.Month, 1);
+            int firstWeekOffset = (int)firstDay.DayOfWeek;
+            return ((date.Day + firstWeekOffset - 1) / 7) + 1;
+        }
+
+        private static string GetCategoria(Transacao transacao)
+        {
+            return transacao.Despesa?.Categoria ?? "Outros";
         }
     }
 }

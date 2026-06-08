@@ -1,140 +1,182 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F5F5F5"
     android:fitsSystemWindows="true">
 
-	<LinearLayout
-        android:orientation="vertical"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp">
+        android:orientation="vertical"
+        android:padding="20dp">
 
-
-		<!-- Receita vinculada -->
-		<TextView
-			android:id="@+id/txtReceita"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:text="Receita: -"
-			android:textStyle="bold"
-			android:textColor="#333"
-			android:textSize="15sp"
-			android:background="#F7F7F7"
-			android:padding="8dp"
-			android:layout_marginTop="4dp"
-			android:layout_marginHorizontal="6dp"
-			android:drawableStart="@android:drawable/arrow_up_float"
-			android:drawablePadding="6dp" />
-
-		<!-- Despesa vinculada -->
-		<TextView
-			android:id="@+id/txtDespesa"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:text="Despesa: -"
-			android:textStyle="bold"
-			android:textColor="#333"
-			android:textSize="15sp"
-			android:background="#EFEFEF"
-			android:padding="8dp"
-			android:layout_marginTop="8dp"
-			android:layout_marginHorizontal="6dp"
-			android:backgroundTintMode="src_over"
-			android:drawableStart="@android:drawable/arrow_down_float"
-			android:drawablePadding="6dp" />
-
-
-		<!-- Data da transação -->
-		<TextView
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:text="Despesa do mes"
+            android:textColor="#222222"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Receita vinculada"
+            android:textColor="#222222"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/spinnerReceita"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="4dp"
+            android:background="@android:drawable/edit_text" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Categoria"
+            android:textColor="#222222"
+            android:textStyle="bold" />
+
+        <Spinner
+            android:id="@+id/spinnerCategoria"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="4dp"
+            android:background="@android:drawable/edit_text" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Descricao da despesa"
+            android:textColor="#222222"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/edtDescricaoDespesa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:hint="Descricao da despesa"
+            android:inputType="textCapSentences" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Vencimento / mes"
+            android:textColor="#222222"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/edtVencimentoDespesa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:hint="dd/MM/yyyy"
+            android:inputType="date"
+            android:focusable="false"
+            android:clickable="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="Valor da despesa"
+            android:textColor="#222222"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/edtValorDespesa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:hint="0,00"
+            android:inputType="numberDecimal" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Pagamento"
+            android:textColor="#222222"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:text="Data do pagamento"
-            android:textStyle="bold"
-            android:textColor="#222"
-            android:textSize="14sp"
-            android:layout_marginTop="16dp"
-            android:layout_marginHorizontal="4dp"/>
-		<EditText
+            android:textColor="#222222"
+            android:textStyle="bold" />
+
+        <EditText
             android:id="@+id/edtData"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:hint="dd/MM/yyyy"
             android:inputType="date"
-            android:background="@android:drawable/edit_text"
-            android:padding="10dp"
-            android:layout_marginHorizontal="4dp"/>
+            android:focusable="false"
+            android:clickable="true" />
 
-		<!-- Valor -->
-		<TextView
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Valor"
-            android:textStyle="bold"
-            android:textColor="#222"
-            android:textSize="14sp"
-            android:layout_marginTop="6dp"
-            android:layout_marginHorizontal="4dp"/>
-		<EditText
+            android:layout_marginTop="12dp"
+            android:text="Valor pago"
+            android:textColor="#222222"
+            android:textStyle="bold" />
+
+        <EditText
             android:id="@+id/edtValor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="numberDecimal"
-            android:background="@android:drawable/edit_text"
-            android:padding="10dp"
-            android:layout_marginHorizontal="4dp"/>
+            android:layout_marginTop="4dp"
+            android:hint="0,00"
+            android:inputType="numberDecimal" />
 
-		<!-- Observação -->
-		<TextView
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Observação"
-            android:textStyle="bold"
-            android:textColor="#222"
-            android:textSize="14sp"
-            android:layout_marginTop="6dp"
-            android:layout_marginHorizontal="4dp"/>
-		<EditText
+            android:layout_marginTop="12dp"
+            android:text="Observacao"
+            android:textColor="#222222"
+            android:textStyle="bold" />
+
+        <EditText
             android:id="@+id/edtObservacao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            android:background="@android:drawable/edit_text"
-            android:padding="10dp"
-            android:lines="3"
-            android:gravity="top|start"
-            android:layout_marginHorizontal="4dp"/>
+            android:layout_marginTop="4dp"
+            android:hint="Observacao"
+            android:inputType="textCapSentences" />
 
-				<!-- Botão Salvar -->
-		<Button
+        <Button
             android:id="@+id/btnSalvarTransacao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
             android:text="Salvar"
             android:textColor="#FFFFFF"
-            android:backgroundTint="@android:color/holo_green_light"
             android:textStyle="bold"
-            android:layout_marginTop="12dp"
-            android:layout_marginHorizontal="4dp"
-            android:layout_marginBottom="6dp"
-            android:background="@android:drawable/btn_default"
-            android:stateListAnimator="@null"
-            android:padding="12dp"/>
+            android:backgroundTint="#198754" />
 
-		<!-- Botão Excluir -->
-		<Button
+        <Button
             android:id="@+id/btnExcluirTransacao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:text="Excluir"
             android:textColor="#FFFFFF"
-            android:backgroundTint="#E53935"
             android:textStyle="bold"
-            android:layout_marginTop="6dp"
-            android:layout_marginBottom="12dp"
-            android:layout_marginHorizontal="4dp"
-            android:background="@android:drawable/btn_default"
-            android:stateListAnimator="@null"
-            android:padding="12dp"/>
-	</LinearLayout>
+            android:backgroundTint="#DC3545" />
+
+    </LinearLayout>
 </ScrollView>

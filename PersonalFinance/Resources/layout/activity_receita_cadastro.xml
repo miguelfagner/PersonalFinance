@@ -1,100 +1,106 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#F5F5F5"
     android:fitsSystemWindows="true">
 
-	<LinearLayout
-        android:orientation="vertical"
-        android:padding="16dp"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
 
-		<!-- Fonte Pagadora -->
-		<TextView
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:text="Fonte Pagadora"
             android:textStyle="bold"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-		<EditText
+            android:textColor="#222222" />
+
+        <EditText
             android:id="@+id/edtFonte"
-            android:hint="Digite a fonte pagadora"
-            android:inputType="text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp"
+            android:hint="Digite a fonte pagadora"
+            android:inputType="textCapWords" />
 
-		<!-- Descrição -->
-		<TextView
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:text="Descrição"
             android:textStyle="bold"
-            android:layout_marginTop="12dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-		<EditText
+            android:textColor="#222222" />
+
+        <EditText
             android:id="@+id/edtDescricao"
-            android:hint="Digite a descrição"
-            android:inputType="text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp"
+            android:hint="Digite a descrição"
+            android:inputType="textCapSentences" />
 
-		<!-- Tipo -->
-		<TextView
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:text="Tipo"
             android:textStyle="bold"
-            android:layout_marginTop="12dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-		<EditText
+            android:textColor="#222222" />
+
+        <EditText
             android:id="@+id/edtTipo"
-            android:hint="Ex: Salário, Freelance"
-            android:inputType="text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp"
+            android:hint="Ex: Salário, Freelance"
+            android:inputType="textCapWords" />
 
-		<!-- Valor -->
-		<TextView
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:text="Valor"
             android:textStyle="bold"
-            android:layout_marginTop="12dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-		<EditText
+            android:textColor="#222222" />
+
+        <EditText
             android:id="@+id/edtValor"
-            android:hint="Valor"
-            android:inputType="numberDecimal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"/>
+            android:layout_marginTop="4dp"
+            android:hint="0,00"
+            android:inputType="numberDecimal" />
 
-		<!-- Mês de Referência -->
-		<TextView
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
             android:text="Mês de Referência"
             android:textStyle="bold"
-            android:layout_marginTop="12dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-		<EditText
+            android:textColor="#222222" />
+
+        <EditText
             android:id="@+id/edtMesReferencia"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
             android:hint="MM/AAAA"
             android:inputType="date"
             android:focusable="false"
-            android:clickable="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp" />
+            android:clickable="true" />
 
-		<!-- Botão Salvar -->
-		<Button
+        <Button
             android:id="@+id/btnSalvar"
-            android:text="Salvar Receita"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="#4CAF50"
-            android:textColor="#FFFFFF" />
+            android:layout_marginTop="24dp"
+            android:text="Salvar"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:backgroundTint="#198754" />
 
-	</LinearLayout>
+    </LinearLayout>
 </ScrollView>

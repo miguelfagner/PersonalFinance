@@ -17,6 +17,7 @@ namespace PersonalFinance.Resources.Activities
 
         private DatabaseService _db;
         private Receita _receita;
+        private DateTime _mesSelecionado;
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
@@ -65,11 +66,30 @@ namespace PersonalFinance.Resources.Activities
             _btnExcluir = FindViewById<Button>(Resource.Id.btnExcluirReceita);
 
             // Preencher campos
+            _mesSelecionado = _receita.MesReferencia == default
+                ? new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1)
+                : new DateTime(_receita.MesReferencia.Year, _receita.MesReferencia.Month, 1);
+
             _edtMesReferencia.Text = _receita.MesReferencia.ToString("MM/yyyy");
             _edtFonte.Text = _receita.FontePagadora;
             _edtDescricao.Text = _receita.Descricao;
             _edtTipo.Text = _receita.Tipo;
             _edtValor.Text = _receita.Valor.ToString("F2", new CultureInfo("pt-BR"));
+
+            _edtMesReferencia.Click += (s, e) =>
+            {
+                var dialog = new DatePickerDialog(this,
+                    (sender, args) =>
+                    {
+                        _mesSelecionado = new DateTime(args.Date.Year, args.Date.Month, 1);
+                        _edtMesReferencia.Text = _mesSelecionado.ToString("MM/yyyy");
+                    },
+                    _mesSelecionado.Year,
+                    _mesSelecionado.Month - 1,
+                    1);
+
+                dialog.Show();
+            };
 
 
             // ajustar o valor decimal
@@ -87,10 +107,11 @@ namespace PersonalFinance.Resources.Activities
             {
                 try
                 {
+                    _receita.MesReferencia = _mesSelecionado;
                     _receita.FontePagadora = _edtFonte.Text;
                     _receita.Descricao = _edtDescricao.Text;
                     _receita.Tipo = _edtTipo.Text;
-                    _receita.Valor = decimal.TryParse(_edtValor.Text, out decimal valor) ? valor : 0;
+                    _receita.Valor = decimal.TryParse(_edtValor.Text, NumberStyles.Any, new CultureInfo("pt-BR"), out decimal valor) ? valor : 0;
 
                     await _db.SalvarReceitaAsync(_receita);
 

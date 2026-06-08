@@ -4,6 +4,7 @@ using Android.Widget;
 using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
 using PersonalFinance.Resources.ViewModels;
+using PersonalFinance.Resources.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -15,7 +16,8 @@ namespace PersonalFinance.Resources.Activities
     public class DespesaCreateActivity : Activity
     {
         private Spinner _spinnerReceita;
-        private EditText _edtDescricao, _edtCategoria, _edtValor, _edtNParcela, _edtData;
+        private Spinner _spinnerCategoria;
+        private EditText _edtDescricao, _edtValor, _edtNParcela, _edtData;
         private Button _btnSalvar;
         private DespesaViewModel _viewModel;
         private List<Receita> _receitas;
@@ -31,8 +33,8 @@ namespace PersonalFinance.Resources.Activities
 
             // Vincular componentes
             _spinnerReceita = FindViewById<Spinner>(Resource.Id.spinnerReceita);
+            _spinnerCategoria = FindViewById<Spinner>(Resource.Id.spinnerCategoria);
             _edtDescricao = FindViewById<EditText>(Resource.Id.edtDescricao);
-            _edtCategoria = FindViewById<EditText>(Resource.Id.edtCategoria);
             _edtValor = FindViewById<EditText>(Resource.Id.edtValor);
             _edtNParcela = FindViewById<EditText>(Resource.Id.edtNParcela);
             _edtData = FindViewById<EditText>(Resource.Id.edtVencimento);
@@ -40,17 +42,10 @@ namespace PersonalFinance.Resources.Activities
 
             // Carregar receitas do banco
             var db = new DatabaseService();
-            var mesRef = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            var dtInicio = new DateTime(mesRef.Year, mesRef.Month, 1);
-            var dtFinal = new DateTime(mesRef.Year, mesRef.Month, DateTime.DaysInMonth(mesRef.Year, mesRef.Month));
-           
-            _receitas = await db.ListaReceitasAsync(dtInicio, dtFinal);
+            _receitas = await db.ListaReceitasAsync();
 
             // Adapter do Spinner
-            var adapter = new ArrayAdapter(this, Android.Resource.Layout.SimpleSpinnerItem,
-                _receitas.Select(r => r.FontePagadora).ToList());
-            adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
-            _spinnerReceita.Adapter = adapter;
+            _spinnerReceita.Adapter = FormOptions.CreateSpinnerAdapter(this, _receitas.Select(r => r.FontePagadora));
 
             // Receber dados passados via intent (se houver)
             var descricao = Intent.GetStringExtra("Descricao");
@@ -61,7 +56,6 @@ namespace PersonalFinance.Resources.Activities
             var receitaId = Intent.GetIntExtra("ReceitaId", 0);
 
             if (!string.IsNullOrEmpty(descricao)) _edtDescricao.Text = descricao;
-            if (!string.IsNullOrEmpty(categoria)) _edtCategoria.Text = categoria;
             _edtValor.Text = valor.ToString("N2", CultureInfo.InvariantCulture);
             _edtNParcela.Text = nParcela.ToString();
             if (ticks > 0)
@@ -76,6 +70,12 @@ namespace PersonalFinance.Resources.Activities
                 int index = _receitas.FindIndex(r => r.Id == receitaId);
                 if (index >= 0) _spinnerReceita.SetSelection(index);
             }
+
+            var categorias = FormOptions.WithCurrentOption(FormOptions.CategoriasDespesa, categoria);
+            _spinnerCategoria.Adapter = FormOptions.CreateSpinnerAdapter(this, categorias);
+
+            int categoriaIndex = categorias.FindIndex(c => string.Equals(c, categoria, StringComparison.OrdinalIgnoreCase));
+            if (categoriaIndex >= 0) _spinnerCategoria.SetSelection(categoriaIndex);
 
             // Mostrar a data de hoje como padrão se não veio do intent
             if (_edtData.Text == "") _edtData.Text = _dataSelecionada.ToString("dd/MM/yyyy");
@@ -118,7 +118,7 @@ namespace PersonalFinance.Resources.Activities
 
                 _viewModel.ReceitaId = _receitas[selectedIndex].Id;
                 _viewModel.Descricao = _edtDescricao.Text?.Trim().ToUpper();
-                _viewModel.Categoria = _edtCategoria.Text?.Trim().ToUpper();
+                _viewModel.Categoria = _spinnerCategoria.SelectedItem?.ToString()?.Trim().ToUpperInvariant();
 
                 string valorTexto = _edtValor.Text?.Replace(",", ".") ?? "0";
                 _viewModel.Valor = decimal.TryParse(valorTexto, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal val) ? val : 0;
