@@ -52,7 +52,7 @@ namespace PersonalFinance.Resources.Activities
             tvContasPendentes = FindViewById<TextView>(Resource.Id.tvContasPendentes);
             tvMediaDiaria = FindViewById<TextView>(Resource.Id.tvMediaDiaria);
             tvLimiteDiario = FindViewById<TextView>(Resource.Id.tvLimiteDiario);
-            tvMaiorCategoria = FindViewById<TextView>(Resource.Id.tvMaiorCategoria);
+            //tvMaiorCategoria = FindViewById<TextView>(Resource.Id.tvMaiorCategoria);
 
             // ProgressBars
             progDespesa = FindViewById<ProgressBar>(Resource.Id.progDespesa);
@@ -154,14 +154,10 @@ namespace PersonalFinance.Resources.Activities
             var saldoPlanejado = totalReceita - totalDespesa;
             var saldoRealizado = totalReceita - totalQuitado;
             var saldoAposCompromissos = totalReceita - Math.Max(totalDespesa, totalQuitado);
+            var gastoPessoalDiarioPlan = Planejado("PESSOAL") / DateTime.DaysInMonth(ano, mes);
 
-            decimal Planejado(params string[] categorias) => despesasMes
-                .Where(d => CategoriaEh(d.Categoria, categorias))
-                .Sum(d => d.Valor);
-
-            decimal Realizado(params string[] categorias) => transacoesMes
-                .Where(t => t.Despesa != null && CategoriaEh(t.Despesa.Categoria, categorias))
-                .Sum(t => t.Valor);
+            decimal Planejado(params string[] categorias) => despesasMes.Where(d => CategoriaEh(d.Categoria, categorias)).Sum(d => d.Valor);
+            decimal Realizado(params string[] categorias) => transacoesMes.Where(t => t.Despesa != null && CategoriaEh(t.Despesa.Categoria, categorias)).Sum(t => t.Valor);
 
             var gastoPessoalPlanejado = Planejado("PESSOAL");
             var gastoPessoal = Realizado("PESSOAL");
@@ -209,18 +205,12 @@ namespace PersonalFinance.Resources.Activities
             tvFaltaQuitar.Text = $"PREVISTO EM ABERTO: R$ {faltaQuitar:N2}";
             tvSaldoPlanejado.Text = $"SALDO PLANEJADO: R$ {saldoPlanejado:N2}";
             tvSaldoRealizado.Text = $"SALDO REALIZADO: R$ {saldoRealizado:N2}";
-            tvDesvioOrcamento.Text = desvioOrcamento > 0
-                ? $"ACIMA DO PLANEJADO: R$ {desvioOrcamento:N2}"
-                : $"ABAIXO DO PLANEJADO: R$ {Math.Abs(desvioOrcamento):N2}";
+            tvDesvioOrcamento.Text = desvioOrcamento > 0 ? $"ACIMA DO PLANEJADO: R$ {desvioOrcamento:N2}" : $"ABAIXO DO PLANEJADO: R$ {Math.Abs(desvioOrcamento):N2}";
             tvComprometimentoRenda.Text = $"COMPROMETIMENTO DA RENDA: {comprometimento:N1}%";
             tvContasPendentes.Text = $"CONTAS PENDENTES: {contasPendentes} DE {despesasMes.Count}";
             tvMediaDiaria.Text = $"MEDIA DIARIA REALIZADA: R$ {mediaDiaria:N2}";
-            tvLimiteDiario.Text = diasRestantes > 0
-                ? $"DISPONIVEL POR DIA ({diasRestantes} DIAS): R$ {limiteDiario:N2}"
-                : "DISPONIVEL POR DIA: MES ENCERRADO";
-            tvMaiorCategoria.Text = categoriasRealizadas == null
-                ? "MAIOR CONSUMO: SEM TRANSACOES"
-                : $"MAIOR CONSUMO: {categoriasRealizadas.Categoria} - R$ {categoriasRealizadas.Total:N2}";
+            tvLimiteDiario.Text = diasRestantes > 0 ? $"DISPONIVEL POR DIA ({diasRestantes} DIAS): R$ {gastoPessoalDiarioPlan:N2}" : "DISPONIVEL POR DIA: MES ENCERRADO";
+            tvMaiorCategoria.Text = categoriasRealizadas == null ? "MAIOR CONSUMO: SEM TRANSACOES" : $"MAIOR CONSUMO: {categoriasRealizadas.Categoria} - R$ {categoriasRealizadas.Total:N2}";
 
             progDespesa.Progress = Percentual(totalQuitado, totalDespesa);
             progGastosPessoais.Progress = Percentual(gastoPessoal, gastoPessoalPlanejado);

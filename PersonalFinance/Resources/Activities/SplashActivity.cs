@@ -16,7 +16,7 @@ namespace PersonalFinance.Resources.Activities
             SetContentView(Resource.Layout.activity_splash);
 
             var imagem = FindViewById<ImageView>(Resource.Id.imgSplash);
-            var inicioExibicao = Task.Delay(1800);
+            var inicioExibicao = Task.Delay(TimeSpan.FromSeconds(5));
 
             var hoje = DateTime.Today;
             var inicioMes = new DateTime(hoje.Year, hoje.Month, 1);

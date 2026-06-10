@@ -178,7 +178,18 @@
                     android:textSize="15sp"
                     android:textStyle="bold" />
 
-                <TextView
+
+				<TextView
+                    android:id="@+id/tvLimiteDiario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="PESSOAL DIÁRIO DISPONIVEL: R$ 0,00"
+                    android:textColor="@color/finance_success"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+				<TextView
                     android:id="@+id/tvTotalQuitado"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -264,7 +275,7 @@
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
-                <TextView
+                <!--<TextView
                     android:id="@+id/tvLimiteDiario"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -272,16 +283,16 @@
                     android:text="DISPONIVEL POR DIA: R$ 0,00"
                     android:textColor="@color/finance_text_secondary"
                     android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold" />-->
 
-                <TextView
+                <!--<TextView
                     android:id="@+id/tvMaiorCategoria"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="MAIOR CONSUMO: SEM TRANSACOES"
                     android:textColor="@color/finance_text_secondary"
                     android:textSize="14sp"
-                    android:textStyle="bold" />
+                    android:textStyle="bold" />-->
 
             </LinearLayout>
 
