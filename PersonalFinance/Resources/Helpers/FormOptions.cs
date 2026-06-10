@@ -12,6 +12,7 @@ namespace PersonalFinance.Resources.Helpers
             "GASTOS DOMESTICOS",
             "ALIMENTACAO",
             "TRANSPORTE",
+            "COMBUSTIVEL",
             "SAUDE",
             "EDUCACAO",
             "LAZER",

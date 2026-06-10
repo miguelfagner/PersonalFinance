@@ -1,46 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:gravity="center"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/finance_background"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
 
-	<Button
-        android:id="@+id/btnListarReceitas"
-        android:text="Lista Receitas"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp" />
+        android:orientation="vertical"
+        android:padding="20dp">
 
-	<Button
-	    android:id="@+id/btnListarDespesas"
-	    android:text="Lista Despesas"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_marginTop="20dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_hero"
+            android:elevation="3dp"
+            android:orientation="vertical"
+            android:padding="22dp">
 
-	<Button
-	    android:id="@+id/btnListarTransacoes"
-	    android:text="Lista Transacoes"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_marginTop="20dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif-medium"
+                android:text="Sua vida financeira"
+                android:textColor="@color/finance_white"
+                android:textSize="24sp" />
 
-	<Button
-	    android:id="@+id/btnBalanco"
-	    android:text="Lista Balanco"
-	    android:layout_width="match_parent"
-	    android:layout_height="wrap_content"
-	    android:layout_marginTop="20dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:alpha="0.78"
+                android:lineSpacingExtra="2dp"
+                android:text="Organize receitas, compromissos e pagamentos em um só lugar."
+                android:textColor="@color/finance_white"
+                android:textSize="14sp" />
+        </LinearLayout>
 
-v    <!-- Novo botão para exportar o backup -->
-    <Button
-        android:id="@+id/btnExportarBackup"
-        android:text="Exportar Backup para Downloads"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp" />
-	
-	s
-</LinearLayout>
+        <TextView
+            style="@style/FinanceSectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:layout_marginBottom="10dp"
+            android:text="VISÃO GERAL" />
+
+        <Button
+            android:id="@+id/btnBalanco"
+            style="@style/FinanceButtonPrimary"
+            android:text="Abrir balanço mensal" />
+
+        <TextView
+            style="@style/FinanceSectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:layout_marginBottom="10dp"
+            android:text="GERENCIAR" />
+
+        <Button
+            android:id="@+id/btnListarReceitas"
+            style="@style/FinanceButtonSecondary"
+            android:text="Receitas" />
+
+        <Button
+            android:id="@+id/btnListarDespesas"
+            style="@style/FinanceButtonSecondary"
+            android:layout_marginTop="10dp"
+            android:text="Despesas" />
+
+        <Button
+            android:id="@+id/btnListarTransacoes"
+            style="@style/FinanceButtonSecondary"
+            android:layout_marginTop="10dp"
+            android:text="Transações" />
+
+        <Button
+            android:id="@+id/btnExportarBackup"
+            style="@style/FinanceButtonSecondary"
+            android:layout_marginTop="22dp"
+            android:layout_marginBottom="12dp"
+            android:text="Exportar backup" />
+    </LinearLayout>
+</ScrollView>

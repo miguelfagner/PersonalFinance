@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5"
+    android:background="@color/finance_background"
+    android:fillViewport="true"
     android:fitsSystemWindows="true">
 
     <LinearLayout
@@ -12,95 +13,48 @@
         android:padding="20dp">
 
         <TextView
+            style="@style/FinanceScreenTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Fonte Pagadora"
-            android:textStyle="bold"
-            android:textColor="#222222" />
-
-        <EditText
-            android:id="@+id/edtFonte"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:hint="Digite a fonte pagadora"
-            android:inputType="textCapWords" />
+            android:text="Nova receita" />
 
         <TextView
+            style="@style/FinanceScreenSubtitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Descrição"
-            android:textStyle="bold"
-            android:textColor="#222222" />
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="20dp"
+            android:text="Registre uma entrada para acompanhar seu orçamento." />
 
-        <EditText
-            android:id="@+id/edtDescricao"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:hint="Digite a descrição"
-            android:inputType="textCapSentences" />
+            android:background="@drawable/bg_card"
+            android:elevation="1dp"
+            android:orientation="vertical"
+            android:padding="18dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Tipo"
-            android:textStyle="bold"
-            android:textColor="#222222" />
+            <TextView style="@style/FinanceFieldLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Fonte pagadora" />
+            <EditText android:id="@+id/edtFonte" style="@style/FinanceInput" android:hint="Ex.: Empresa" android:inputType="textCapWords" />
 
-        <EditText
-            android:id="@+id/edtTipo"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:hint="Ex: Salário, Freelance"
-            android:inputType="textCapWords" />
+            <TextView style="@style/FinanceFieldLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="Descrição" />
+            <EditText android:id="@+id/edtDescricao" style="@style/FinanceInput" android:hint="Descrição da receita" android:inputType="textCapSentences" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Valor"
-            android:textStyle="bold"
-            android:textColor="#222222" />
+            <TextView style="@style/FinanceFieldLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="Tipo" />
+            <EditText android:id="@+id/edtTipo" style="@style/FinanceInput" android:hint="Ex.: Salário ou freelance" android:inputType="textCapWords" />
 
-        <EditText
-            android:id="@+id/edtValor"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:hint="0,00"
-            android:inputType="numberDecimal" />
+            <TextView style="@style/FinanceFieldLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="Valor" />
+            <EditText android:id="@+id/edtValor" style="@style/FinanceInput" android:hint="0,00" android:inputType="numberDecimal" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:text="Mês de Referência"
-            android:textStyle="bold"
-            android:textColor="#222222" />
-
-        <EditText
-            android:id="@+id/edtMesReferencia"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:hint="MM/AAAA"
-            android:inputType="date"
-            android:focusable="false"
-            android:clickable="true" />
+            <TextView style="@style/FinanceFieldLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="Mês de referência" />
+            <EditText android:id="@+id/edtMesReferencia" style="@style/FinanceInput" android:clickable="true" android:focusable="false" android:hint="MM/AAAA" android:inputType="date" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/btnSalvar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="Salvar"
-            android:textColor="#FFFFFF"
-            android:textStyle="bold"
-            android:backgroundTint="#198754" />
-
+            style="@style/FinanceButtonPrimary"
+            android:layout_marginTop="18dp"
+            android:layout_marginBottom="12dp"
+            android:text="Salvar receita" />
     </LinearLayout>
 </ScrollView>

@@ -1,135 +1,30 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F2F2F2"
-    android:fitsSystemWindows="true"
-    android:padding="16dp">
+    android:background="@color/finance_background"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
 
-	<LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:padding="16dp"
-        android:elevation="4dp"
-        android:layout_marginBottom="16dp"
-        android:clipToPadding="false"
-        android:layout_marginTop="8dp"
-        android:layout_marginLeft="4dp"
-        android:layout_marginRight="4dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+        <TextView style="@style/FinanceScreenTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Detalhes da despesa" />
+        <TextView style="@style/FinanceScreenSubtitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:layout_marginBottom="20dp" android:text="Informações completas deste compromisso." />
 
-			<!-- Descrição -->
-			<TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Descrição"
-                android:textStyle="bold"
-                android:textColor="#555555"
-                android:textSize="16sp"/>
-			<TextView
-                android:id="@+id/tvDescricao"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="#222222"
-                android:paddingBottom="12dp" />
-
-			<!-- Categoria -->
-			<TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Categoria"
-                android:textStyle="bold"
-                android:textColor="#555555"
-                android:textSize="16sp"/>
-			<TextView
-                android:id="@+id/tvCategoria"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="#222222"
-                android:paddingBottom="12dp" />
-
-			<!-- Valor -->
-			<TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Valor"
-                android:textStyle="bold"
-                android:textColor="#555555"
-                android:textSize="16sp"/>
-			<TextView
-                android:id="@+id/tvValor"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="#E53935"
-                android:textStyle="bold"
-                android:paddingBottom="12dp" />
-
-			<!-- Data de cadastro -->
-			<TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Data de Cadastro"
-                android:textStyle="bold"
-                android:textColor="#555555"
-                android:textSize="16sp"/>
-			<TextView
-                android:id="@+id/tvDataCadastro"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="#222222"
-                android:paddingBottom="12dp" />
-
-			<!-- Vencimento -->
-			<TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Vencimento"
-                android:textStyle="bold"
-                android:textColor="#555555"
-                android:textSize="16sp"/>
-			<TextView
-                android:id="@+id/tvVencimento"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="#222222"
-                android:paddingBottom="12dp" />
-
-			<!-- Número da Parcela -->
-			<TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Número da Parcela"
-                android:textStyle="bold"
-                android:textColor="#555555"
-                android:textSize="16sp"/>
-			<TextView
-                android:id="@+id/tvNParcela"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="#222222"
-                android:paddingBottom="12dp" />
-
-			<!-- Receita Id -->
-			<TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Receita Id"
-                android:textStyle="bold"
-                android:textColor="#555555"
-                android:textSize="16sp"/>
-			<TextView
-                android:id="@+id/tvReceitaId"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textColor="#222222"
-                android:paddingBottom="12dp" />
-		</LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_card" android:elevation="1dp" android:orientation="vertical" android:padding="18dp">
+            <TextView style="@style/FinanceDetailLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="DESCRIÇÃO" />
+            <TextView android:id="@+id/tvDescricao" style="@style/FinanceDetailValue" android:layout_width="match_parent" android:layout_height="wrap_content" />
+            <TextView style="@style/FinanceDetailLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="CATEGORIA" />
+            <TextView android:id="@+id/tvCategoria" style="@style/FinanceDetailValue" android:layout_width="match_parent" android:layout_height="wrap_content" />
+            <TextView style="@style/FinanceDetailLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="VALOR" />
+            <TextView android:id="@+id/tvValor" style="@style/FinanceDetailValue" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/finance_danger" android:textStyle="bold" />
+            <TextView style="@style/FinanceDetailLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="DATA DE CADASTRO" />
+            <TextView android:id="@+id/tvDataCadastro" style="@style/FinanceDetailValue" android:layout_width="match_parent" android:layout_height="wrap_content" />
+            <TextView style="@style/FinanceDetailLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="VENCIMENTO" />
+            <TextView android:id="@+id/tvVencimento" style="@style/FinanceDetailValue" android:layout_width="match_parent" android:layout_height="wrap_content" />
+            <TextView style="@style/FinanceDetailLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="NÚMERO DA PARCELA" />
+            <TextView android:id="@+id/tvNParcela" style="@style/FinanceDetailValue" android:layout_width="match_parent" android:layout_height="wrap_content" />
+            <TextView style="@style/FinanceDetailLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="RECEITA VINCULADA" />
+            <TextView android:id="@+id/tvReceitaId" style="@style/FinanceDetailValue" android:layout_width="match_parent" android:layout_height="wrap_content" />
+        </LinearLayout>
+    </LinearLayout>
 </ScrollView>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="finance_primary">#17324D</color>
+    <color name="finance_primary_dark">#10263B</color>
+    <color name="finance_accent">#247B78</color>
+    <color name="finance_background">#F4F7FA</color>
+    <color name="finance_surface">#FFFFFF</color>
+    <color name="finance_surface_alt">#ECF2F6</color>
+    <color name="finance_border">#D8E2EA</color>
+    <color name="finance_text_primary">#17212B</color>
+    <color name="finance_text_secondary">#667785</color>
+    <color name="finance_success">#18794E</color>
+    <color name="finance_danger">#C2414F</color>
+    <color name="finance_warning">#B7791F</color>
+    <color name="finance_info">#2E6F9E</color>
+    <color name="finance_white">#FFFFFF</color>
+</resources>

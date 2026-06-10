@@ -18,10 +18,10 @@ namespace PersonalFinance.Resources.Activities
         {
             base.OnCreate(savedInstanceState);
 
-            var btnExport = new Button(this) { Text = "Exportar Backup para Downloads" };
-            btnExport.Click += (s, e) => ExportToDownloads();
+            SetContentView(Resource.Layout.activity_backup_export);
 
-            SetContentView(btnExport);
+            var btnExport = FindViewById<Button>(Resource.Id.btnExportarArquivo);
+            btnExport.Click += (s, e) => ExportToDownloads();
         }
 
         // Abre seletor para salvar o arquivos

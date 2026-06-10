@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="AppTheme" parent="@android:style/Theme.Material.Light">
+        <item name="android:fontFamily">sans</item>
+        <item name="android:colorAccent">@color/finance_accent</item>
+        <item name="android:windowBackground">@color/finance_background</item>
+        <item name="android:navigationBarColor">@color/finance_primary_dark</item>
+        <item name="android:statusBarColor">@color/finance_primary_dark</item>
+        <item name="android:actionBarStyle">@style/FinanceActionBar</item>
+        <item name="android:windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="SplashTheme" parent="@android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:windowBackground">@color/finance_primary_dark</item>
+        <item name="android:navigationBarColor">@color/finance_primary_dark</item>
+        <item name="android:statusBarColor">@color/finance_primary_dark</item>
+    </style>
+
+    <style name="FinanceActionBar" parent="@android:style/Widget.Material.ActionBar.Solid">
+        <item name="android:background">@color/finance_primary</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:titleTextStyle">@style/FinanceActionBarTitle</item>
+    </style>
+
+    <style name="FinanceActionBarTitle" parent="@android:style/TextAppearance.Material.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/finance_white</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="FinanceScreenTitle">
+        <item name="android:textColor">@color/finance_text_primary</item>
+        <item name="android:textSize">26sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="FinanceScreenSubtitle">
+        <item name="android:textColor">@color/finance_text_secondary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
+
+    <style name="FinanceSectionTitle">
+        <item name="android:textColor">@color/finance_text_secondary</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.12</item>
+    </style>
+
+    <style name="FinanceCardTitle">
+        <item name="android:textColor">@color/finance_text_primary</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="FinanceFieldLabel">
+        <item name="android:textColor">@color/finance_text_primary</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="FinanceInput">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">52dp</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:background">@drawable/bg_input</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <item name="android:textColor">@color/finance_text_primary</item>
+        <item name="android:textColorHint">@color/finance_text_secondary</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="FinanceSpinner">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">52dp</item>
+        <item name="android:layout_marginTop">6dp</item>
+        <item name="android:background">@drawable/bg_input</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <item name="android:spinnerMode">dialog</item>
+    </style>
+
+    <style name="FinanceButtonPrimary" parent="@android:style/Widget.Material.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">54dp</item>
+        <item name="android:background">@drawable/bg_button_primary</item>
+        <item name="android:backgroundTint">@null</item>
+        <item name="android:textColor">@color/finance_white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="FinanceButtonSecondary" parent="@android:style/Widget.Material.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">54dp</item>
+        <item name="android:background">@drawable/bg_button_secondary</item>
+        <item name="android:backgroundTint">@null</item>
+        <item name="android:textColor">@color/finance_primary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="FinanceButtonDanger" parent="@android:style/Widget.Material.Button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">54dp</item>
+        <item name="android:background">@drawable/bg_button_danger</item>
+        <item name="android:backgroundTint">@null</item>
+        <item name="android:textColor">@color/finance_white</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="FinanceFab" parent="@android:style/Widget.Material.Button">
+        <item name="android:layout_width">58dp</item>
+        <item name="android:layout_height">58dp</item>
+        <item name="android:background">@drawable/bg_fab</item>
+        <item name="android:backgroundTint">@null</item>
+        <item name="android:textColor">@color/finance_white</item>
+        <item name="android:textSize">28sp</item>
+        <item name="android:elevation">8dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:minWidth">0dp</item>
+        <item name="android:minHeight">0dp</item>
+        <item name="android:padding">0dp</item>
+        <item name="android:stateListAnimator">@null</item>
+    </style>
+
+    <style name="FinanceItemTitle">
+        <item name="android:textColor">@color/finance_text_primary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="FinanceItemMeta">
+        <item name="android:textColor">@color/finance_text_secondary</item>
+        <item name="android:textSize">13sp</item>
+    </style>
+
+    <style name="FinanceDetailLabel">
+        <item name="android:textColor">@color/finance_text_secondary</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:letterSpacing">0.08</item>
+    </style>
+
+    <style name="FinanceDetailValue">
+        <item name="android:textColor">@color/finance_text_primary</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingBottom">18dp</item>
+    </style>
+</resources>

@@ -4,7 +4,7 @@ using PersonalFinance.Resources.Activities;
 namespace PersonalFinance
 {
 
-    [Activity(Label = "Controle Financeiro", MainLauncher = true)]
+    [Activity(Label = "Controle Financeiro")]
     public class MainActivity : Activity
     {
         protected override void OnCreate(Bundle savedInstanceState)

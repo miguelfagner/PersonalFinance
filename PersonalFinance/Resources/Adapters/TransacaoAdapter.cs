@@ -97,8 +97,8 @@ namespace PersonalFinance.Resources.Adapters
                 tvValorDestaque.Text = $"R$ {transacao.Valor.ToString("N2", new CultureInfo("pt-BR"))}";
                 tvValorDestaque.SetTextColor(
                     transacao.Valor >= 0
-                        ? Android.Graphics.Color.ParseColor("#388E3C")
-                        : Android.Graphics.Color.ParseColor("#D32F2F")
+                        ? Android.Graphics.Color.ParseColor("#18794E")
+                        : Android.Graphics.Color.ParseColor("#C2414F")
                 );
 
                 return view;

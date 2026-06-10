@@ -44,10 +44,10 @@ namespace PersonalFinance.Resources.Adapters
             // Define cor do botão conforme status
             if (despesa.Sttatus == null) // pendente
                 btnQuitar.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(
-                    Android.Graphics.Color.ParseColor("#198754")); // verde
+                    Android.Graphics.Color.ParseColor("#18794E")); // verde
             else if (despesa.Sttatus == false) // parcialmente quitado
                 btnQuitar.BackgroundTintList = Android.Content.Res.ColorStateList.ValueOf(
-                    Android.Graphics.Color.ParseColor("#ffc107")); // amarelo
+                    Android.Graphics.Color.ParseColor("#B7791F")); // amarelo
 
             // Remove handlers antigos para evitar múltiplos eventos
             btnQuitar.Click -= async (s, e) => { };

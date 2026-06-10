@@ -16,8 +16,10 @@ namespace PersonalFinance.Resources.Activities
     [Activity(Label = "Balanço Mensal")]
     public class BalancoDetailActivity : Activity
     {
-        private TextView tvTotalReceita, tvTotalDespesa, tvSaldo, tvTotalQuitado, tvFaltaQuitar, tvResumo, tvGastosPessoais, tvGastosDomesticos, tvDespesaFixa, tvDespesaFixaQuitada, tvDespFixaAberta, tvMesAtual;
-        private ProgressBar progDespesa, progGastosDomesticos, progGastosPessoais;
+        private TextView tvTotalReceita, tvTotalDespesa, tvSaldo, tvTotalQuitado, tvFaltaQuitar, tvResumo;
+        private TextView tvGastosPessoais, tvGastosDomesticos, tvCombustivel, tvSaldoPlanejado, tvSaldoRealizado;
+        private TextView tvDesvioOrcamento, tvComprometimentoRenda, tvContasPendentes, tvMediaDiaria, tvLimiteDiario, tvMaiorCategoria, tvMesAtual;
+        private ProgressBar progDespesa, progGastosDomesticos, progGastosPessoais, progCombustivel;
         private PieChart pieChartDespesas;
         private BarChart barChartSemanal;
 
@@ -34,22 +36,29 @@ namespace PersonalFinance.Resources.Activities
 
             // Inicializar TextViews
             tvMesAtual = FindViewById<TextView>(Resource.Id.tvMesAtual);
-            tvDespesaFixa = FindViewById<TextView>(Resource.Id.tvDespesaFixa);
-            tvDespFixaAberta = FindViewById<TextView>(Resource.Id.tvDespFixaAberta);
-            tvDespesaFixaQuitada = FindViewById<TextView>(Resource.Id.tvDespesaFixaQuitada);
             tvTotalReceita = FindViewById<TextView>(Resource.Id.tvTotalReceita);
             tvTotalDespesa = FindViewById<TextView>(Resource.Id.tvTotalDespesa);
             tvTotalQuitado = FindViewById<TextView>(Resource.Id.tvTotalQuitado);
             tvGastosPessoais = FindViewById<TextView>(Resource.Id.tvGastosPessoais);
             tvGastosDomesticos = FindViewById<TextView>(Resource.Id.tvGastosDomesticos);
+            tvCombustivel = FindViewById<TextView>(Resource.Id.tvCombustivel);
             tvSaldo = FindViewById<TextView>(Resource.Id.tvSaldo);
             tvFaltaQuitar = FindViewById<TextView>(Resource.Id.tvFaltaQuitar);
             tvResumo = FindViewById<TextView>(Resource.Id.tvResumo);
+            tvSaldoPlanejado = FindViewById<TextView>(Resource.Id.tvSaldoPlanejado);
+            tvSaldoRealizado = FindViewById<TextView>(Resource.Id.tvSaldoRealizado);
+            tvDesvioOrcamento = FindViewById<TextView>(Resource.Id.tvDesvioOrcamento);
+            tvComprometimentoRenda = FindViewById<TextView>(Resource.Id.tvComprometimentoRenda);
+            tvContasPendentes = FindViewById<TextView>(Resource.Id.tvContasPendentes);
+            tvMediaDiaria = FindViewById<TextView>(Resource.Id.tvMediaDiaria);
+            tvLimiteDiario = FindViewById<TextView>(Resource.Id.tvLimiteDiario);
+            tvMaiorCategoria = FindViewById<TextView>(Resource.Id.tvMaiorCategoria);
 
             // ProgressBars
             progDespesa = FindViewById<ProgressBar>(Resource.Id.progDespesa);
             progGastosPessoais = FindViewById<ProgressBar>(Resource.Id.progGastosPessoais);
             progGastosDomesticos = FindViewById<ProgressBar>(Resource.Id.progGastosDomesticos);
+            progCombustivel = FindViewById<ProgressBar>(Resource.Id.progCombustivel);
 
             // Gráficos
             pieChartDespesas = FindViewById<PieChart>(Resource.Id.pieChartDespesas);
@@ -126,90 +135,159 @@ namespace PersonalFinance.Resources.Activities
 
         private void AtualizarIndicadores(List<Receita> receitas, List<Despesa> despesas, List<Transacao> transacoes, int mes, int ano)
         {
+            var despesasMes = despesas
+                .Where(d => d.Vencimento.Month == mes && d.Vencimento.Year == ano)
+                .ToList();
+
+            var transacoesMes = transacoes
+                .Where(t => t.Data.Month == mes && t.Data.Year == ano)
+                .ToList();
+
             var totalReceita = receitas
                 .Where(r => r.MesReferencia.Month == mes && r.MesReferencia.Year == ano)
                 .Sum(r => r?.Valor ?? 0);
 
-            var totalDespesa = despesas
-                .Where(d => d.Vencimento.Month == mes && d.Vencimento.Year == ano)
+            var totalDespesa = despesasMes.Sum(d => d.Valor);
+            var totalQuitado = transacoesMes.Sum(t => t?.Valor ?? 0);
+            var faltaQuitar = Math.Max(0m, totalDespesa - totalQuitado);
+            var desvioOrcamento = totalQuitado - totalDespesa;
+            var saldoPlanejado = totalReceita - totalDespesa;
+            var saldoRealizado = totalReceita - totalQuitado;
+            var saldoAposCompromissos = totalReceita - Math.Max(totalDespesa, totalQuitado);
+
+            decimal Planejado(params string[] categorias) => despesasMes
+                .Where(d => CategoriaEh(d.Categoria, categorias))
                 .Sum(d => d.Valor);
 
-            var totalQuitado = transacoes
-                .Where(t => t.Data.Month == mes && t.Data.Year == ano)
-                .Sum(t => t?.Valor ?? 0);
-
-            var gastoPessoalPlanejado = despesas
-                .Where(d => (d.Categoria ?? "").Trim().ToUpper() == "PESSOAL")
-                .Sum(d => d.Valor);
-
-            var gastoPessoal = transacoes
-                .Where(t => t.Despesa != null && (t.Despesa.Categoria ?? "").Trim().ToUpper() == "PESSOAL")
+            decimal Realizado(params string[] categorias) => transacoesMes
+                .Where(t => t.Despesa != null && CategoriaEh(t.Despesa.Categoria, categorias))
                 .Sum(t => t.Valor);
 
-            var gastoDomesticoPlanejado = despesas
-                .Where(d => (d.Categoria ?? "").Trim().ToUpper() == "CASA")
-                .Sum(d => d.Valor);
+            var gastoPessoalPlanejado = Planejado("PESSOAL");
+            var gastoPessoal = Realizado("PESSOAL");
+            var gastoDomesticoPlanejado = Planejado("CASA", "GASTOS DOMESTICOS");
+            var gastoDomestico = Realizado("CASA", "GASTOS DOMESTICOS");
+            var combustivelPlanejado = Planejado("COMBUSTIVEL");
+            var combustivelRealizado = Realizado("COMBUSTIVEL");
 
-            var gastoDomestico = transacoes
-                .Where(t => t.Despesa != null && (t.Despesa.Categoria ?? "").Trim().ToUpper() == "CASA")
-                .Sum(t => t.Valor);
+            var pagosPorDespesa = transacoesMes
+                .GroupBy(t => t.DespesaId)
+                .ToDictionary(g => g.Key, g => g.Sum(t => t.Valor));
 
-            decimal despesaFixaQuitada = transacoes.Where(x => !x.Despesa.Categoria.Equals("PESSOAL")
-                                    && !x.Despesa.Categoria.Equals("GASTOS DOMESTICOS")).Sum(x => x?.Valor ?? 0);
+            var contasPendentes = despesasMes.Count(d =>
+                !pagosPorDespesa.TryGetValue(d.Id, out decimal pago) || pago < d.Valor);
 
+            var categoriasRealizadas = transacoesMes
+                .Where(t => t.Despesa != null)
+                .GroupBy(t => NormalizarCategoria(t.Despesa.Categoria))
+                .Select(g => new { Categoria = g.Key, Total = g.Sum(t => t.Valor) })
+                .OrderByDescending(x => x.Total)
+                .FirstOrDefault();
 
-            var saldo = totalReceita - totalDespesa;
+            var hoje = DateTime.Today;
+            var inicioMesAtual = new DateTime(hoje.Year, hoje.Month, 1);
+            var inicioMesIndicador = new DateTime(ano, mes, 1);
+            var diasNoMes = DateTime.DaysInMonth(ano, mes);
+            var diasDecorridos = inicioMesIndicador < inicioMesAtual
+                ? diasNoMes
+                : inicioMesIndicador == inicioMesAtual ? hoje.Day : 0;
+            var diasRestantes = inicioMesIndicador < inicioMesAtual
+                ? 0
+                : inicioMesIndicador == inicioMesAtual ? diasNoMes - hoje.Day + 1 : diasNoMes;
+            var mediaDiaria = diasDecorridos > 0 ? totalQuitado / diasDecorridos : 0;
+            var limiteDiario = diasRestantes > 0 ? Math.Max(0m, saldoAposCompromissos) / diasRestantes : 0;
+            var comprometimento = totalReceita > 0 ? totalDespesa / totalReceita * 100 : 0;
 
-            // Atualiza textos
-            tvTotalReceita.Text = $"RECEITA: R${totalReceita:N2}";
-            tvTotalDespesa.Text = $"DESPESAS: R${totalDespesa:N2}";
-            tvTotalQuitado.Text = $"DESPESAS QUITADAS: R${totalQuitado:N2}";
-            tvFaltaQuitar.Text = $"GASTOS PREVISTOS EM ABERTO: R${(totalDespesa - totalQuitado):N2}";
-            tvGastosPessoais.Text = $"GASTOS PESSOAIS: R${(gastoPessoalPlanejado - gastoPessoal):N2} DISPONÍVEIS DE R${gastoPessoalPlanejado:N2}";
-            tvGastosDomesticos.Text = $"GASTOS DOMESTICOS: R${(gastoDomesticoPlanejado - gastoDomestico):N2} DISPONÍVEIS DE R${gastoDomesticoPlanejado:N2}";
-            tvSaldo.Text = $"POUPADO: R$ {saldo:N2}";
+            tvSaldo.Text = $"SALDO APOS COMPROMISSOS: R$ {saldoAposCompromissos:N2}";
+            tvTotalDespesa.Text = FormatarAcompanhamento("TOTAL DAS DESPESAS", totalDespesa, totalQuitado);
+            tvGastosPessoais.Text = FormatarAcompanhamento("PESSOAL", gastoPessoalPlanejado, gastoPessoal);
+            tvGastosDomesticos.Text = FormatarAcompanhamento("CASA / DOMESTICOS", gastoDomesticoPlanejado, gastoDomestico);
+            tvCombustivel.Text = FormatarAcompanhamento("COMBUSTIVEL", combustivelPlanejado, combustivelRealizado);
 
+            tvTotalReceita.Text = $"RECEITA DO MES: R$ {totalReceita:N2}";
+            tvTotalQuitado.Text = $"TOTAL REALIZADO: R$ {totalQuitado:N2}";
+            tvFaltaQuitar.Text = $"PREVISTO EM ABERTO: R$ {faltaQuitar:N2}";
+            tvSaldoPlanejado.Text = $"SALDO PLANEJADO: R$ {saldoPlanejado:N2}";
+            tvSaldoRealizado.Text = $"SALDO REALIZADO: R$ {saldoRealizado:N2}";
+            tvDesvioOrcamento.Text = desvioOrcamento > 0
+                ? $"ACIMA DO PLANEJADO: R$ {desvioOrcamento:N2}"
+                : $"ABAIXO DO PLANEJADO: R$ {Math.Abs(desvioOrcamento):N2}";
+            tvComprometimentoRenda.Text = $"COMPROMETIMENTO DA RENDA: {comprometimento:N1}%";
+            tvContasPendentes.Text = $"CONTAS PENDENTES: {contasPendentes} DE {despesasMes.Count}";
+            tvMediaDiaria.Text = $"MEDIA DIARIA REALIZADA: R$ {mediaDiaria:N2}";
+            tvLimiteDiario.Text = diasRestantes > 0
+                ? $"DISPONIVEL POR DIA ({diasRestantes} DIAS): R$ {limiteDiario:N2}"
+                : "DISPONIVEL POR DIA: MES ENCERRADO";
+            tvMaiorCategoria.Text = categoriasRealizadas == null
+                ? "MAIOR CONSUMO: SEM TRANSACOES"
+                : $"MAIOR CONSUMO: {categoriasRealizadas.Categoria} - R$ {categoriasRealizadas.Total:N2}";
 
-
-            //novos indicadores
-            var despesaFixa = totalDespesa - gastoPessoalPlanejado;
-            tvDespesaFixa.Text = $"DESPESA FIXA: {despesaFixa:N2}";
-            tvDespesaFixaQuitada.Text = $"DESPESA FIXA QUITADA: {despesaFixaQuitada:N2}";
-            tvDespFixaAberta.Text = $"DESPESA FIXA ABERTA: {(despesaFixa - despesaFixaQuitada):N2}";
-
-            // Atualiza indicadores
-            progDespesa.Progress = totalDespesa > 0 ? (int)((totalQuitado / totalDespesa) * 100) : 0;
-            progGastosPessoais.Progress = gastoPessoalPlanejado > 0 ? (int)((gastoPessoal / gastoPessoalPlanejado) * 100) : 0;
-            progGastosDomesticos.Progress = gastoDomesticoPlanejado > 0 ? (int)((gastoDomestico / gastoDomesticoPlanejado) * 100) : 0;
-
-            int porcPoupada = 0;
+            progDespesa.Progress = Percentual(totalQuitado, totalDespesa);
+            progGastosPessoais.Progress = Percentual(gastoPessoal, gastoPessoalPlanejado);
+            progGastosDomesticos.Progress = Percentual(gastoDomestico, gastoDomesticoPlanejado);
+            progCombustivel.Progress = Percentual(combustivelRealizado, combustivelPlanejado);
 
             if (totalReceita == 0)
             {
                 tvResumo.Text = "SEM RECEITA REGISTRADA!";
-                tvResumo.SetTextColor(Android.Graphics.Color.ParseColor("#9E9E9E")); // cinza
+                tvResumo.SetTextColor(Android.Graphics.Color.ParseColor("#667785")); // cinza
+            }
+            else if (saldoAposCompromissos < 0)
+            {
+                tvResumo.Text = $"ORCAMENTO NO VERMELHO EM R$ {Math.Abs(saldoAposCompromissos):N2}";
+                tvResumo.SetTextColor(Android.Graphics.Color.ParseColor("#C2414F"));
+            }
+            else if (desvioOrcamento > 0)
+            {
+                tvResumo.Text = $"GASTOS R$ {desvioOrcamento:N2} ACIMA DO PLANEJADO";
+                tvResumo.SetTextColor(Android.Graphics.Color.ParseColor("#B7791F"));
+            }
+            else if (contasPendentes > 0)
+            {
+                tvResumo.Text = $"{contasPendentes} CONTAS AINDA AGUARDAM PAGAMENTO";
+                tvResumo.SetTextColor(Android.Graphics.Color.ParseColor("#B7791F"));
             }
             else
             {
-                porcPoupada = (int)(((totalReceita - totalDespesa) / totalReceita) * 100);
+                tvResumo.Text = "TODAS AS DESPESAS PLANEJADAS FORAM ATENDIDAS";
+                tvResumo.SetTextColor(Android.Graphics.Color.ParseColor("#18794E"));
+            }
+        }
 
-                if (porcPoupada < 0)
-                {
-                    tvResumo.Text = "SITUAÇÃO CRÍTICA! GASTOS MAIORES QUE RECEITA!";
-                    tvResumo.SetTextColor(Android.Graphics.Color.ParseColor("#F44336")); // vermelho
-                }
-                else if (porcPoupada < 20)
-                {
-                    tvResumo.Text = $"VOCÊ ESTÁ POUPANDO SOMENTE {porcPoupada}%";
-                    tvResumo.SetTextColor(Android.Graphics.Color.ParseColor("#FF9800")); // laranja
-                }
-                else
-                {
-                    tvResumo.Text = $"VOCÊ ESTÁ POUPANDO {porcPoupada}% 👏";
-                    tvResumo.SetTextColor(Android.Graphics.Color.ParseColor("#4CAF50")); // verde
-                }
+        private static bool CategoriaEh(string? categoria, params string[] categorias)
+        {
+            var normalizada = NormalizarCategoria(categoria);
+            return categorias.Any(c => string.Equals(normalizada, c, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static string NormalizarCategoria(string? categoria)
+        {
+            return string.IsNullOrWhiteSpace(categoria) ? "OUTROS" : categoria.Trim().ToUpperInvariant();
+        }
+
+        private static int Percentual(decimal realizado, decimal planejado)
+        {
+            return planejado > 0
+                ? Math.Clamp((int)(realizado / planejado * 100), 0, 100)
+                : realizado > 0 ? 100 : 0;
+        }
+
+        private static string FormatarAcompanhamento(string titulo, decimal planejado, decimal realizado)
+        {
+            if (planejado <= 0)
+            {
+                return realizado > 0
+                    ? $"{titulo}: R$ {realizado:N2} | SEM VALOR PLANEJADO"
+                    : $"{titulo}: SEM VALOR PLANEJADO";
             }
 
+            var diferenca = planejado - realizado;
+            var percentual = realizado / planejado * 100;
+            var complemento = diferenca >= 0
+                ? $"restam R$ {diferenca:N2}"
+                : $"excedeu R$ {Math.Abs(diferenca):N2}";
+
+            return $"{titulo}: {percentual:N0}% | R$ {realizado:N2} DE R$ {planejado:N2} | {complemento}";
         }
 
         public void ConfigurarPieChartDespesas(Context context, PieChart chart, List<Despesa> despesas, int mes, int ano)
@@ -223,6 +301,7 @@ namespace PersonalFinance.Resources.Activities
             if (!despesasPorCategoria.Any()) { chart.Clear(); return; }
 
             var totalDespesaMes = despesasPorCategoria.Sum(d => d.Total);
+            if (totalDespesaMes <= 0) { chart.Clear(); return; }
 
             var maiores = despesasPorCategoria
                 .Where(d => d.Total / totalDespesaMes >= 0.05m)
@@ -273,7 +352,8 @@ namespace PersonalFinance.Resources.Activities
         public void ConfigurarBarChartSemanalPorTransacoes(BarChart chart, List<Transacao> transacoes, int mes, int ano)
         {
             var transacoesFiltradas = transacoes
-                .Where(t => t.Data.Month == mes && t.Data.Year == ano && t.Despesa.Categoria == "PESSOAL")
+                .Where(t => t.Data.Month == mes && t.Data.Year == ano &&
+                            t.Despesa != null && CategoriaEh(t.Despesa.Categoria, "PESSOAL"))
                 .ToList();
 
             int GetWeekOfMonth(DateTime date)

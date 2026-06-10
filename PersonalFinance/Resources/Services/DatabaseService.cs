@@ -24,7 +24,7 @@ namespace PersonalFinance.Resources.Services
         internal Task<List<Despesa>> ListaDespesasAsync(DateTime dtInicio, DateTime dtFinal)
         {
             var ls = _db.Table<Despesa>()
-                .Where(x => x.DataCadastro >= dtInicio && x.DataCadastro <= dtFinal)
+                .Where(x => x.Vencimento >= dtInicio && x.Vencimento <= dtFinal)
                 .OrderByDescending(x => x.Valor).ToListAsync();
 
             return ls;

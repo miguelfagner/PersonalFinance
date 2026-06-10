@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/finance_background"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            style="@style/FinanceScreenTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Exportar backup" />
+
+        <TextView
+            style="@style/FinanceScreenSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="20dp"
+            android:text="Gere uma cópia dos seus dados e escolha onde deseja armazená-la." />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card"
+            android:elevation="1dp"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <TextView
+                style="@style/FinanceCardTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Seus dados, sob seu controle" />
+
+            <TextView
+                style="@style/FinanceScreenSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="O arquivo exportado contém o banco de dados local do aplicativo." />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnExportarArquivo"
+            style="@style/FinanceButtonPrimary"
+            android:layout_marginTop="18dp"
+            android:text="Escolher destino" />
+    </LinearLayout>
+</ScrollView>
