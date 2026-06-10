@@ -9,17 +9,14 @@ namespace PersonalFinance.Resources.Activities
     [Activity(Label = "Editar Transacao")]
     public class TransacaoEditActivity : Activity
     {
-        private Spinner _spinnerReceita, _spinnerCategoria;
-        private EditText _edtDescricaoDespesa, _edtVencimentoDespesa, _edtValorDespesa;
-        private EditText _edtData, _edtValor, _edtObservacao;
+        private Spinner _spinnerDespesa;
+        private EditText _edtDescricao, _edtValor, _edtData;
         private Button _btnSalvar, _btnExcluir;
 
         private DatabaseService _db;
         private Transacao _transacao;
-        private Despesa _despesa;
-        private List<Receita> _receitas;
-        private DateTime _vencimentoSelecionado;
-        private DateTime _dataPagamentoSelecionada;
+        private List<Despesa> _despesas;
+        private DateTime _dataSelecionada;
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
@@ -42,144 +39,109 @@ namespace PersonalFinance.Resources.Activities
             }
 
             _transacao = await _db.PegarTransacaoAsync(transacaoId);
-            if (_transacao == null || _transacao.DespesaId == 0)
+            if (_transacao == null)
             {
                 Toast.MakeText(this, "Transacao nao encontrada.", ToastLength.Short).Show();
                 Finish();
                 return;
             }
 
-            _despesa = await _db.PegarDespesaAsync(_transacao.DespesaId);
-            if (_despesa == null)
+            _spinnerDespesa = FindViewById<Spinner>(Resource.Id.spinnerDespesa);
+            _edtDescricao = FindViewById<EditText>(Resource.Id.edtDescricao);
+            _edtValor = FindViewById<EditText>(Resource.Id.edtValor);
+            _edtData = FindViewById<EditText>(Resource.Id.edtData);
+            _btnSalvar = FindViewById<Button>(Resource.Id.btnSalvarTransacao);
+            _btnExcluir = FindViewById<Button>(Resource.Id.btnExcluirTransacao);
+
+            if (!await CarregarDespesasAsync())
             {
-                Toast.MakeText(this, "Despesa da transacao nao encontrada.", ToastLength.Short).Show();
+                Toast.MakeText(this, "Despesa atual da transacao nao encontrada.", ToastLength.Short).Show();
                 Finish();
                 return;
             }
 
-            _spinnerReceita = FindViewById<Spinner>(Resource.Id.spinnerReceita);
-            _spinnerCategoria = FindViewById<Spinner>(Resource.Id.spinnerCategoria);
-            _edtDescricaoDespesa = FindViewById<EditText>(Resource.Id.edtDescricaoDespesa);
-            _edtVencimentoDespesa = FindViewById<EditText>(Resource.Id.edtVencimentoDespesa);
-            _edtValorDespesa = FindViewById<EditText>(Resource.Id.edtValorDespesa);
-            _edtData = FindViewById<EditText>(Resource.Id.edtData);
-            _edtValor = FindViewById<EditText>(Resource.Id.edtValor);
-            _edtObservacao = FindViewById<EditText>(Resource.Id.edtObservacao);
-            _btnSalvar = FindViewById<Button>(Resource.Id.btnSalvarTransacao);
-            _btnExcluir = FindViewById<Button>(Resource.Id.btnExcluirTransacao);
-
-            await CarregarReceitasAsync();
-            CarregarCategorias();
             PreencherCampos();
-            ConfigurarSeletoresDeData();
-            ConfigurarCamposDeValor();
+            ConfigurarSeletorDeData();
+            ConfigurarCampoDeValor();
 
             _btnSalvar.Click += async (s, e) => await SalvarAsync();
             _btnExcluir.Click += async (s, e) => await ConfirmarExclusaoAsync();
         }
 
-        private async Task CarregarReceitasAsync()
+        private async Task<bool> CarregarDespesasAsync()
         {
-            _receitas = await _db.ListaReceitasAsync();
-            _spinnerReceita.Adapter = FormOptions.CreateSpinnerAdapter(this, _receitas.Select(r => r.FontePagadora));
+            _despesas = await _db.ListaDespesasAsync();
+            _spinnerDespesa.Adapter = FormOptions.CreateSpinnerAdapter(this, _despesas.Select(FormatarDespesa));
 
-            int receitaIndex = _receitas.FindIndex(r => r.Id == _despesa.ReceitaId);
-            if (receitaIndex >= 0) _spinnerReceita.SetSelection(receitaIndex);
-        }
+            int despesaIndex = _despesas.FindIndex(d => d.Id == _transacao.DespesaId);
+            if (despesaIndex < 0)
+                return false;
 
-        private void CarregarCategorias()
-        {
-            var categorias = FormOptions.WithCurrentOption(FormOptions.CategoriasDespesa, _despesa.Categoria);
-            _spinnerCategoria.Adapter = FormOptions.CreateSpinnerAdapter(this, categorias);
-
-            int categoriaIndex = categorias.FindIndex(c => string.Equals(c, _despesa.Categoria, StringComparison.OrdinalIgnoreCase));
-            if (categoriaIndex >= 0) _spinnerCategoria.SetSelection(categoriaIndex);
+            _spinnerDespesa.SetSelection(despesaIndex);
+            return true;
         }
 
         private void PreencherCampos()
         {
-            _vencimentoSelecionado = _despesa.Vencimento == default ? DateTime.Today : _despesa.Vencimento;
-            _dataPagamentoSelecionada = _transacao.Data == default ? DateTime.Today : _transacao.Data;
+            _dataSelecionada = _transacao.Data == default ? DateTime.Today : _transacao.Data;
 
-            _edtDescricaoDespesa.Text = _despesa.Descricao;
-            _edtVencimentoDespesa.Text = _vencimentoSelecionado.ToString("dd/MM/yyyy");
-            _edtValorDespesa.Text = _despesa.Valor.ToString("F2", new CultureInfo("pt-BR"));
-
-            _edtData.Text = _dataPagamentoSelecionada.ToString("dd/MM/yyyy");
+            _edtDescricao.Text = _transacao.Observacao;
             _edtValor.Text = _transacao.Valor.ToString("F2", new CultureInfo("pt-BR"));
-            _edtObservacao.Text = _transacao.Observacao;
+            _edtData.Text = _dataSelecionada.ToString("dd/MM/yyyy");
         }
 
-        private void ConfigurarSeletoresDeData()
+        private void ConfigurarSeletorDeData()
         {
-            _edtVencimentoDespesa.Click += (s, e) =>
-            {
-                var dialog = new DatePickerDialog(this, (sender, args) =>
-                {
-                    _vencimentoSelecionado = args.Date;
-                    _edtVencimentoDespesa.Text = _vencimentoSelecionado.ToString("dd/MM/yyyy");
-                }, _vencimentoSelecionado.Year, _vencimentoSelecionado.Month - 1, _vencimentoSelecionado.Day);
-
-                dialog.Show();
-            };
-
             _edtData.Click += (s, e) =>
             {
                 var dialog = new DatePickerDialog(this, (sender, args) =>
                 {
-                    _dataPagamentoSelecionada = args.Date;
-                    _edtData.Text = _dataPagamentoSelecionada.ToString("dd/MM/yyyy");
-                }, _dataPagamentoSelecionada.Year, _dataPagamentoSelecionada.Month - 1, _dataPagamentoSelecionada.Day);
+                    _dataSelecionada = args.Date;
+                    _edtData.Text = _dataSelecionada.ToString("dd/MM/yyyy");
+                }, _dataSelecionada.Year, _dataSelecionada.Month - 1, _dataSelecionada.Day);
 
                 dialog.Show();
             };
         }
 
-        private void ConfigurarCamposDeValor()
+        private void ConfigurarCampoDeValor()
         {
-            _edtValorDespesa.TextChanged += (s, e) => NormalizarDecimal(_edtValorDespesa);
-            _edtValor.TextChanged += (s, e) => NormalizarDecimal(_edtValor);
-        }
-
-        private static void NormalizarDecimal(EditText campo)
-        {
-            if (campo.Text.Contains("."))
-            {
-                campo.Text = campo.Text.Replace(".", ",");
-                campo.SetSelection(campo.Text.Length);
-            }
+            MoneyInputFormatter.Configure(_edtValor);
         }
 
         private async Task SalvarAsync()
         {
             try
             {
-                var receitaIndex = _spinnerReceita.SelectedItemPosition;
-                if (receitaIndex < 0 || receitaIndex >= _receitas.Count)
+                int despesaIndex = _spinnerDespesa.SelectedItemPosition;
+                if (despesaIndex < 0 || despesaIndex >= _despesas.Count)
                 {
-                    Toast.MakeText(this, "Selecione uma receita.", ToastLength.Short).Show();
+                    Toast.MakeText(this, "Selecione uma despesa.", ToastLength.Short).Show();
                     return;
                 }
 
-                _despesa.ReceitaId = _receitas[receitaIndex].Id;
-                _despesa.Categoria = _spinnerCategoria.SelectedItem?.ToString();
-                _despesa.Descricao = _edtDescricaoDespesa.Text?.Trim().ToUpperInvariant();
-                _despesa.Vencimento = _vencimentoSelecionado;
-                _despesa.Valor = ParseDecimal(_edtValorDespesa.Text);
-
-                _transacao.Data = _dataPagamentoSelecionada;
-                _transacao.Valor = ParseDecimal(_edtValor.Text);
-                _transacao.Observacao = _edtObservacao.Text?.Trim();
-
-                if (_despesa.Valor <= 0 || _transacao.Valor <= 0)
+                decimal valor = MoneyInputFormatter.Parse(_edtValor.Text);
+                if (valor <= 0)
                 {
-                    Toast.MakeText(this, "Informe valores validos.", ToastLength.Short).Show();
+                    Toast.MakeText(this, "Informe um valor valido.", ToastLength.Short).Show();
                     return;
                 }
 
-                await _db.SalvarDespesaAsync(_despesa);
+                int despesaAnteriorId = _transacao.DespesaId;
+                int novaDespesaId = _despesas[despesaIndex].Id;
+
+                _transacao.DespesaId = novaDespesaId;
+                _transacao.Observacao = _edtDescricao.Text?.Trim();
+                _transacao.Valor = valor;
+                _transacao.Data = _dataSelecionada;
+
+                _btnSalvar.Enabled = false;
+
                 await _db.SalvarTransacaoAsync(_transacao);
-                await _db.AtualizaStatusAsync(_despesa.Id);
+                await _db.AtualizaStatusAsync(despesaAnteriorId);
+
+                if (novaDespesaId != despesaAnteriorId)
+                    await _db.AtualizaStatusAsync(novaDespesaId);
 
                 Toast.MakeText(this, "Transacao atualizada!", ToastLength.Short).Show();
                 Finish();
@@ -187,6 +149,10 @@ namespace PersonalFinance.Resources.Activities
             catch (Exception ex)
             {
                 Toast.MakeText(this, "Erro ao salvar: " + ex.Message, ToastLength.Long).Show();
+            }
+            finally
+            {
+                _btnSalvar.Enabled = true;
             }
         }
 
@@ -217,11 +183,9 @@ namespace PersonalFinance.Resources.Activities
                 .Show();
         }
 
-        private static decimal ParseDecimal(string text)
+        private static string FormatarDespesa(Despesa despesa)
         {
-            return decimal.TryParse(text, NumberStyles.Any, new CultureInfo("pt-BR"), out decimal value)
-                ? value
-                : 0;
+            return $"{despesa.Descricao} - {despesa.Categoria} - R$ {despesa.Valor:F2}";
         }
     }
 }

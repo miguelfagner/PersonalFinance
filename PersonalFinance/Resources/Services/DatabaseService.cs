@@ -86,6 +86,11 @@ namespace PersonalFinance.Resources.Services
 
             var totalPago = transacoes.Sum(x => x.Valor);
 
+            if (totalPago > despesa.Valor)
+            {
+                despesa.Valor = totalPago;
+            }
+
             if (totalPago == despesa.Valor)
             {
                 despesa.Sttatus = true; // quitado

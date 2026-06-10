@@ -47,7 +47,7 @@ namespace PersonalFinance.Resources.Activities
 
             _spinnerDespesa.ItemSelected += async (s, e) =>
             {
-                if (e.Position >= 0 && e.Position < _despesas.Count && string.IsNullOrWhiteSpace(_edtValor.Text))
+                if (e.Position >= 0 && e.Position < _despesas.Count && MoneyInputFormatter.Parse(_edtValor.Text) == 0)
                 {
                     await PreencherCamposAsync(db, _despesas[e.Position]);
                 }
@@ -68,14 +68,7 @@ namespace PersonalFinance.Resources.Activities
                 dialog.Show();
             };
 
-            _edtValor.TextChanged += (s, e) =>
-            {
-                if (_edtValor.Text.Contains("."))
-                {
-                    _edtValor.Text = _edtValor.Text.Replace(".", ",");
-                    _edtValor.SetSelection(_edtValor.Text.Length);
-                }
-            };
+            MoneyInputFormatter.Configure(_edtValor);
 
             _btnSalvar.Click += async (s, e) =>
             {
@@ -86,7 +79,8 @@ namespace PersonalFinance.Resources.Activities
                     return;
                 }
 
-                if (!decimal.TryParse(_edtValor.Text.Replace(",", "."), NumberStyles.Any, CultureInfo.InvariantCulture, out decimal valor) || valor <= 0)
+                decimal valor = MoneyInputFormatter.Parse(_edtValor.Text);
+                if (valor <= 0)
                 {
                     Toast.MakeText(this, "Informe um valor válido.", ToastLength.Short).Show();
                     return;
@@ -130,7 +124,7 @@ namespace PersonalFinance.Resources.Activities
                 var transacoes = await db.ListaTransacoesAsync(despesa.Id);
                 var valorRestante = despesa.Valor - transacoes.Sum(x => x.Valor);
 
-                _edtValor.Text = valorRestante.ToString("F2", new CultureInfo("pt-BR"));
+                MoneyInputFormatter.SetValue(_edtValor, valorRestante);
                 _edtObservacao.Text = string.IsNullOrWhiteSpace(_edtObservacao.Text)
                     ? despesa.Descricao
                     : _edtObservacao.Text;
