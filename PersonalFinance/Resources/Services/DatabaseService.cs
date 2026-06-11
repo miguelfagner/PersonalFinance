@@ -37,6 +37,37 @@ namespace PersonalFinance.Resources.Services
                 .ToListAsync();
         }
 
+        internal async Task<List<DespesaEmAberto>> ListaDespesasEmAbertoAsync(DateTime dtInicio, DateTime dtFinal)
+        {
+            var despesas = await _db.Table<Despesa>()
+                .Where(x => x.Vencimento >= dtInicio && x.Vencimento <= dtFinal)
+                .OrderBy(x => x.Vencimento)
+                .ToListAsync();
+            var transacoes = await _db.Table<Transacao>().ToListAsync();
+            var idsDespesasDoMes = despesas.Select(x => x.Id).ToHashSet();
+            var pagamentosPorDespesa = transacoes
+                .Where(x => idsDespesasDoMes.Contains(x.DespesaId))
+                .GroupBy(x => x.DespesaId)
+                .ToDictionary(grupo => grupo.Key, grupo => grupo.Sum(x => x.Valor));
+
+            return despesas
+                .Select(despesa =>
+                {
+                    pagamentosPorDespesa.TryGetValue(despesa.Id, out var totalPago);
+
+                    return new DespesaEmAberto
+                    {
+                        Despesa = despesa,
+                        TotalPago = totalPago,
+                        ValorRestante = Math.Max(0m, despesa.Valor - totalPago)
+                    };
+                })
+                .Where(item => item.ValorRestante > 0)
+                .OrderBy(item => item.Despesa.Vencimento)
+                .ThenByDescending(item => item.ValorRestante)
+                .ToList();
+        }
+
         internal Task<int> SalvarDespesaAsync(Despesa despesa)
         {
             if (despesa.Id != 0)

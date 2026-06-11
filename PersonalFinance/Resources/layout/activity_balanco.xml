@@ -285,14 +285,14 @@
                     android:textSize="14sp"
                     android:textStyle="bold" />-->
 
-                <!--<TextView
+                <TextView
                     android:id="@+id/tvMaiorCategoria"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="MAIOR CONSUMO: SEM TRANSACOES"
                     android:textColor="@color/finance_text_secondary"
                     android:textSize="14sp"
-                    android:textStyle="bold" />-->
+                    android:textStyle="bold" />
 
             </LinearLayout>
 

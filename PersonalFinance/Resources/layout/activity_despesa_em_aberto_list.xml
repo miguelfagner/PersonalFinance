@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/finance_background"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:background="@drawable/bg_card"
+        android:elevation="1dp"
+        android:orientation="vertical"
+        android:padding="18dp">
+
+        <TextView
+            style="@style/FinanceSectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TOTAL A QUITAR NO MÊS" />
+
+        <TextView
+            android:id="@+id/tvTotalRestante"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="R$ 0,00"
+            android:textColor="@color/finance_danger"
+            android:textSize="28sp" />
+
+        <TextView
+            android:id="@+id/tvResumoPendencias"
+            style="@style/FinanceScreenSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="0 despesas em aberto" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvSemPendencias"
+        style="@style/FinanceScreenSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="28dp"
+        android:text="Nenhuma despesa em aberto."
+        android:visibility="gone" />
+
+    <ListView
+        android:id="@+id/listDespesasEmAberto"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clipToPadding="false"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="10dp" />
+</LinearLayout>

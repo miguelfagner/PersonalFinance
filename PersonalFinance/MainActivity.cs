@@ -16,12 +16,26 @@ namespace PersonalFinance
             var btnDespesaLista = FindViewById<Button>(Resource.Id.btnListarDespesas);
             var btnTransacaoLista = FindViewById<Button>(Resource.Id.btnListarTransacoes);
             var btnBalanco = FindViewById<Button>(Resource.Id.btnBalanco);
+            var btnValoresAQuitar = FindViewById<Button>(Resource.Id.btnValoresAQuitar);
             var btnExportar = FindViewById<Button>(Resource.Id.btnExportarBackup);
+            var btnImportar = FindViewById<Button>(Resource.Id.btnImportarBackup);
 
 
             btnExportar.Click += (s, e) =>
             {
                 var intent = new Intent(this, typeof(BackupExportActivity));
+                StartActivity(intent);
+            };
+
+            btnImportar.Click += (s, e) =>
+            {
+                var intent = new Intent(this, typeof(BackupImportActivity));
+                StartActivity(intent);
+            };
+
+            btnValoresAQuitar.Click += (s, e) =>
+            {
+                var intent = new Intent(this, typeof(DespesaEmAbertoListActivity));
                 StartActivity(intent);
             };
 

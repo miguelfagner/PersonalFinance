@@ -52,6 +52,12 @@
             style="@style/FinanceButtonPrimary"
             android:text="Abrir balanço mensal" />
 
+        <Button
+            android:id="@+id/btnValoresAQuitar"
+            style="@style/FinanceButtonSecondary"
+            android:layout_marginTop="10dp"
+            android:text="Valores a quitar" />
+
         <TextView
             style="@style/FinanceSectionTitle"
             android:layout_width="match_parent"
@@ -81,7 +87,13 @@
             android:id="@+id/btnExportarBackup"
             style="@style/FinanceButtonSecondary"
             android:layout_marginTop="22dp"
-            android:layout_marginBottom="12dp"
             android:text="Exportar backup" />
+
+        <Button
+            android:id="@+id/btnImportarBackup"
+            style="@style/FinanceButtonSecondary"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="12dp"
+            android:text="Importar backup" />
     </LinearLayout>
 </ScrollView>

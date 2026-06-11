@@ -52,7 +52,7 @@ namespace PersonalFinance.Resources.Activities
             tvContasPendentes = FindViewById<TextView>(Resource.Id.tvContasPendentes);
             tvMediaDiaria = FindViewById<TextView>(Resource.Id.tvMediaDiaria);
             tvLimiteDiario = FindViewById<TextView>(Resource.Id.tvLimiteDiario);
-            //tvMaiorCategoria = FindViewById<TextView>(Resource.Id.tvMaiorCategoria);
+            tvMaiorCategoria = FindViewById<TextView>(Resource.Id.tvMaiorCategoria);
 
             // ProgressBars
             progDespesa = FindViewById<ProgressBar>(Resource.Id.progDespesa);

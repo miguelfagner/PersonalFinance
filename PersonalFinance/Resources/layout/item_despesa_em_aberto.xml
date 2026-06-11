@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_card"
+    android:elevation="1dp"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvDescricaoAberta"
+            style="@style/FinanceItemTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Descrição" />
+
+        <TextView
+            android:id="@+id/tvSituacaoAberta"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="PENDENTE"
+            android:textColor="@color/finance_text_secondary"
+            android:textSize="11sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvCategoriaVencimento"
+        style="@style/FinanceItemMeta"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Categoria - Vence em 01/01/2026" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvValorOriginal"
+            style="@style/FinanceItemMeta"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Valor: R$ 0,00" />
+
+        <TextView
+            android:id="@+id/tvValorPago"
+            style="@style/FinanceItemMeta"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="end"
+            android:text="Pago: R$ 0,00" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvValorRestante"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="sans-serif-medium"
+            android:text="Falta: R$ 0,00"
+            android:textColor="@color/finance_danger"
+            android:textSize="17sp" />
+
+        <Button
+            android:id="@+id/btnQuitarAberta"
+            android:layout_width="82dp"
+            android:layout_height="44dp"
+            android:background="@drawable/bg_button_primary"
+            android:backgroundTint="@null"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:stateListAnimator="@null"
+            android:text="Quitar"
+            android:textAllCaps="false"
+            android:textColor="@color/finance_white"
+            android:textSize="12sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+</LinearLayout>
