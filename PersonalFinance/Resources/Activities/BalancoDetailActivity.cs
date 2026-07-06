@@ -200,6 +200,8 @@ namespace PersonalFinance.Resources.Activities
             tvGastosDomesticos.Text = FormatarAcompanhamento("CASA / DOMESTICOS", gastoDomesticoPlanejado, gastoDomestico);
             tvCombustivel.Text = FormatarAcompanhamento("COMBUSTIVEL", combustivelPlanejado, combustivelRealizado);
 
+            
+            
             tvTotalReceita.Text = $"RECEITA DO MES: R$ {totalReceita:N2}";
             tvTotalQuitado.Text = $"TOTAL REALIZADO: R$ {totalQuitado:N2}";
             tvFaltaQuitar.Text = $"PREVISTO EM ABERTO: R$ {faltaQuitar:N2}";
@@ -209,7 +211,11 @@ namespace PersonalFinance.Resources.Activities
             tvComprometimentoRenda.Text = $"COMPROMETIMENTO DA RENDA: {comprometimento:N1}%";
             tvContasPendentes.Text = $"CONTAS PENDENTES: {contasPendentes} DE {despesasMes.Count}";
             tvMediaDiaria.Text = $"MEDIA DIARIA REALIZADA: R$ {mediaDiaria:N2}";
+            
+            
             tvLimiteDiario.Text = diasRestantes > 0 ? $"DISPONIVEL POR DIA ({diasRestantes} DIAS): R$ {gastoPessoalDiarioPlan:N2}" : "DISPONIVEL POR DIA: MES ENCERRADO";
+            
+            
             tvMaiorCategoria.Text = categoriasRealizadas == null ? "MAIOR CONSUMO: SEM TRANSACOES" : $"MAIOR CONSUMO: {categoriasRealizadas.Categoria} - R$ {categoriasRealizadas.Total:N2}";
 
             progDespesa.Progress = Percentual(totalQuitado, totalDespesa);
@@ -273,11 +279,8 @@ namespace PersonalFinance.Resources.Activities
 
             var diferenca = planejado - realizado;
             var percentual = realizado / planejado * 100;
-            var complemento = diferenca >= 0
-                ? $"restam R$ {diferenca:N2}"
-                : $"excedeu R$ {Math.Abs(diferenca):N2}";
 
-            return $"{titulo}: {percentual:N0}% | R$ {realizado:N2} DE R$ {planejado:N2} | {complemento}";
+            return $"{titulo}: R$ {realizado:N2} DE R$ {planejado:N2} | {percentual:N0}%";
         }
 
         public void ConfigurarPieChartDespesas(Context context, PieChart chart, List<Despesa> despesas, int mes, int ano)
