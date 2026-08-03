@@ -18,5 +18,11 @@ namespace PersonalFinance.Resources.Models
         public string Tipo { get; set; }
 
         public decimal Valor { get; set; }
+
+        [Indexed(Name = "UX_Receita_Modelo_Competencia", Order = 1, Unique = true)]
+        public int? ReceitaFixaId { get; set; }
+
+        [Indexed(Name = "UX_Receita_Modelo_Competencia", Order = 2, Unique = true)]
+        public DateTime? CompetenciaGeracao { get; set; }
     }
 }

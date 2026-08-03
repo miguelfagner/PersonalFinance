@@ -2,6 +2,7 @@ using Android.Views;
 using PersonalFinance.Resources.Helpers;
 using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
+using PersonalFinance.Resources.Widgets;
 using System.Globalization;
 
 namespace PersonalFinance.Resources.Activities
@@ -143,6 +144,8 @@ namespace PersonalFinance.Resources.Activities
                 if (novaDespesaId != despesaAnteriorId)
                     await _db.AtualizaStatusAsync(novaDespesaId);
 
+                await PersonalFinanceWidgetProvider.AtualizarTodosAsync(this);
+
                 Toast.MakeText(this, "Transacao atualizada!", ToastLength.Short).Show();
                 Finish();
             }
@@ -170,6 +173,7 @@ namespace PersonalFinance.Resources.Activities
                         int despesaId = _transacao.DespesaId;
                         await _db.DeletarTransacaoAsync(_transacao);
                         await _db.AtualizaStatusAsync(despesaId);
+                        await PersonalFinanceWidgetProvider.AtualizarTodosAsync(this);
 
                         Toast.MakeText(this, "Transacao excluida!", ToastLength.Short).Show();
                         Finish();

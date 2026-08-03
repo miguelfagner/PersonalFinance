@@ -64,6 +64,25 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="26dp"
             android:layout_marginBottom="10dp"
+            android:text="PLANEJAMENTO MENSAL" />
+
+        <Button
+            android:id="@+id/btnPrepararProximoMes"
+            style="@style/FinanceButtonPrimary"
+            android:text="Preparar próximo mês" />
+
+        <Button
+            android:id="@+id/btnLancamentosFixos"
+            style="@style/FinanceButtonSecondary"
+            android:layout_marginTop="10dp"
+            android:text="Gerenciar lançamentos fixos" />
+
+        <TextView
+            style="@style/FinanceSectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="26dp"
+            android:layout_marginBottom="10dp"
             android:text="GERENCIAR" />
 
         <Button

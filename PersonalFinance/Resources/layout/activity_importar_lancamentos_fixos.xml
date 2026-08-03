@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/finance_background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            style="@style/FinanceScreenTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Importar lançamentos" />
+
+        <TextView
+            style="@style/FinanceScreenSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="18dp"
+            android:text="Transforme receitas e despesas de um mês em modelos fixos." />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <TextView
+                style="@style/FinanceFieldLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mês de origem" />
+
+            <EditText
+                android:id="@+id/edtCompetenciaImportacao"
+                style="@style/FinanceInput"
+                android:clickable="true"
+                android:focusable="false"
+                android:hint="MM/AAAA" />
+
+            <Button
+                android:id="@+id/btnCarregarImportacao"
+                style="@style/FinanceButtonSecondary"
+                android:layout_marginTop="12dp"
+                android:text="Carregar lançamentos" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tvResumoImportacao"
+            style="@style/FinanceScreenSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="Escolha um mês para continuar." />
+
+        <TextView
+            style="@style/FinanceSectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="RECEITAS" />
+
+        <LinearLayout
+            android:id="@+id/containerReceitasImportacao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical" />
+
+        <TextView
+            style="@style/FinanceSectionTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="DESPESAS" />
+
+        <LinearLayout
+            android:id="@+id/containerDespesasImportacao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="vertical" />
+
+        <Button
+            android:id="@+id/btnImportarSelecionados"
+            style="@style/FinanceButtonPrimary"
+            android:layout_marginTop="22dp"
+            android:layout_marginBottom="12dp"
+            android:enabled="false"
+            android:text="Criar modelos fixos" />
+    </LinearLayout>
+</ScrollView>

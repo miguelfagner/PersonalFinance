@@ -5,6 +5,7 @@ using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
 using PersonalFinance.Resources.ViewModels;
 using PersonalFinance.Resources.Helpers;
+using PersonalFinance.Resources.Widgets;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -40,9 +41,15 @@ namespace PersonalFinance.Resources.Activities
             _edtData = FindViewById<EditText>(Resource.Id.edtVencimento);
             _btnSalvar = FindViewById<Button>(Resource.Id.btnSalvar);
 
+            int mesInicial = Intent.GetIntExtra("Mes", DateTime.Today.Month);
+            int anoInicial = Intent.GetIntExtra("Ano", DateTime.Today.Year);
+            int diaInicial = Math.Min(DateTime.Today.Day, DateTime.DaysInMonth(anoInicial, mesInicial));
+            _dataSelecionada = new DateTime(anoInicial, mesInicial, diaInicial);
+
             // Carregar receitas do banco
             var db = new DatabaseService();
-            _receitas = await db.ListaReceitasAsync();
+            var inicioMes = new DateTime(anoInicial, mesInicial, 1);
+            _receitas = await db.ListaReceitasAsync(inicioMes, inicioMes.AddMonths(1));
 
             // Adapter do Spinner
             _spinnerReceita.Adapter = FormOptions.CreateSpinnerAdapter(this, _receitas.Select(r => r.FontePagadora));
@@ -129,6 +136,7 @@ namespace PersonalFinance.Resources.Activities
                 bool sucesso = await _viewModel.SalvarDespesa();
                 if (sucesso)
                 {
+                    await PersonalFinanceWidgetProvider.AtualizarTodosAsync(this);
                     Toast.MakeText(this, "Despesa cadastrada!", ToastLength.Short).Show();
                     Finish(); // fecha Activity e volta para a lista
                 }

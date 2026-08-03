@@ -68,7 +68,7 @@ namespace PersonalFinance.Resources.Activities
 
             var mesRef = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
             var dtInicio = new DateTime(mesRef.Year, mesRef.Month, 1);
-            var dtFinal = new DateTime(mesRef.Year, mesRef.Month, DateTime.DaysInMonth(mesRef.Year, mesRef.Month));
+            var dtFinal = dtInicio.AddMonths(1);
 
             // Gesture detector
             _gestureDetector = new GestureDetector(this, new SwipeGestureListener(
@@ -76,14 +76,14 @@ namespace PersonalFinance.Resources.Activities
                 {
                     mesRef = mesRef.AddMonths(-1);
                     dtInicio = new DateTime(mesRef.Year, mesRef.Month, 1);
-                    dtFinal = new DateTime(mesRef.Year, mesRef.Month, DateTime.DaysInMonth(mesRef.Year, mesRef.Month));
+                    dtFinal = dtInicio.AddMonths(1);
                     await CarregarDadosAsync(dtInicio, dtFinal);
                 },
                 onSwipeLeft: async () =>
                 {
                     mesRef = mesRef.AddMonths(1);
                     dtInicio = new DateTime(mesRef.Year, mesRef.Month, 1);
-                    dtFinal = new DateTime(mesRef.Year, mesRef.Month, DateTime.DaysInMonth(mesRef.Year, mesRef.Month));
+                    dtFinal = dtInicio.AddMonths(1);
                     await CarregarDadosAsync(dtInicio, dtFinal);
                 }
             ));

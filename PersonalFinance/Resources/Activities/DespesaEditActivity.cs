@@ -4,6 +4,7 @@ using PersonalFinance.Resources.Helpers;
 using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
 using System.Globalization;
+using PersonalFinance.Resources.Widgets;
 
 namespace PersonalFinance.Resources.Activities
 {
@@ -73,6 +74,12 @@ namespace PersonalFinance.Resources.Activities
             _edtDescricao.Text = _despesa.Descricao;
             _edtValor.Text = _despesa.Valor.ToString("F2", new CultureInfo("pt-BR"));
 
+            if (_despesa.CompetenciaGeracao.HasValue)
+            {
+                _spinnerReceita.Enabled = false;
+                _edtNParcela.Enabled = false;
+            }
+
             _edtVencimento.Click += (s, e) =>
             {
                 DateTime dataAtual = _despesa.Vencimento != default ? _despesa.Vencimento : DateTime.Now;
@@ -81,6 +88,16 @@ namespace PersonalFinance.Resources.Activities
                 {
                     _edtVencimento.Text = args.Date.ToString("dd/MM/yyyy");
                 }, dataAtual.Year, dataAtual.Month - 1, dataAtual.Day);
+
+                if (_despesa.CompetenciaGeracao.HasValue)
+                {
+                    var inicio = new DateTime(
+                        _despesa.CompetenciaGeracao.Value.Year,
+                        _despesa.CompetenciaGeracao.Value.Month,
+                        1);
+                    dialog.DatePicker.MinDate = new DateTimeOffset(inicio).ToUnixTimeMilliseconds();
+                    dialog.DatePicker.MaxDate = new DateTimeOffset(inicio.AddMonths(1).AddDays(-1)).ToUnixTimeMilliseconds();
+                }
 
                 dialog.Show();
             };
@@ -102,12 +119,23 @@ namespace PersonalFinance.Resources.Activities
                     _despesa.NParcela = int.TryParse(_edtNParcela.Text, out int nParcela) ? nParcela : 0;
 
                     if (DateTime.TryParseExact(_edtVencimento.Text, "dd/MM/yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime venc))
+                    {
+                        if (_despesa.CompetenciaGeracao.HasValue &&
+                            (venc.Month != _despesa.CompetenciaGeracao.Value.Month ||
+                             venc.Year != _despesa.CompetenciaGeracao.Value.Year))
+                        {
+                            Toast.MakeText(this, "Um lançamento gerado não pode ser movido para outra competência.", ToastLength.Short).Show();
+                            return;
+                        }
+
                         _despesa.Vencimento = venc;
+                    }
 
                     _despesa.Valor = decimal.TryParse(_edtValor.Text, NumberStyles.Any, new CultureInfo("pt-BR"), out decimal valor) ? valor : 0;
 
                     await _db.SalvarDespesaAsync(_despesa);
                     await _db.AtualizaStatusAsync(_despesa.Id);
+                    await PersonalFinanceWidgetProvider.AtualizarTodosAsync(this);
 
                     Toast.MakeText(this, "Despesa atualizada!", ToastLength.Short).Show();
                     Finish();
@@ -128,6 +156,7 @@ namespace PersonalFinance.Resources.Activities
                         try
                         {
                             await _db.DeletarDespesaAsync(_despesa);
+                            await PersonalFinanceWidgetProvider.AtualizarTodosAsync(this);
 
                             Toast.MakeText(this, "Despesa excluída!", ToastLength.Short).Show();
                             Finish();
@@ -172,6 +201,7 @@ namespace PersonalFinance.Resources.Activities
 
                 await _db.SalvarTransacaoAsync(transacao);
                 await _db.AtualizaStatusAsync(despesa.Id);
+                await PersonalFinanceWidgetProvider.AtualizarTodosAsync(this);
 
                 despesa.Sttatus = true;
 

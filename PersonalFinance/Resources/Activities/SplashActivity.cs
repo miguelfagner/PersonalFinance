@@ -20,7 +20,7 @@ namespace PersonalFinance.Resources.Activities
 
             var hoje = DateTime.Today;
             var inicioMes = new DateTime(hoje.Year, hoje.Month, 1);
-            var fimMes = inicioMes.AddMonths(1).AddTicks(-1);
+            var fimMes = inicioMes.AddMonths(1);
 
             var banco = new DatabaseService();
             var receitasTask = banco.ListaReceitasAsync(inicioMes, fimMes);

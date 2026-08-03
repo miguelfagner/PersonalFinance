@@ -76,20 +76,29 @@ namespace PersonalFinance.Resources.Activities
             _edtTipo.Text = _receita.Tipo;
             _edtValor.Text = _receita.Valor.ToString("F2", new CultureInfo("pt-BR"));
 
-            _edtMesReferencia.Click += (s, e) =>
+            if (_receita.CompetenciaGeracao.HasValue)
             {
-                var dialog = new DatePickerDialog(this,
-                    (sender, args) =>
-                    {
-                        _mesSelecionado = new DateTime(args.Date.Year, args.Date.Month, 1);
-                        _edtMesReferencia.Text = _mesSelecionado.ToString("MM/yyyy");
-                    },
-                    _mesSelecionado.Year,
-                    _mesSelecionado.Month - 1,
-                    1);
+                _edtMesReferencia.Enabled = false;
+                _edtMesReferencia.Alpha = 0.65f;
+            }
 
-                dialog.Show();
-            };
+            if (!_receita.CompetenciaGeracao.HasValue)
+            {
+                _edtMesReferencia.Click += (s, e) =>
+                {
+                    var dialog = new DatePickerDialog(this,
+                        (sender, args) =>
+                        {
+                            _mesSelecionado = new DateTime(args.Date.Year, args.Date.Month, 1);
+                            _edtMesReferencia.Text = _mesSelecionado.ToString("MM/yyyy");
+                        },
+                        _mesSelecionado.Year,
+                        _mesSelecionado.Month - 1,
+                        1);
+
+                    dialog.Show();
+                };
+            }
 
 
             // ajustar o valor decimal

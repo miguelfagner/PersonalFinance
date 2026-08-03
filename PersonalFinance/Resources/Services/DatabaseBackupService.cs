@@ -48,6 +48,10 @@ namespace PersonalFinance.Resources.Services
                 DeleteDatabaseSidecars();
 
                 ValidateBackup(DatabasePath);
+
+                // Migra tabelas, colunas e indices antes de confirmar a substituicao.
+                // Se qualquer etapa falhar, o catch abaixo ainda restaura o banco anterior.
+                _ = new DatabaseService();
             }
             catch (Exception importException)
             {

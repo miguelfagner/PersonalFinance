@@ -13,6 +13,7 @@ namespace PersonalFinance.Resources.Activities
         List<Despesa> despesas;
         private DatabaseService _db;
         private DespesaAdapter adapter;
+        private DateTime _competencia;
 
         protected override async void OnCreate(Bundle savedInstanceState)
         {
@@ -24,10 +25,14 @@ namespace PersonalFinance.Resources.Activities
 
             _db = new DatabaseService();
 
+            int mes = Intent.GetIntExtra("Mes", DateTime.Today.Month);
+            int ano = Intent.GetIntExtra("Ano", DateTime.Today.Year);
+            _competencia = new DateTime(ano, mes, 1);
+            Title = $"Despesas - {_competencia:MM/yyyy}";
+
             // Carrega a lista inicial
-            var mesRef = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            var dtInicio = new DateTime(mesRef.Year, mesRef.Month, 1);
-            var dtFinal = new DateTime(mesRef.Year, mesRef.Month, DateTime.DaysInMonth(mesRef.Year, mesRef.Month));
+            var dtInicio = _competencia;
+            var dtFinal = _competencia.AddMonths(1);
 
             despesas = await _db.ListaDespesasAsync(dtInicio, dtFinal);
             adapter = new DespesaAdapter(this, despesas);
@@ -45,6 +50,8 @@ namespace PersonalFinance.Resources.Activities
             btnAddDespesa.Click += (s, e) =>
             {
                 var intent = new Intent(this, typeof(DespesaCreateActivity));
+                intent.PutExtra("Mes", _competencia.Month);
+                intent.PutExtra("Ano", _competencia.Year);
                 StartActivity(intent);
             };
         }
@@ -54,9 +61,8 @@ namespace PersonalFinance.Resources.Activities
             base.OnResume();
 
             // Atualiza a lista sempre que voltar para a Activity
-            var mesRef = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            var dtInicio = new DateTime(mesRef.Year, mesRef.Month, 1);
-            var dtFinal = new DateTime(mesRef.Year, mesRef.Month, DateTime.DaysInMonth(mesRef.Year, mesRef.Month));
+            var dtInicio = _competencia;
+            var dtFinal = _competencia.AddMonths(1);
 
             despesas = await _db.ListaDespesasAsync(dtInicio, dtFinal);
 

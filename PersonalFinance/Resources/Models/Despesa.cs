@@ -30,5 +30,11 @@ namespace PersonalFinance.Resources.Models
         public bool? Sttatus { get; set; } //true quitado, null pendente, false parcialmente quitado
         public bool replicavel { get; set; }
 
+        [Indexed(Name = "UX_Despesa_Modelo_Competencia", Order = 1, Unique = true)]
+        public int? DespesaFixaId { get; set; }
+
+        [Indexed(Name = "UX_Despesa_Modelo_Competencia", Order = 2, Unique = true)]
+        public DateTime? CompetenciaGeracao { get; set; }
+
     }
 }

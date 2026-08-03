@@ -46,7 +46,7 @@ namespace PersonalFinance.Resources.Activities
         private async Task CarregarDespesasAsync()
         {
             var inicioMes = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            var fimMes = inicioMes.AddMonths(1).AddTicks(-1);
+            var fimMes = inicioMes.AddMonths(1);
 
             _despesas = await _db.ListaDespesasEmAbertoAsync(inicioMes, fimMes);
             var totalRestante = _despesas.Sum(x => x.ValorRestante);

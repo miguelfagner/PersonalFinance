@@ -34,6 +34,10 @@ namespace PersonalFinance.Resources.Activities
             _edtValor = FindViewById<EditText>(Resource.Id.edtValor);
             _btnSalvar = FindViewById<Button>(Resource.Id.btnSalvar);
 
+            int mesInicial = Intent.GetIntExtra("Mes", DateTime.Today.Month);
+            int anoInicial = Intent.GetIntExtra("Ano", DateTime.Today.Year);
+            _mesSelecionado = new DateTime(anoInicial, mesInicial, 1);
+
             // Preenche mês atual
             _edtMesReferencia.Text = _mesSelecionado.ToString("MM/yyyy");
 

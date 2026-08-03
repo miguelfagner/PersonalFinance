@@ -4,9 +4,9 @@ using SQLite;
 
 namespace PersonalFinance.Resources.Services
 {
-    public class DatabaseService
+    public partial class DatabaseService
     {
-        private SQLiteAsyncConnection _db;
+        private readonly SQLiteAsyncConnection _db;
 
         public DatabaseService()
         {
@@ -18,13 +18,16 @@ namespace PersonalFinance.Resources.Services
             _db.CreateTableAsync<Despesa>().Wait();
             _db.CreateTableAsync<Banco>().Wait();
             _db.CreateTableAsync<Transacao>().Wait();
+            _db.CreateTableAsync<ReceitaFixa>().Wait();
+            _db.CreateTableAsync<DespesaFixa>().Wait();
+            _db.CreateTableAsync<PreparacaoMensalItem>().Wait();
         }
 
         //DESPESA
         internal Task<List<Despesa>> ListaDespesasAsync(DateTime dtInicio, DateTime dtFinal)
         {
             var ls = _db.Table<Despesa>()
-                .Where(x => x.Vencimento >= dtInicio && x.Vencimento <= dtFinal)
+                .Where(x => x.Vencimento >= dtInicio && x.Vencimento < dtFinal)
                 .OrderByDescending(x => x.Valor).ToListAsync();
 
             return ls;
@@ -40,7 +43,7 @@ namespace PersonalFinance.Resources.Services
         internal async Task<List<DespesaEmAberto>> ListaDespesasEmAbertoAsync(DateTime dtInicio, DateTime dtFinal)
         {
             var despesas = await _db.Table<Despesa>()
-                .Where(x => x.Vencimento >= dtInicio && x.Vencimento <= dtFinal)
+                .Where(x => x.Vencimento >= dtInicio && x.Vencimento < dtFinal)
                 .OrderBy(x => x.Vencimento)
                 .ToListAsync();
             var transacoes = await _db.Table<Transacao>().ToListAsync();
@@ -68,12 +71,34 @@ namespace PersonalFinance.Resources.Services
                 .ToList();
         }
 
-        internal Task<int> SalvarDespesaAsync(Despesa despesa)
+        internal async Task<int> SalvarDespesaAsync(Despesa despesa)
         {
             if (despesa.Id != 0)
-                return _db.UpdateAsync(despesa);
-            else
-                return _db.InsertAsync(despesa);
+            {
+                var existente = await _db.FindAsync<Despesa>(despesa.Id)
+                    ?? throw new InvalidOperationException("A despesa nao existe mais.");
+                if (existente.CompetenciaGeracao.HasValue)
+                {
+                    var competencia = existente.CompetenciaGeracao.Value;
+                    if (despesa.Vencimento.Year != competencia.Year ||
+                        despesa.Vencimento.Month != competencia.Month)
+                    {
+                        throw new InvalidOperationException(
+                            "A competencia de uma despesa gerada nao pode ser alterada.");
+                    }
+
+                    despesa.ReceitaId = existente.ReceitaId;
+                    despesa.DataCadastro = existente.DataCadastro;
+                    despesa.NParcela = existente.NParcela;
+                    despesa.replicavel = false;
+                    despesa.DespesaFixaId = existente.DespesaFixaId;
+                    despesa.CompetenciaGeracao = competencia;
+                }
+
+                return await _db.UpdateAsync(despesa);
+            }
+
+            return await _db.InsertAsync(despesa);
         }
 
         internal Task<Despesa> PegarDespesaAsync(int despesaId)
@@ -142,7 +167,7 @@ namespace PersonalFinance.Resources.Services
         internal Task<List<Receita>> ListaReceitasAsync(DateTime dtInicio, DateTime dtFinal)
         {
             var ls = _db.Table<Receita>()
-                .Where(x => x.MesReferencia >= dtInicio && x.MesReferencia <= dtFinal)
+                .Where(x => x.MesReferencia >= dtInicio && x.MesReferencia < dtFinal)
                 .OrderByDescending(r => r.MesReferencia).ToListAsync();
 
             return ls;
@@ -155,12 +180,31 @@ namespace PersonalFinance.Resources.Services
                 .ToListAsync();
         }
 
-        internal Task<int> SalvarReceitaAsync(Receita receita)
+        internal async Task<int> SalvarReceitaAsync(Receita receita)
         {
             if (receita.Id != 0)
-                return _db.UpdateAsync(receita);
-            else
-                return _db.InsertAsync(receita);
+            {
+                var existente = await _db.FindAsync<Receita>(receita.Id)
+                    ?? throw new InvalidOperationException("A receita nao existe mais.");
+                if (existente.CompetenciaGeracao.HasValue)
+                {
+                    var competencia = existente.CompetenciaGeracao.Value;
+                    if (receita.MesReferencia.Year != competencia.Year ||
+                        receita.MesReferencia.Month != competencia.Month)
+                    {
+                        throw new InvalidOperationException(
+                            "A competencia de uma receita gerada nao pode ser alterada.");
+                    }
+
+                    receita.MesReferencia = competencia;
+                    receita.ReceitaFixaId = existente.ReceitaFixaId;
+                    receita.CompetenciaGeracao = competencia;
+                }
+
+                return await _db.UpdateAsync(receita);
+            }
+
+            return await _db.InsertAsync(receita);
         }
 
         internal Task<Receita> PegarReceitaAsync(int receitaId)
@@ -168,9 +212,18 @@ namespace PersonalFinance.Resources.Services
             return _db.FindAsync<Receita>(receitaId);
         }
 
-        public Task<int> DeletarReceitaAsync(Receita receita)
+        public async Task<int> DeletarReceitaAsync(Receita receita)
         {
-            return _db.DeleteAsync(receita);
+            var despesasVinculadas = await _db.Table<Despesa>()
+                .Where(item => item.ReceitaId == receita.Id)
+                .CountAsync();
+            if (despesasVinculadas > 0)
+            {
+                throw new InvalidOperationException(
+                    "Esta receita possui despesas vinculadas. Exclua ou mova as despesas antes de continuar.");
+            }
+
+            return await _db.DeleteAsync(receita);
         }
 
         //TRANSACOES
@@ -178,7 +231,7 @@ namespace PersonalFinance.Resources.Services
         {
             // Busca todas as transações
             var transacoes = await _db.Table<Transacao>()
-                                      .Where(x => x.Data >= dtInicio && x.Data <= dtFinal)
+                                      .Where(x => x.Data >= dtInicio && x.Data < dtFinal)
                                       .OrderByDescending(t => t.Data)
                                       .ToListAsync();
 

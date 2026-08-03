@@ -13,6 +13,7 @@ namespace PersonalFinance.Resources.Activities
         private ReceitaAdapter _adapter;
         private List<Receita> _receitas;
         private Button _addReceita;
+        private DateTime _competencia;
 
         protected override void OnCreate(Bundle savedInstanceState)
         {
@@ -24,6 +25,10 @@ namespace PersonalFinance.Resources.Activities
 
 
             _db = new DatabaseService();
+            int mes = Intent.GetIntExtra("Mes", DateTime.Today.Month);
+            int ano = Intent.GetIntExtra("Ano", DateTime.Today.Year);
+            _competencia = new DateTime(ano, mes, 1);
+            Title = $"Receitas - {_competencia:MM/yyyy}";
 
             // Clique no item da lista → abre edição
             _listView.ItemClick += (s, e) =>
@@ -38,6 +43,8 @@ namespace PersonalFinance.Resources.Activities
             {
                 var intent = new Intent(this, typeof(ReceitaCreateActivity));
                 intent.PutExtra("tipo", "Receita");
+                intent.PutExtra("Mes", _competencia.Month);
+                intent.PutExtra("Ano", _competencia.Year);
                 StartActivity(intent);
             };
 
@@ -54,9 +61,8 @@ namespace PersonalFinance.Resources.Activities
 
         private async Task CarregarReceitasAsync()
         {
-            var mesRef = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            var dtInicio = new DateTime(mesRef.Year, mesRef.Month, 1);
-            var dtFinal = new DateTime(mesRef.Year, mesRef.Month, DateTime.DaysInMonth(mesRef.Year, mesRef.Month));
+            var dtInicio = _competencia;
+            var dtFinal = _competencia.AddMonths(1);
 
             _receitas = await _db.ListaReceitasAsync(dtInicio, dtFinal);
 

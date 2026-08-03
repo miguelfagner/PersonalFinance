@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/finance_background"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:id="@+id/tvReceitaFixaFormTitulo"
+            style="@style/FinanceScreenTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nova receita fixa" />
+
+        <TextView
+            android:id="@+id/tvReceitaFixaFormSubtitulo"
+            style="@style/FinanceScreenSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="20dp"
+            android:text="Este modelo poderá ser lançado em qualquer competência." />
+
+        <TextView
+            android:id="@+id/tvReceitaFixaFormStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="ATIVA"
+            android:textColor="@color/finance_success"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card"
+            android:elevation="1dp"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <TextView
+                style="@style/FinanceFieldLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Fonte pagadora" />
+
+            <EditText
+                android:id="@+id/edtReceitaFixaFonte"
+                style="@style/FinanceInput"
+                android:hint="Ex.: Empresa"
+                android:inputType="textCapWords" />
+
+            <TextView
+                style="@style/FinanceFieldLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Descrição" />
+
+            <EditText
+                android:id="@+id/edtReceitaFixaDescricao"
+                style="@style/FinanceInput"
+                android:hint="Ex.: Salário mensal"
+                android:inputType="textCapSentences" />
+
+            <TextView
+                style="@style/FinanceFieldLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Tipo" />
+
+            <EditText
+                android:id="@+id/edtReceitaFixaTipo"
+                style="@style/FinanceInput"
+                android:hint="Ex.: Salário ou benefício"
+                android:inputType="textCapWords" />
+
+            <TextView
+                style="@style/FinanceFieldLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Valor previsto" />
+
+            <EditText
+                android:id="@+id/edtReceitaFixaValor"
+                style="@style/FinanceInput"
+                android:hint="0,00"
+                android:inputType="numberDecimal" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnSalvarReceitaFixa"
+            style="@style/FinanceButtonPrimary"
+            android:layout_marginTop="18dp"
+            android:text="Salvar receita fixa" />
+
+        <Button
+            android:id="@+id/btnPausarReceitaFixa"
+            style="@style/FinanceButtonSecondary"
+            android:layout_marginTop="10dp"
+            android:text="Pausar modelo"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btnExcluirReceitaFixa"
+            style="@style/FinanceButtonDanger"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="12dp"
+            android:text="Excluir modelo"
+            android:visibility="gone" />
+    </LinearLayout>
+</ScrollView>

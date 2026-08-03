@@ -3,6 +3,7 @@ using PersonalFinance.Resources.Helpers;
 using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
 using System.Globalization;
+using PersonalFinance.Resources.Widgets;
 
 namespace PersonalFinance.Resources.Activities
 {
@@ -102,6 +103,7 @@ namespace PersonalFinance.Resources.Activities
                 {
                     await db.SalvarTransacaoAsync(transacao);
                     await db.AtualizaStatusAsync(despesa.Id);
+                    await PersonalFinanceWidgetProvider.AtualizarTodosAsync(this);
 
                     Toast.MakeText(this, "Transação salva!", ToastLength.Short).Show();
                     Finish();

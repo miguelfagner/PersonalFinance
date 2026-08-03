@@ -3,6 +3,7 @@ using Android.Content;
 using Android.OS;
 using Android.Widget;
 using PersonalFinance.Resources.Services;
+using PersonalFinance.Resources.Widgets;
 
 namespace PersonalFinance.Resources.Activities
 {
@@ -58,6 +59,7 @@ namespace PersonalFinance.Resources.Activities
             try
             {
                 await DatabaseBackupService.ImportAsync(ContentResolver!, source);
+                await PersonalFinanceWidgetProvider.AtualizarTodosAsync(this);
 
                 Toast.MakeText(this, "Backup importado com sucesso!", ToastLength.Long)?.Show();
 

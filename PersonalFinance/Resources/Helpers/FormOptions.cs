@@ -9,15 +9,13 @@ namespace PersonalFinance.Resources.Helpers
         {
             "PESSOAL",
             "CASA",
-            "GASTOS DOMESTICOS",
+            "MORADIA",
             "ALIMENTACAO",
-            "TRANSPORTE",
-            "COMBUSTIVEL",
+            "FAMÍLIA",
             "SAUDE",
-            "EDUCACAO",
-            "LAZER",
-            "SERVICOS",
-            "OUTROS"
+            "CARTÃO CRÉDITO",
+            "EMPRESA",
+            "TRANSPORTE",
         };
 
         internal static ArrayAdapter<string> CreateSpinnerAdapter(Activity activity, IEnumerable<string> items)
