@@ -2,6 +2,7 @@
 using PersonalFinance.Resources.Adapters;
 using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
+using PersonalFinance.Resources.ViewModels;
 
 namespace PersonalFinance.Resources.Activities
 {
@@ -52,6 +53,8 @@ namespace PersonalFinance.Resources.Activities
             int mes = Intent.GetIntExtra("Mes", 0);
             int ano = Intent.GetIntExtra("Ano", 0);
             int semana = Intent.GetIntExtra("Semana", 0);
+            bool filtrarPorDespesaIds = Intent.HasExtra("DespesaIds");
+            int[]? despesaIds = Intent.GetIntArrayExtra("DespesaIds");
 
             if(mes == 0 || ano == 0)
             {
@@ -68,6 +71,12 @@ namespace PersonalFinance.Resources.Activities
 
             // Apply filters dynamically
             IEnumerable<Transacao> query = _transacoes;
+
+            if (filtrarPorDespesaIds)
+            {
+                var idsPermitidos = despesaIds?.ToHashSet() ?? new HashSet<int>();
+                query = query.Where(t => idsPermitidos.Contains(t.DespesaId));
+            }
 
             // Filter by category
             if (categorias?.Length > 0)
@@ -89,7 +98,7 @@ namespace PersonalFinance.Resources.Activities
             {
                 query = query.Where(t =>
                     t.Despesa != null &&
-                    string.Equals(t.Despesa.Categoria, "PESSOAL", StringComparison.OrdinalIgnoreCase) &&
+                    string.Equals(GetCategoria(t), "PESSOAL", StringComparison.OrdinalIgnoreCase) &&
                     GetWeekOfMonth(t.Data) == semana
                 );
             }
@@ -141,7 +150,7 @@ namespace PersonalFinance.Resources.Activities
 
         private static string GetCategoria(Transacao transacao)
         {
-            return transacao.Despesa?.Categoria ?? "Outros";
+            return BalancoMensalCalculator.NormalizarCategoria(transacao.Despesa?.Categoria);
         }
     }
 }

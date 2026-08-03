@@ -12,6 +12,8 @@
     <color name="finance_success">#18794E</color>
     <color name="finance_danger">#C2414F</color>
     <color name="finance_warning">#B7791F</color>
+    <color name="finance_danger_text">#A12D3D</color>
+    <color name="finance_warning_text">#815300</color>
     <color name="finance_info">#2E6F9E</color>
     <color name="finance_white">#FFFFFF</color>
 </resources>

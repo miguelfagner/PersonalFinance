@@ -158,4 +158,21 @@
         <item name="android:textSize">16sp</item>
         <item name="android:paddingBottom">18dp</item>
     </style>
+
+    <style name="FinanceIndicatorBox">
+        <item name="android:background">@drawable/bg_indicator</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:minHeight">82dp</item>
+        <item name="android:padding">14dp</item>
+        <item name="android:textColor">@color/finance_text_primary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="FinanceIndicatorLine">
+        <item name="android:textColor">@color/finance_text_secondary</item>
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:lineSpacingExtra">2dp</item>
+    </style>
 </resources>

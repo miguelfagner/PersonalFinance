@@ -1,6 +1,8 @@
 ﻿using Android.Content;
 using Android.Graphics;
 using Android.Views;
+using Android.Content.Res;
+using System.Globalization;
 using MikePhil.Charting.Animation;
 using MikePhil.Charting.Charts;
 using MikePhil.Charting.Components;
@@ -10,38 +12,89 @@ using MikePhil.Charting.Highlight;
 using MikePhil.Charting.Listener;
 using PersonalFinance.Resources.Models;
 using PersonalFinance.Resources.Services;
+using PersonalFinance.Resources.ViewModels;
 
 namespace PersonalFinance.Resources.Activities
 {
     [Activity(Label = "Balanço Mensal")]
     public class BalancoDetailActivity : Activity
     {
-        private TextView tvTotalReceita, tvTotalDespesa, tvSaldo, tvTotalQuitado, tvFaltaQuitar, tvResumo;
-        private TextView tvGastosPessoais, tvGastosDomesticos, tvCombustivel, tvSaldoPlanejado, tvSaldoRealizado;
-        private TextView tvDesvioOrcamento, tvComprometimentoRenda, tvContasPendentes, tvMediaDiaria, tvLimiteDiario, tvMaiorCategoria, tvMesAtual;
-        private ProgressBar progDespesa, progGastosDomesticos, progGastosPessoais, progCombustivel;
-        private PieChart pieChartDespesas;
-        private BarChart barChartSemanal;
+        private static readonly CultureInfo CulturaPtBr = CultureInfo.GetCultureInfo("pt-BR");
+        private const string EstadoAnoReferencia = "balanco_ano_referencia";
+        private const string EstadoMesReferencia = "balanco_mes_referencia";
 
-        private DatabaseService _db;
-        private List<Despesa> _despesas;
+        private TextView tvTotalReceita = null!;
+        private TextView tvTotalDespesa = null!;
+        private TextView tvSaldo = null!;
+        private TextView tvTotalQuitado = null!;
+        private TextView tvFaltaQuitar = null!;
+        private TextView tvResumo = null!;
+        private TextView tvSaldoPlanejado = null!;
+        private TextView tvSaldoRealizado = null!;
+        private TextView tvDesvioOrcamento = null!;
+        private TextView tvComprometimentoRenda = null!;
+        private TextView tvContasPendentes = null!;
+        private TextView tvMediaDiaria = null!;
+        private TextView tvLimiteDiario = null!;
+        private TextView tvMaiorCategoria = null!;
+        private TextView tvMesAtual = null!;
+        private TextView tvProjecaoPessoal = null!;
+        private TextView tvRitmoPessoal = null!;
+        private TextView tvDiasComGastoPessoal = null!;
+        private TextView tvDetalhePendencias = null!;
+        private TextView tvContasVencidas = null!;
+        private TextView tvPesoRecorrentes = null!;
+        private TextView tvConcentracaoCategorias = null!;
+        private TextView tvTicketMedio = null!;
+        private TextView tvMaiorLancamento = null!;
+        private TextView tvDiasComSaidas = null!;
+        private TextView btnMesAnterior = null!;
+        private TextView btnProximoMes = null!;
+        private TextView tvErroCarregamento = null!;
+        private Button btnVerTransacoesMes = null!;
+        private Button btnVerGastosPessoais = null!;
+        private LinearLayout layoutCategorias = null!;
+        private ScrollView scrollIndicadores = null!;
+        private ProgressBar progDespesa = null!;
+        private ProgressBar progQuitacao = null!;
+        private PieChart pieChartDespesas = null!;
+        private BarChart barChartSemanal = null!;
 
-        private GestureDetector _gestureDetector;
-        private LinearLayout _rootLayout; // Layout raiz para capturar o toque
+        private DatabaseService _db = null!;
+        private List<Despesa> _despesas = new();
+        private GestureDetector _gestureDetector = null!;
+        private LinearLayout _rootLayout = null!;
+        private DateTime _mesReferencia = new(DateTime.Today.Year, DateTime.Today.Month, 1);
+        private DateTime _mesExibido = new(DateTime.Today.Year, DateTime.Today.Month, 1);
+        private int[] _idsDespesasPessoais = Array.Empty<int>();
+        private int _versaoCarregamento;
+        private bool _primeiroResume = true;
+        private bool _destruida;
 
-        protected override async void OnCreate(Bundle savedInstanceState)
+        protected override async void OnCreate(Bundle? savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.activity_balanco);
 
-            // Inicializar TextViews
+            if (savedInstanceState != null &&
+                savedInstanceState.ContainsKey(EstadoAnoReferencia) &&
+                savedInstanceState.ContainsKey(EstadoMesReferencia))
+            {
+                var anoSalvo = savedInstanceState.GetInt(EstadoAnoReferencia);
+                var mesSalvo = savedInstanceState.GetInt(EstadoMesReferencia);
+                if (anoSalvo >= DateTime.MinValue.Year && anoSalvo <= DateTime.MaxValue.Year &&
+                    mesSalvo is >= 1 and <= 12)
+                {
+                    _mesReferencia = new DateTime(anoSalvo, mesSalvo, 1);
+                }
+            }
+
             tvMesAtual = FindViewById<TextView>(Resource.Id.tvMesAtual);
+            btnMesAnterior = FindViewById<TextView>(Resource.Id.btnMesAnterior);
+            btnProximoMes = FindViewById<TextView>(Resource.Id.btnProximoMes);
             tvTotalReceita = FindViewById<TextView>(Resource.Id.tvTotalReceita);
             tvTotalDespesa = FindViewById<TextView>(Resource.Id.tvTotalDespesa);
             tvTotalQuitado = FindViewById<TextView>(Resource.Id.tvTotalQuitado);
-            tvGastosPessoais = FindViewById<TextView>(Resource.Id.tvGastosPessoais);
-            tvGastosDomesticos = FindViewById<TextView>(Resource.Id.tvGastosDomesticos);
-            tvCombustivel = FindViewById<TextView>(Resource.Id.tvCombustivel);
             tvSaldo = FindViewById<TextView>(Resource.Id.tvSaldo);
             tvFaltaQuitar = FindViewById<TextView>(Resource.Id.tvFaltaQuitar);
             tvResumo = FindViewById<TextView>(Resource.Id.tvResumo);
@@ -53,248 +106,496 @@ namespace PersonalFinance.Resources.Activities
             tvMediaDiaria = FindViewById<TextView>(Resource.Id.tvMediaDiaria);
             tvLimiteDiario = FindViewById<TextView>(Resource.Id.tvLimiteDiario);
             tvMaiorCategoria = FindViewById<TextView>(Resource.Id.tvMaiorCategoria);
+            tvProjecaoPessoal = FindViewById<TextView>(Resource.Id.tvProjecaoPessoal);
+            tvRitmoPessoal = FindViewById<TextView>(Resource.Id.tvRitmoPessoal);
+            tvDiasComGastoPessoal = FindViewById<TextView>(Resource.Id.tvDiasComGastoPessoal);
+            tvDetalhePendencias = FindViewById<TextView>(Resource.Id.tvDetalhePendencias);
+            tvContasVencidas = FindViewById<TextView>(Resource.Id.tvContasVencidas);
+            tvPesoRecorrentes = FindViewById<TextView>(Resource.Id.tvPesoRecorrentes);
+            tvConcentracaoCategorias = FindViewById<TextView>(Resource.Id.tvConcentracaoCategorias);
+            tvTicketMedio = FindViewById<TextView>(Resource.Id.tvTicketMedio);
+            tvMaiorLancamento = FindViewById<TextView>(Resource.Id.tvMaiorLancamento);
+            tvDiasComSaidas = FindViewById<TextView>(Resource.Id.tvDiasComSaidas);
+            tvErroCarregamento = FindViewById<TextView>(Resource.Id.tvErroCarregamento);
+            btnVerTransacoesMes = FindViewById<Button>(Resource.Id.btnVerTransacoesMes);
+            btnVerGastosPessoais = FindViewById<Button>(Resource.Id.btnVerGastosPessoais);
+            layoutCategorias = FindViewById<LinearLayout>(Resource.Id.layoutCategorias);
+            scrollIndicadores = FindViewById<ScrollView>(Resource.Id.scrollIndicadores);
 
-            // ProgressBars
             progDespesa = FindViewById<ProgressBar>(Resource.Id.progDespesa);
-            progGastosPessoais = FindViewById<ProgressBar>(Resource.Id.progGastosPessoais);
-            progGastosDomesticos = FindViewById<ProgressBar>(Resource.Id.progGastosDomesticos);
-            progCombustivel = FindViewById<ProgressBar>(Resource.Id.progCombustivel);
+            progQuitacao = FindViewById<ProgressBar>(Resource.Id.progQuitacao);
 
-            // Gráficos
             pieChartDespesas = FindViewById<PieChart>(Resource.Id.pieChartDespesas);
             barChartSemanal = FindViewById<BarChart>(Resource.Id.barChartSemanal);
 
-            _db = new DatabaseService();
-
-            var mesRef = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
-            var dtInicio = new DateTime(mesRef.Year, mesRef.Month, 1);
-            var dtFinal = dtInicio.AddMonths(1);
-
-            // Gesture detector
+            try
+            {
+                _db = new DatabaseService();
+            }
+            catch (Exception)
+            {
+                MostrarErroCarregamento(_mesReferencia);
+                btnMesAnterior.Enabled = false;
+                btnProximoMes.Enabled = false;
+                return;
+            }
             _gestureDetector = new GestureDetector(this, new SwipeGestureListener(
-                onSwipeRight: async () =>
-                {
-                    mesRef = mesRef.AddMonths(-1);
-                    dtInicio = new DateTime(mesRef.Year, mesRef.Month, 1);
-                    dtFinal = dtInicio.AddMonths(1);
-                    await CarregarDadosAsync(dtInicio, dtFinal);
-                },
-                onSwipeLeft: async () =>
-                {
-                    mesRef = mesRef.AddMonths(1);
-                    dtInicio = new DateTime(mesRef.Year, mesRef.Month, 1);
-                    dtFinal = dtInicio.AddMonths(1);
-                    await CarregarDadosAsync(dtInicio, dtFinal);
-                }
+                onSwipeRight: () => NavegarMesAsync(-1),
+                onSwipeLeft: () => NavegarMesAsync(1)
             ));
 
-            // Layout raiz para capturar toque
             _rootLayout = FindViewById<LinearLayout>(Resource.Id.rootLayout);
-            _rootLayout.Touch += (s, e) =>
+            _rootLayout.Touch += (_, e) =>
             {
-                _gestureDetector.OnTouchEvent(e.Event);
+                if (e.Event != null)
+                {
+                    _gestureDetector.OnTouchEvent(e.Event);
+                }
             };
 
+            btnMesAnterior.Click += async (_, _) => await NavegarMesAsync(-1);
+            btnProximoMes.Click += async (_, _) => await NavegarMesAsync(1);
+            btnVerTransacoesMes.Click += (_, _) => AbrirTransacoesDoMes(apenasPessoais: false);
+            btnVerGastosPessoais.Click += (_, _) => AbrirTransacoesDoMes(apenasPessoais: true);
 
-            await CarregarDadosAsync(dtInicio, dtFinal);
+            await CarregarDadosAsync(_mesReferencia, _mesReferencia.AddMonths(1));
         }
 
-        public override bool OnTouchEvent(MotionEvent e)
+        protected override void OnSaveInstanceState(Bundle outState)
         {
-            _gestureDetector?.OnTouchEvent(e);
+            outState.PutInt(EstadoAnoReferencia, _mesReferencia.Year);
+            outState.PutInt(EstadoMesReferencia, _mesReferencia.Month);
+            base.OnSaveInstanceState(outState);
+        }
+
+        protected override void OnDestroy()
+        {
+            _destruida = true;
+            _versaoCarregamento++;
+            base.OnDestroy();
+        }
+
+        protected override async void OnResume()
+        {
+            base.OnResume();
+
+            if (_primeiroResume)
+            {
+                _primeiroResume = false;
+                return;
+            }
+
+            await CarregarDadosAsync(_mesReferencia, _mesReferencia.AddMonths(1));
+        }
+
+        public override bool OnTouchEvent(MotionEvent? e)
+        {
+            if (e != null)
+            {
+                _gestureDetector?.OnTouchEvent(e);
+            }
+
             return base.OnTouchEvent(e);
         }
 
 
-        private async Task CarregarDadosAsync(DateTime dtInicio, DateTime dtFinal)
+        private async Task NavegarMesAsync(int deslocamento)
         {
-            var despesas = await _db.ListaDespesasAsync(dtInicio, dtFinal) ?? new List<Despesa>();
-            var receitas = await _db.ListaReceitasAsync(dtInicio, dtFinal) ?? new List<Receita>();
-            var transacoes = await _db.ListaTransacoesAsync(dtInicio, dtFinal) ?? new List<Transacao>();
-
-            _despesas = despesas;
-
-            //var hoje = DateTime.Today;
-            var mes = dtInicio.Month;
-            var ano = dtInicio.Year;
-
-            tvMesAtual.Text = dtInicio.ToString("MMMM 'de' yyyy").ToUpper();
-
-            //---------------------------------------------------------
-            // Atualizar indicadores
-            AtualizarIndicadores(receitas, despesas, transacoes, mes, ano);
-
-            //---------------------------------------------------------
-            // Gráfico de despesas por categoria
-            ConfigurarPieChartDespesas(this, pieChartDespesas, _despesas, mes, ano);
-
-            //---------------------------------------------------------
-            // Gráfico semanal por transações
-            ConfigurarBarChartSemanalPorTransacoes(barChartSemanal, transacoes, mes, ano);
+            _mesReferencia = _mesReferencia.AddMonths(deslocamento);
+            await CarregarDadosAsync(_mesReferencia, _mesReferencia.AddMonths(1));
         }
 
-        private void AtualizarIndicadores(List<Receita> receitas, List<Despesa> despesas, List<Transacao> transacoes, int mes, int ano)
+        private async Task CarregarDadosAsync(DateTime dtInicio, DateTime dtFinal)
         {
-            var despesasMes = despesas
-                .Where(d => d.Vencimento.Month == mes && d.Vencimento.Year == ano)
-                .ToList();
-
-            var transacoesMes = transacoes
-                .Where(t => t.Data.Month == mes && t.Data.Year == ano)
-                .ToList();
-
-            var totalReceita = receitas
-                .Where(r => r.MesReferencia.Month == mes && r.MesReferencia.Year == ano)
-                .Sum(r => r?.Valor ?? 0);
-
-            var totalDespesa = despesasMes.Sum(d => d.Valor);
-            var totalQuitado = transacoesMes.Sum(t => t?.Valor ?? 0);
-            var faltaQuitar = Math.Max(0m, totalDespesa - totalQuitado);
-            var desvioOrcamento = totalQuitado - totalDespesa;
-            var saldoPlanejado = totalReceita - totalDespesa;
-            var saldoRealizado = totalReceita - totalQuitado;
-            var saldoAposCompromissos = totalReceita - Math.Max(totalDespesa, totalQuitado);
-            var gastoPessoalDiarioPlan = Planejado("PESSOAL") / DateTime.DaysInMonth(ano, mes);
-
-            decimal Planejado(params string[] categorias) => despesasMes.Where(d => CategoriaEh(d.Categoria, categorias)).Sum(d => d.Valor);
-            decimal Realizado(params string[] categorias) => transacoesMes.Where(t => t.Despesa != null && CategoriaEh(t.Despesa.Categoria, categorias)).Sum(t => t.Valor);
-
-            var gastoPessoalPlanejado = Planejado("PESSOAL");
-            var gastoPessoal = Realizado("PESSOAL");
-            var gastoDomesticoPlanejado = Planejado("CASA", "GASTOS DOMESTICOS");
-            var gastoDomestico = Realizado("CASA", "GASTOS DOMESTICOS");
-            var combustivelPlanejado = Planejado("COMBUSTIVEL");
-            var combustivelRealizado = Realizado("COMBUSTIVEL");
-
-            var pagosPorDespesa = transacoesMes
-                .GroupBy(t => t.DespesaId)
-                .ToDictionary(g => g.Key, g => g.Sum(t => t.Valor));
-
-            var contasPendentes = despesasMes.Count(d =>
-                !pagosPorDespesa.TryGetValue(d.Id, out decimal pago) || pago < d.Valor);
-
-            var categoriasRealizadas = transacoesMes
-                .Where(t => t.Despesa != null)
-                .GroupBy(t => NormalizarCategoria(t.Despesa.Categoria))
-                .Select(g => new { Categoria = g.Key, Total = g.Sum(t => t.Valor) })
-                .OrderByDescending(x => x.Total)
-                .FirstOrDefault();
-
-            var hoje = DateTime.Today;
-            var inicioMesAtual = new DateTime(hoje.Year, hoje.Month, 1);
-            var inicioMesIndicador = new DateTime(ano, mes, 1);
-            var diasNoMes = DateTime.DaysInMonth(ano, mes);
-            var diasDecorridos = inicioMesIndicador < inicioMesAtual
-                ? diasNoMes
-                : inicioMesIndicador == inicioMesAtual ? hoje.Day : 0;
-            var diasRestantes = inicioMesIndicador < inicioMesAtual
-                ? 0
-                : inicioMesIndicador == inicioMesAtual ? diasNoMes - hoje.Day + 1 : diasNoMes;
-            var mediaDiaria = diasDecorridos > 0 ? totalQuitado / diasDecorridos : 0;
-            var limiteDiario = diasRestantes > 0 ? Math.Max(0m, saldoAposCompromissos) / diasRestantes : 0;
-            var comprometimento = totalReceita > 0 ? totalDespesa / totalReceita * 100 : 0;
-
-            tvSaldo.Text = $"SALDO APOS COMPROMISSOS: R$ {saldoAposCompromissos:N2}";
-            tvTotalDespesa.Text = FormatarAcompanhamento("TOTAL DAS DESPESAS", totalDespesa, totalQuitado);
-            tvGastosPessoais.Text = FormatarAcompanhamento("PESSOAL", gastoPessoalPlanejado, gastoPessoal);
-            tvGastosDomesticos.Text = FormatarAcompanhamento("CASA / DOMESTICOS", gastoDomesticoPlanejado, gastoDomestico);
-            tvCombustivel.Text = FormatarAcompanhamento("COMBUSTIVEL", combustivelPlanejado, combustivelRealizado);
-
-            
-            
-            tvTotalReceita.Text = $"RECEITA DO MES: R$ {totalReceita:N2}";
-            tvTotalQuitado.Text = $"TOTAL REALIZADO: R$ {totalQuitado:N2}";
-            tvFaltaQuitar.Text = $"PREVISTO EM ABERTO: R$ {faltaQuitar:N2}";
-            tvSaldoPlanejado.Text = $"SALDO PLANEJADO: R$ {saldoPlanejado:N2}";
-            tvSaldoRealizado.Text = $"SALDO REALIZADO: R$ {saldoRealizado:N2}";
-            tvDesvioOrcamento.Text = desvioOrcamento > 0 ? $"ACIMA DO PLANEJADO: R$ {desvioOrcamento:N2}" : $"ABAIXO DO PLANEJADO: R$ {Math.Abs(desvioOrcamento):N2}";
-            tvComprometimentoRenda.Text = $"COMPROMETIMENTO DA RENDA: {comprometimento:N1}%";
-            tvContasPendentes.Text = $"CONTAS PENDENTES: {contasPendentes} DE {despesasMes.Count}";
-            tvMediaDiaria.Text = $"MEDIA DIARIA REALIZADA: R$ {mediaDiaria:N2}";
-            
-            
-            tvLimiteDiario.Text = diasRestantes > 0 ? $"DISPONIVEL POR DIA ({diasRestantes} DIAS): R$ {gastoPessoalDiarioPlan:N2}" : "DISPONIVEL POR DIA: MES ENCERRADO";
-            
-            
-            tvMaiorCategoria.Text = categoriasRealizadas == null ? "MAIOR CONSUMO: SEM TRANSACOES" : $"MAIOR CONSUMO: {categoriasRealizadas.Categoria} - R$ {categoriasRealizadas.Total:N2}";
-
-            progDespesa.Progress = Percentual(totalQuitado, totalDespesa);
-            progGastosPessoais.Progress = Percentual(gastoPessoal, gastoPessoalPlanejado);
-            progGastosDomesticos.Progress = Percentual(gastoDomestico, gastoDomesticoPlanejado);
-            progCombustivel.Progress = Percentual(combustivelRealizado, combustivelPlanejado);
-
-            if (totalReceita == 0)
+            var versao = ++_versaoCarregamento;
+            try
             {
-                tvResumo.Text = "SEM RECEITA REGISTRADA!";
-                tvResumo.SetTextColor(Android.Graphics.Color.ParseColor("#667785")); // cinza
+                var despesasTask = _db.ListaDespesasAsync(dtInicio, dtFinal);
+                var receitasTask = _db.ListaReceitasAsync(dtInicio, dtFinal);
+                var transacoesTask = _db.ListaTransacoesAsync(dtInicio, dtFinal);
+                var despesasEmAbertoTask = _db.ListaDespesasEmAbertoAsync(
+                    dtInicio,
+                    dtFinal,
+                    DateTime.Today.AddDays(1));
+
+                await Task.WhenAll(despesasTask, receitasTask, transacoesTask, despesasEmAbertoTask);
+
+                if (versao != _versaoCarregamento || _destruida || IsFinishing || IsDestroyed)
+                {
+                    return;
+                }
+
+                scrollIndicadores.Visibility = ViewStates.Visible;
+                tvErroCarregamento.Visibility = ViewStates.Gone;
+                _mesExibido = dtInicio;
+
+                var despesas = await despesasTask ?? new List<Despesa>();
+                var receitas = await receitasTask ?? new List<Receita>();
+                var transacoes = await transacoesTask ?? new List<Transacao>();
+                var despesasEmAberto = await despesasEmAbertoTask ?? new List<DespesaEmAberto>();
+
+                _despesas = despesas;
+                var mes = dtInicio.Month;
+                var ano = dtInicio.Year;
+
+                tvMesAtual.Text = dtInicio
+                    .ToString("MMMM 'de' yyyy", CulturaPtBr)
+                    .ToUpper(CulturaPtBr);
+
+                var resumo = BalancoMensalCalculator.Calcular(
+                    receitas,
+                    despesas,
+                    transacoes,
+                    despesasEmAberto,
+                    mes,
+                    ano,
+                    DateTime.Today);
+
+                AtualizarIndicadores(resumo);
+                AtualizarCategorias(resumo.Categorias);
+                ConfigurarPieChartDespesas(this, pieChartDespesas, _despesas, mes, ano);
+
+                var inicioMesAtual = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+                var transacoesRealizadas = dtInicio > inicioMesAtual
+                    ? new List<Transacao>()
+                    : dtInicio == inicioMesAtual
+                        ? transacoes.Where(t => t.Data.Date <= DateTime.Today).ToList()
+                        : transacoes;
+                var idsDespesasPessoais = despesas
+                    .Where(d => CategoriaEh(d.Categoria, "PESSOAL"))
+                    .Select(d => d.Id)
+                    .ToArray();
+                _idsDespesasPessoais = idsDespesasPessoais;
+                ConfigurarBarChartSemanalPorTransacoes(
+                    barChartSemanal,
+                    transacoesRealizadas,
+                    mes,
+                    ano,
+                    idsDespesasPessoais);
             }
-            else if (saldoAposCompromissos < 0)
+            catch (Exception)
             {
-                tvResumo.Text = $"ORCAMENTO NO VERMELHO EM R$ {Math.Abs(saldoAposCompromissos):N2}";
-                tvResumo.SetTextColor(Android.Graphics.Color.ParseColor("#C2414F"));
+                if (versao == _versaoCarregamento && !_destruida && !IsFinishing && !IsDestroyed)
+                {
+                    MostrarErroCarregamento(dtInicio);
+                    Toast.MakeText(this, "Não foi possível atualizar o balanço.", ToastLength.Short)?.Show();
+                }
             }
-            else if (desvioOrcamento > 0)
+        }
+
+        private void MostrarErroCarregamento(DateTime mesReferencia)
+        {
+            tvMesAtual.Text = mesReferencia
+                .ToString("MMMM 'de' yyyy", CulturaPtBr)
+                .ToUpper(CulturaPtBr);
+            scrollIndicadores.Visibility = ViewStates.Gone;
+            tvErroCarregamento.Visibility = ViewStates.Visible;
+        }
+
+        private void AbrirTransacoesDoMes(bool apenasPessoais)
+        {
+            var intent = new Intent(this, typeof(TransacaoListActivity));
+            intent.PutExtra("Mes", _mesExibido.Month);
+            intent.PutExtra("Ano", _mesExibido.Year);
+
+            if (apenasPessoais)
             {
-                tvResumo.Text = $"GASTOS R$ {desvioOrcamento:N2} ACIMA DO PLANEJADO";
-                tvResumo.SetTextColor(Android.Graphics.Color.ParseColor("#B7791F"));
+                intent.PutExtra("Categoria", "PESSOAL");
+                intent.PutExtra("DespesaIds", _idsDespesasPessoais);
             }
-            else if (contasPendentes > 0)
+
+            StartActivity(intent);
+        }
+
+        private void AtualizarIndicadores(BalancoMensalResumo resumo)
+        {
+            var percentualQuitado = PercentualDecimal(resumo.TotalQuitadoCompetencia, resumo.TotalPlanejado);
+            var percentualContasQuitadas = PercentualDecimal(resumo.ContasQuitadas, resumo.TotalContas);
+
+            tvSaldo.Text = FormatarMoeda(resumo.SaldoPlanejado);
+            tvTotalReceita.Text = $"RECEITA CADASTRADA\n{FormatarMoeda(resumo.TotalReceita)}";
+            tvTotalDespesa.Text = $"COMPROMISSOS\n{FormatarMoeda(resumo.TotalPlanejado)}";
+            tvDesvioOrcamento.Text = resumo.TotalPlanejado > 0m
+                ? $"QUITADO DA COMPETÊNCIA: {FormatarMoeda(resumo.TotalQuitadoCompetencia)} DE {FormatarMoeda(resumo.TotalPlanejado)} · {percentualQuitado:N0}%"
+                : "NENHUM COMPROMISSO PLANEJADO";
+
+            tvTotalQuitado.Text = $"SAÍDAS NO MÊS\n{FormatarMoeda(resumo.TotalSaidasMes)}";
+            tvFaltaQuitar.Text = $"EM ABERTO AGORA\n{FormatarMoeda(resumo.TotalEmAberto)}";
+            tvSaldoPlanejado.Text = $"SALDO APÓS COMPROMISSOS: {FormatarMoeda(resumo.SaldoPlanejado)}";
+            tvSaldoRealizado.Text = $"RECEITA − SAÍDAS DO MÊS: {FormatarMoeda(resumo.SaldoFluxoMes)}";
+            tvComprometimentoRenda.Text = resumo.ComprometimentoRenda.HasValue
+                ? $"COMPROMETIMENTO DA RENDA: {resumo.ComprometimentoRenda.Value:N1}%"
+                : "COMPROMETIMENTO DA RENDA: SEM RECEITA CADASTRADA";
+            tvPesoRecorrentes.Text = resumo.PesoRecorrentes.HasValue
+                ? $"PESO DOS COMPROMISSOS RECORRENTES: {resumo.PesoRecorrentes.Value:N1}%"
+                : "PESO DOS COMPROMISSOS RECORRENTES: SEM DESPESAS";
+
+            tvMediaDiaria.Text = $"MÉDIA PESSOAL/DIA\n{FormatarMoeda(resumo.MediaPessoalDiaria)}";
+            tvLimiteDiario.Text = resumo.LimitePessoalDiario.HasValue
+                ? $"DISPONÍVEL/DIA\n{FormatarMoeda(resumo.LimitePessoalDiario.Value)}"
+                : resumo.PessoalPlanejado <= 0m
+                    ? "DISPONÍVEL/DIA\nSEM ORÇAMENTO"
+                    : "DISPONÍVEL/DIA\nMÊS ENCERRADO";
+            tvProjecaoPessoal.Text = FormatarProjecaoPessoal(resumo);
+            tvRitmoPessoal.Text = FormatarRitmoPessoal(resumo);
+            var ritmoAcimaDoOrcamento = resumo.ProjecaoPessoal.HasValue &&
+                                        resumo.PessoalPlanejado > 0m &&
+                                        resumo.ProjecaoPessoal.Value > resumo.PessoalPlanejado;
+            tvRitmoPessoal.SetTextColor(Color.ParseColor(
+                resumo.PessoalPlanejado <= 0m
+                    ? "#667785"
+                    : ritmoAcimaDoOrcamento ? "#A12D3D" : "#18794E"));
+            tvDiasComGastoPessoal.Text = resumo.DiasComGastoPessoal == 0
+                ? "NENHUM DIA COM GASTO PESSOAL"
+                : $"GASTOS PESSOAIS EM {resumo.DiasComGastoPessoal} {Pluralizar(resumo.DiasComGastoPessoal, "DIA", "DIAS")}";
+
+            tvContasPendentes.Text = resumo.TotalContas > 0
+                ? $"QUITADAS: {resumo.ContasQuitadas} DE {resumo.TotalContas} · {percentualContasQuitadas:N0}%"
+                : "NENHUMA CONTA PLANEJADA";
+            tvDetalhePendencias.Text = $"PARCIAIS: {resumo.ContasParciais} · SEM PAGAMENTO: {resumo.ContasSemPagamento}";
+            tvContasVencidas.Text = resumo.ContasVencidas > 0
+                ? $"VENCIDAS: {resumo.ContasVencidas} · {FormatarMoeda(resumo.ValorVencido)} EM ATRASO"
+                : "NENHUMA CONTA VENCIDA";
+            tvContasVencidas.SetTextColor(Color.ParseColor(resumo.ContasVencidas > 0 ? "#C2414F" : "#18794E"));
+
+            tvMaiorCategoria.Text = string.IsNullOrEmpty(resumo.MaiorCategoria)
+                ? "MAIOR CATEGORIA\nSEM SAÍDAS NO MÊS"
+                : $"MAIOR CATEGORIA\n{resumo.MaiorCategoria} · {FormatarMoeda(resumo.MaiorCategoriaValor)} · {resumo.ParticipacaoMaiorCategoria:N0}%";
+            tvConcentracaoCategorias.Text = resumo.QuantidadeTransacoes > 0
+                ? $"AS 3 MAIORES CATEGORIAS CONCENTRAM {resumo.ConcentracaoTopTres:N0}% DAS SAÍDAS"
+                : "CONCENTRAÇÃO POR CATEGORIA: SEM DADOS";
+            tvTicketMedio.Text = $"TICKET MÉDIO\n{FormatarMoeda(resumo.TicketMedio)} · {resumo.QuantidadeTransacoes} {Pluralizar(resumo.QuantidadeTransacoes, "LANÇAMENTO", "LANÇAMENTOS")}";
+            tvMaiorLancamento.Text = resumo.QuantidadeTransacoes > 0
+                ? $"MAIOR LANÇAMENTO\n{Truncar(resumo.MaiorLancamentoDescricao, 34)} · {FormatarMoeda(resumo.MaiorLancamento)}"
+                : "MAIOR LANÇAMENTO\nSEM SAÍDAS NO MÊS";
+            tvDiasComSaidas.Text = resumo.DiasComSaidas == 0
+                ? "NENHUM DIA COM SAÍDAS"
+                : $"HOUVE SAÍDA EM {resumo.DiasComSaidas} {Pluralizar(resumo.DiasComSaidas, "DIA", "DIAS")} DO MÊS";
+
+            progDespesa.Progress = Percentual(resumo.TotalQuitadoCompetencia, resumo.TotalPlanejado);
+            progQuitacao.Progress = Percentual(resumo.ContasQuitadas, resumo.TotalContas);
+            progDespesa.ContentDescription = resumo.TotalPlanejado > 0m
+                ? $"Valor quitado da competência: {percentualQuitado:N0} por cento"
+                : "Nenhum compromisso planejado";
+            progQuitacao.ContentDescription = resumo.TotalContas > 0
+                ? $"Contas totalmente quitadas: {percentualContasQuitadas:N0} por cento"
+                : "Nenhuma conta planejada";
+            AtualizarSituacao(resumo);
+        }
+
+        private void AtualizarSituacao(BalancoMensalResumo resumo)
+        {
+            string texto;
+            string cor;
+
+            if (resumo.TotalReceita <= 0m)
             {
-                tvResumo.Text = $"{contasPendentes} CONTAS AINDA AGUARDAM PAGAMENTO";
-                tvResumo.SetTextColor(Android.Graphics.Color.ParseColor("#B7791F"));
+                texto = "SEM RECEITA CADASTRADA PARA ESTA COMPETÊNCIA";
+                cor = "#667785";
+            }
+            else if (resumo.SaldoPlanejado < 0m)
+            {
+                texto = $"COMPROMISSOS SUPERAM A RECEITA EM {FormatarMoeda(Math.Abs(resumo.SaldoPlanejado))}";
+                cor = "#C2414F";
+            }
+            else if (resumo.ContasVencidas > 0)
+            {
+                texto = $"{resumo.ContasVencidas} {Pluralizar(resumo.ContasVencidas, "CONTA VENCIDA", "CONTAS VENCIDAS")} · {FormatarMoeda(resumo.ValorVencido)} EM ATRASO";
+                cor = "#C2414F";
+            }
+            else if (resumo.TotalEmAberto > 0m)
+            {
+                texto = $"{FormatarMoeda(resumo.TotalEmAberto)} AINDA PRECISAM SER QUITADOS";
+                cor = "#815300";
+            }
+            else if (resumo.TotalPlanejado <= 0m)
+            {
+                texto = "NENHUM COMPROMISSO PLANEJADO PARA O MÊS";
+                cor = "#667785";
             }
             else
             {
-                tvResumo.Text = "TODAS AS DESPESAS PLANEJADAS FORAM ATENDIDAS";
-                tvResumo.SetTextColor(Android.Graphics.Color.ParseColor("#18794E"));
+                texto = "TODOS OS COMPROMISSOS DA COMPETÊNCIA FORAM QUITADOS";
+                cor = "#18794E";
+            }
+
+            tvResumo.Text = texto;
+            tvResumo.SetTextColor(Color.ParseColor(cor));
+            tvSaldo.SetTextColor(Color.ParseColor(resumo.SaldoPlanejado < 0m ? "#C2414F" : "#17212B"));
+        }
+
+        private void AtualizarCategorias(IReadOnlyList<CategoriaBalanco> categorias)
+        {
+            layoutCategorias.RemoveAllViews();
+
+            if (categorias.Count == 0)
+            {
+                var vazio = new TextView(this)
+                {
+                    Text = "Nenhuma despesa planejada nesta competência.",
+                    TextSize = 14f
+                };
+                vazio.SetTextColor(Color.ParseColor("#667785"));
+                layoutCategorias.AddView(vazio);
+                return;
+            }
+
+            var exibidas = categorias.Take(5).ToList();
+            if (categorias.Count > 5)
+            {
+                exibidas.Add(new CategoriaBalanco
+                {
+                    Nome = "OUTRAS",
+                    Planejado = categorias.Skip(5).Sum(item => item.Planejado),
+                    Quitado = categorias.Skip(5).Sum(item => item.Quitado)
+                });
+            }
+
+            foreach (var categoria in exibidas)
+            {
+                var percentual = PercentualDecimal(categoria.Quitado, categoria.Planejado);
+                var titulo = new TextView(this)
+                {
+                    Text = categoria.Nome,
+                    TextSize = 14f
+                };
+                titulo.SetTypeface(null, TypefaceStyle.Bold);
+                titulo.SetTextColor(Color.ParseColor("#17212B"));
+
+                var detalhe = new TextView(this)
+                {
+                    Text = $"{FormatarMoeda(categoria.Quitado)} de {FormatarMoeda(categoria.Planejado)} quitados · {percentual:N0}%",
+                    TextSize = 12f
+                };
+                detalhe.SetTextColor(Color.ParseColor("#667785"));
+
+                var progresso = new ProgressBar(this, null, Android.Resource.Attribute.ProgressBarStyleHorizontal)
+                {
+                    Max = 100,
+                    Progress = Percentual(categoria.Quitado, categoria.Planejado),
+                    ProgressTintList = ColorStateList.ValueOf(Color.ParseColor("#18794E")),
+                    ProgressBackgroundTintList = ColorStateList.ValueOf(Color.ParseColor("#ECF2F6")),
+                    ContentDescription = $"{categoria.Nome}: {percentual:N0} por cento quitado"
+                };
+                var parametros = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MatchParent, Dp(8))
+                {
+                    TopMargin = Dp(6),
+                    BottomMargin = Dp(16)
+                };
+
+                layoutCategorias.AddView(titulo);
+                layoutCategorias.AddView(detalhe);
+                layoutCategorias.AddView(progresso, parametros);
             }
         }
 
         private static bool CategoriaEh(string? categoria, params string[] categorias)
         {
-            var normalizada = NormalizarCategoria(categoria);
+            var normalizada = BalancoMensalCalculator.NormalizarCategoria(categoria);
             return categorias.Any(c => string.Equals(normalizada, c, StringComparison.OrdinalIgnoreCase));
-        }
-
-        private static string NormalizarCategoria(string? categoria)
-        {
-            return string.IsNullOrWhiteSpace(categoria) ? "OUTROS" : categoria.Trim().ToUpperInvariant();
         }
 
         private static int Percentual(decimal realizado, decimal planejado)
         {
-            return planejado > 0
-                ? Math.Clamp((int)(realizado / planejado * 100), 0, 100)
-                : realizado > 0 ? 100 : 0;
+            return planejado > 0m
+                ? Math.Clamp(
+                    (int)Math.Round(realizado / planejado * 100m, MidpointRounding.AwayFromZero),
+                    0,
+                    100)
+                : realizado > 0m ? 100 : 0;
         }
 
-        private static string FormatarAcompanhamento(string titulo, decimal planejado, decimal realizado)
+        private static decimal PercentualDecimal(decimal realizado, decimal planejado)
         {
-            if (planejado <= 0)
+            return planejado > 0m ? realizado / planejado * 100m : 0m;
+        }
+
+        private static string FormatarMoeda(decimal valor)
+        {
+            return valor.ToString("C2", CulturaPtBr);
+        }
+
+        private static string FormatarProjecaoPessoal(BalancoMensalResumo resumo)
+        {
+            return resumo.Periodo switch
             {
-                return realizado > 0
-                    ? $"{titulo}: R$ {realizado:N2} | SEM VALOR PLANEJADO"
-                    : $"{titulo}: SEM VALOR PLANEJADO";
+                PeriodoBalanco.Atual when resumo.ProjecaoPessoal.HasValue =>
+                    $"PROJEÇÃO PESSOAL ATÉ O FIM DO MÊS: {FormatarMoeda(resumo.ProjecaoPessoal.Value)}",
+                PeriodoBalanco.Passado =>
+                    $"PESSOAL PAGO NO MÊS: {FormatarMoeda(resumo.PessoalPagoNoMes)}",
+                _ => "PROJEÇÃO PESSOAL DISPONÍVEL APÓS O INÍCIO DO MÊS"
+            };
+        }
+
+        private static string FormatarRitmoPessoal(BalancoMensalResumo resumo)
+        {
+            if (resumo.PessoalPlanejado <= 0m)
+            {
+                return resumo.PessoalPagoNoMes > 0m
+                    ? "HÁ GASTOS PESSOAIS, MAS NÃO HÁ ORÇAMENTO PESSOAL PLANEJADO"
+                    : "NENHUM ORÇAMENTO PESSOAL PLANEJADO";
             }
 
-            var diferenca = planejado - realizado;
-            var percentual = realizado / planejado * 100;
+            if (resumo.Periodo != PeriodoBalanco.Atual || !resumo.ProjecaoPessoal.HasValue)
+            {
+                return $"ORÇAMENTO PESSOAL: {FormatarMoeda(resumo.PessoalPlanejado)}";
+            }
 
-            return $"{titulo}: R$ {realizado:N2} DE R$ {planejado:N2} | {percentual:N0}%";
+            var diferenca = resumo.ProjecaoPessoal.Value - resumo.PessoalPlanejado;
+            if (Math.Abs(diferenca) < 0.01m)
+            {
+                return "RITMO ALINHADO AO ORÇAMENTO PESSOAL";
+            }
+
+            return diferenca > 0m
+                ? $"RITMO ACELERADO: PROJEÇÃO {FormatarMoeda(diferenca)} ACIMA DO ORÇAMENTO"
+                : $"RITMO CONTROLADO: PROJEÇÃO {FormatarMoeda(Math.Abs(diferenca))} ABAIXO DO ORÇAMENTO";
         }
 
-        public void ConfigurarPieChartDespesas(Context context, PieChart chart, List<Despesa> despesas, int mes, int ano)
+        private static string Pluralizar(int quantidade, string singular, string plural)
+        {
+            return quantidade == 1 ? singular : plural;
+        }
+
+        private static string Truncar(string valor, int tamanhoMaximo)
+        {
+            return valor.Length <= tamanhoMaximo
+                ? valor
+                : string.Concat(valor.AsSpan(0, tamanhoMaximo - 1), "…");
+        }
+
+        private int Dp(int valor)
+        {
+            return (int)Math.Round(valor * Resources.DisplayMetrics!.Density);
+        }
+
+        public static void ConfigurarPieChartDespesas(Context context, PieChart chart, List<Despesa> despesas, int mes, int ano)
         {
             var despesasPorCategoria = despesas
                 .Where(d => d.Vencimento.Month == mes && d.Vencimento.Year == ano)
-                .GroupBy(d => d.Categoria ?? "Outros")
+                .GroupBy(d => BalancoMensalCalculator.NormalizarCategoria(d.Categoria))
                 .Select(g => new { Categoria = g.Key, Total = g.Sum(x => x.Valor) })
+                .OrderByDescending(item => item.Total)
                 .ToList();
 
-            if (!despesasPorCategoria.Any()) { chart.Clear(); return; }
+            if (despesasPorCategoria.Count == 0)
+            {
+                chart.Clear();
+                chart.SetNoDataText("Nenhuma despesa planejada neste mês.");
+                chart.ContentDescription = "Nenhuma despesa planejada neste mês.";
+                chart.Invalidate();
+                return;
+            }
 
             var totalDespesaMes = despesasPorCategoria.Sum(d => d.Total);
-            if (totalDespesaMes <= 0) { chart.Clear(); return; }
+            if (totalDespesaMes <= 0m)
+            {
+                chart.Clear();
+                chart.SetNoDataText("Nenhuma despesa planejada neste mês.");
+                chart.ContentDescription = "Nenhuma despesa planejada neste mês.";
+                chart.Invalidate();
+                return;
+            }
 
             var maiores = despesasPorCategoria
                 .Where(d => d.Total / totalDespesaMes >= 0.05m)
@@ -308,33 +609,45 @@ namespace PersonalFinance.Resources.Activities
             foreach (var item in maiores)
                 entries.Add(new PieEntry((float)item.Total, item.Categoria));
 
-            if (menores.Any())
+            if (menores.Count > 0)
                 entries.Add(new PieEntry((float)menores.Sum(x => x.Total), "OUTRAS"));
 
             var dataSet = new PieDataSet(entries, "Despesas por Categoria");
             dataSet.SetColors(new int[]
             {
-                Color.ParseColor("#F44336"),
-                Color.ParseColor("#2196F3"),
-                Color.ParseColor("#4CAF50"),
-                Color.ParseColor("#FF9800"),
-                Color.ParseColor("#9C27B0"),
-                Color.ParseColor("#009688"),
-                Color.ParseColor("#E91E63"),
+                Color.ParseColor("#B42335"),
+                Color.ParseColor("#1D5F8A"),
+                Color.ParseColor("#18794E"),
+                Color.ParseColor("#8A4B08"),
+                Color.ParseColor("#6B3FA0"),
+                Color.ParseColor("#126A67"),
+                Color.ParseColor("#A3255F"),
                 Color.ParseColor("#3F51B5"),
-                Color.ParseColor("#CDDC39"),
-                Color.ParseColor("#FF5722")
+                Color.ParseColor("#596B10"),
+                Color.ParseColor("#A13C12")
             });
 
             dataSet.ValueTextSize = 12f;
-            dataSet.ValueTextColor = Color.Black;
+            dataSet.ValueTextColor = Color.White;
 
             var data = new PieData(dataSet);
+            data.SetValueFormatter(new PercentFormatter(chart));
             chart.Data = data;
+            var resumoCategorias = maiores
+                .Select(item => $"{item.Categoria}, {PercentualDecimal(item.Total, totalDespesaMes):N0} por cento")
+                .ToList();
+            if (menores.Count > 0)
+            {
+                resumoCategorias.Add($"Outras, {PercentualDecimal(menores.Sum(item => item.Total), totalDespesaMes):N0} por cento");
+            }
+
+            chart.ContentDescription = $"Distribuição de {FormatarMoeda(totalDespesaMes)}. {string.Join("; ", resumoCategorias)}.";
             chart.Description.Enabled = false;
             chart.SetUsePercentValues(true);
-            chart.SetDrawEntryLabels(true);
-            chart.Legend.Enabled = false;
+            chart.SetDrawEntryLabels(false);
+            chart.Legend.Enabled = true;
+            chart.Legend.WordWrapEnabled = true;
+            chart.Legend.TextSize = 11f;
 
             chart.AnimateY(1400, Easing.EaseInOutQuad);
             chart.Invalidate();
@@ -342,12 +655,28 @@ namespace PersonalFinance.Resources.Activities
             chart.SetOnChartValueSelectedListener(new PieChartListener(context, despesas, mes, ano));
         }
 
-        public void ConfigurarBarChartSemanalPorTransacoes(BarChart chart, List<Transacao> transacoes, int mes, int ano)
+        public static void ConfigurarBarChartSemanalPorTransacoes(
+            BarChart chart,
+            List<Transacao> transacoes,
+            int mes,
+            int ano,
+            int[] idsDespesasPessoais)
         {
+            var idsPermitidos = idsDespesasPessoais.ToHashSet();
             var transacoesFiltradas = transacoes
                 .Where(t => t.Data.Month == mes && t.Data.Year == ano &&
+                            idsPermitidos.Contains(t.DespesaId) &&
                             t.Despesa != null && CategoriaEh(t.Despesa.Categoria, "PESSOAL"))
                 .ToList();
+
+            if (transacoesFiltradas.Count == 0)
+            {
+                chart.Clear();
+                chart.SetNoDataText("Nenhum gasto pessoal pago neste mês.");
+                chart.ContentDescription = "Nenhum gasto pessoal pago neste mês.";
+                chart.Invalidate();
+                return;
+            }
 
             int GetWeekOfMonth(DateTime date)
             {
@@ -365,7 +694,9 @@ namespace PersonalFinance.Resources.Activities
             var barEntries = new List<BarEntry>();
             for (int semana = 1; semana <= semanasNoMes; semana++)
             {
-                float total = transacoesPorSemana.ContainsKey(semana) ? (float)transacoesPorSemana[semana] : 0f;
+                float total = transacoesPorSemana.TryGetValue(semana, out var valorSemana)
+                    ? (float)valorSemana
+                    : 0f;
                 barEntries.Add(new BarEntry(semana - 1, total)); // <- X começa em 0
             }
 
@@ -384,10 +715,14 @@ namespace PersonalFinance.Resources.Activities
             xAxis.Granularity = 1f;
             xAxis.SetDrawGridLines(false);
             xAxis.ValueFormatter = new IndexAxisValueFormatter(
-                Enumerable.Range(1, semanasNoMes).Select(s => $"Semana {s}").ToArray()
+                Enumerable.Range(1, semanasNoMes).Select(s => $"S{s}").ToArray()
             );
 
             chart.Description.Enabled = false;
+            var resumoSemanas = Enumerable.Range(1, semanasNoMes)
+                .Select(semana =>
+                    $"semana {semana}, {FormatarMoeda(transacoesPorSemana.TryGetValue(semana, out var totalSemana) ? totalSemana : 0m)}");
+            chart.ContentDescription = $"Gastos pessoais pagos em {transacoesFiltradas.Count} lançamentos. {string.Join("; ", resumoSemanas)}.";
             chart.SetFitBars(true);
             chart.AxisLeft.AxisMinimum = 0f;
             chart.AxisRight.Enabled = false;
@@ -395,7 +730,11 @@ namespace PersonalFinance.Resources.Activities
             chart.AnimateY(1200, Easing.EaseInOutQuad);
             chart.Invalidate();
 
-            chart.SetOnChartValueSelectedListener(new BarChartListener(chart.Context, mes, ano));
+            chart.SetOnChartValueSelectedListener(new BarChartListener(
+                chart.Context!,
+                mes,
+                ano,
+                idsDespesasPessoais));
 
         }
     }
@@ -440,7 +779,7 @@ namespace PersonalFinance.Resources.Activities
         {
             var despesasPorCategoria = _despesas
                 .Where(d => d.Vencimento.Month == _mes && d.Vencimento.Year == _ano)
-                .GroupBy(d => d.Categoria ?? "Outros")
+                .GroupBy(d => BalancoMensalCalculator.NormalizarCategoria(d.Categoria))
                 .Select(g => new { Categoria = g.Key, Total = g.Sum(x => x.Valor) })
                 .ToList();
 
@@ -463,12 +802,14 @@ namespace PersonalFinance.Resources.Activities
         private readonly Context _context;
         private readonly int _mes;
         private readonly int _ano;
+        private readonly int[] _idsDespesasPessoais;
 
-        public BarChartListener(Context context, int mes, int ano)
+        public BarChartListener(Context context, int mes, int ano, int[] idsDespesasPessoais)
         {
             _context = context;
             _mes = mes;
             _ano = ano;
+            _idsDespesasPessoais = idsDespesasPessoais;
         }
 
         public void OnNothingSelected() { }
@@ -483,6 +824,7 @@ namespace PersonalFinance.Resources.Activities
                 intent.PutExtra("Mes", _mes);
                 intent.PutExtra("Ano", _ano);
                 intent.PutExtra("Semana", semana);
+                intent.PutExtra("DespesaIds", _idsDespesasPessoais);
                 _context.StartActivity(intent);
             }
         }
@@ -502,8 +844,13 @@ namespace PersonalFinance.Resources.Activities
             OnSwipeLeft = onSwipeLeft;
         }
 
-        public override bool OnFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY)
+        public override bool OnFling(MotionEvent? e1, MotionEvent? e2, float velocityX, float velocityY)
         {
+            if (e1 == null || e2 == null)
+            {
+                return false;
+            }
+
             float diffX = e2.GetX() - e1.GetX();
             float diffY = e2.GetY() - e1.GetY();
 

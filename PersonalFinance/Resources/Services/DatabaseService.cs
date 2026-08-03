@@ -40,16 +40,35 @@ namespace PersonalFinance.Resources.Services
                 .ToListAsync();
         }
 
-        internal async Task<List<DespesaEmAberto>> ListaDespesasEmAbertoAsync(DateTime dtInicio, DateTime dtFinal)
+        internal async Task<List<DespesaEmAberto>> ListaDespesasEmAbertoAsync(
+            DateTime dtInicio,
+            DateTime dtFinal,
+            DateTime? dataPagamentoMaximaExclusiva = null)
         {
             var despesas = await _db.Table<Despesa>()
                 .Where(x => x.Vencimento >= dtInicio && x.Vencimento < dtFinal)
                 .OrderBy(x => x.Vencimento)
                 .ToListAsync();
-            var transacoes = await _db.Table<Transacao>().ToListAsync();
+
+            if (despesas.Count == 0)
+            {
+                return new List<DespesaEmAberto>();
+            }
+
             var idsDespesasDoMes = despesas.Select(x => x.Id).ToHashSet();
+            var parametros = idsDespesasDoMes.Cast<object>().ToList();
+            var marcadores = string.Join(", ", Enumerable.Repeat("?", parametros.Count));
+            var filtroDataPagamento = string.Empty;
+            if (dataPagamentoMaximaExclusiva.HasValue)
+            {
+                filtroDataPagamento = $" AND {nameof(Transacao.Data)} < ?";
+                parametros.Add(dataPagamentoMaximaExclusiva.Value);
+            }
+
+            var transacoes = await _db.QueryAsync<Transacao>(
+                $"SELECT * FROM {nameof(Transacao)} WHERE {nameof(Transacao.DespesaId)} IN ({marcadores}){filtroDataPagamento}",
+                parametros.ToArray());
             var pagamentosPorDespesa = transacoes
-                .Where(x => idsDespesasDoMes.Contains(x.DespesaId))
                 .GroupBy(x => x.DespesaId)
                 .ToDictionary(grupo => grupo.Key, grupo => grupo.Sum(x => x.Valor));
 
