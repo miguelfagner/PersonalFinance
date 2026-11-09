@@ -56,6 +56,23 @@ public sealed class SessionService(FinanceDbContext db, UserManager<IdentityUser
             .ExecuteUpdateAsync(s => s.SetProperty(x => x.RevokedAtUtc, DateTime.UtcNow), ct);
     }
 
+    public async Task<IdentityResult> ChangePasswordAsync(ChangePasswordRequest request, ClaimsPrincipal principal, CancellationToken ct)
+    {
+        var userId = principal.FindFirstValue(JwtRegisteredClaimNames.Sub) ?? principal.FindFirstValue(ClaimTypes.NameIdentifier);
+        var user = userId is null ? null : await users.FindByIdAsync(userId);
+        if (user is null || !string.Equals(user.Email, config["BootstrapUser:Email"], StringComparison.OrdinalIgnoreCase))
+            return IdentityResult.Failed(new IdentityError { Code = "InvalidAccount", Description = "Conta inválida." });
+
+        await using var transaction = await db.Database.BeginTransactionAsync(ct);
+        var result = await users.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
+        if (!result.Succeeded) return result;
+
+        await db.RefreshSessions.Where(x => x.UserId == user.Id && x.RevokedAtUtc == null)
+            .ExecuteUpdateAsync(s => s.SetProperty(x => x.RevokedAtUtc, DateTime.UtcNow), ct);
+        await transaction.CommitAsync(ct);
+        return result;
+    }
+
     private Task<int> RevokeFamilyAsync(Guid familyId, CancellationToken ct) =>
         db.RefreshSessions.Where(x => x.FamilyId == familyId && x.RevokedAtUtc == null)
             .ExecuteUpdateAsync(s => s.SetProperty(x => x.RevokedAtUtc, DateTime.UtcNow), ct);

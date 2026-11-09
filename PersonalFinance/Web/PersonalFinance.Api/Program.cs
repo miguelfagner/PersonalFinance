@@ -1,4 +1,5 @@
 using System.Text;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -54,6 +55,12 @@ app.MapPost("/api/auth/logout", async (RefreshRequest request, SessionService se
     await sessions.LogoutAsync(request, ct);
     return Results.NoContent();
 }).AllowAnonymous();
+app.MapPost("/api/auth/change-password", async (ChangePasswordRequest request, SessionService sessions, ClaimsPrincipal principal, CancellationToken ct) =>
+{
+    var result = await sessions.ChangePasswordAsync(request, principal, ct);
+    return result.Succeeded ? Results.NoContent() : Results.ValidationProblem(
+        result.Errors.GroupBy(x => x.Code).ToDictionary(x => x.Key, x => x.Select(e => e.Description).ToArray()));
+}).RequireAuthorization();
 
 var api = app.MapGroup("/api").RequireAuthorization();
 api.MapFinance();
