@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widgetContainer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_widget_personal_finance"
+    android:orientation="vertical"
+    android:paddingBottom="12dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="12dp">
+
+    <LinearLayout
+        android:id="@+id/widgetResumoArea"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false"
+            android:text="GASTOS"
+            android:textColor="@color/finance_white"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/widgetCompetencia"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:includeFontPadding="false"
+            android:text=""
+            android:textColor="#BFD3E3"
+            android:textSize="0sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/widgetAtualizacao"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textColor="#BFD3E3"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/widgetResumoValores"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="PESSOAL · R$ 0,00 / R$ 0,00"
+            android:textColor="@color/finance_white"
+            android:textSize="12sp" />
+
+        <ProgressBar
+            android:id="@+id/widgetProgresso"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="2dp"
+            android:max="100"
+            android:progress="0"
+            android:progressBackgroundTint="#49647B"
+            android:progressTint="@color/finance_accent" />
+
+        <TextView
+            android:id="@+id/widgetResumoCategorias"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="COMBUSTÍVEL · R$ 0,00"
+            android:textColor="@color/finance_white"
+            android:textSize="12sp" />
+
+        <ProgressBar
+            android:id="@+id/widgetProgressoCombustivel"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="2dp"
+            android:max="100"
+            android:progress="0"
+            android:progressBackgroundTint="#49647B"
+            android:progressTint="@color/finance_accent" />
+
+        <TextView
+            android:id="@+id/widgetResumoCasa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="7dp"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-medium"
+            android:includeFontPadding="false"
+            android:maxLines="1"
+            android:text="CASA · R$ 0,00"
+            android:textColor="@color/finance_white"
+            android:textSize="12sp" />
+
+        <ProgressBar
+            android:id="@+id/widgetProgressoCasa"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="4dp"
+            android:layout_marginTop="2dp"
+            android:max="100"
+            android:progress="0"
+            android:progressBackgroundTint="#49647B"
+            android:progressTint="@color/finance_accent" />
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/widgetLancarGasto"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_marginTop="1dp"
+        android:background="@drawable/bg_widget_personal_finance_button"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:minHeight="0dp"
+        android:minWidth="0dp"
+        android:padding="0dp"
+        android:text="+ Lançar gasto"
+        android:textAllCaps="false"
+        android:textColor="@color/finance_primary_dark"
+        android:textSize="12sp" />
+</LinearLayout>

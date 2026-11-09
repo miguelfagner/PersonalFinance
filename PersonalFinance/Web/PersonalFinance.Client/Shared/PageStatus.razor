@@ -1,0 +1,4 @@
+@if (Loading) { <p role="status" class="status-panel">Carregando…</p> }
+@if (Error is not null) { <div class="alert alert-danger" role="alert">@Error <button type="button" class="btn btn-sm btn-outline-secondary" @onclick="Retry">Tentar novamente</button></div> }
+@if (Message is not null) { <div class="alert alert-info" role="status">@Message</div> }
+@code { [Parameter] public bool Loading { get; set; } [Parameter] public string? Error { get; set; } [Parameter] public string? Message { get; set; } [Parameter] public EventCallback Retry { get; set; } }

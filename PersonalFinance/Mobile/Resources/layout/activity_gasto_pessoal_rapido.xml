@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/finance_background"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/FinanceScreenTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Lançar gasto pessoal" />
+
+            <Button
+                android:id="@+id/btnInicioGastoPessoal"
+                style="@style/FinanceButtonSecondary"
+                android:layout_width="wrap_content"
+                android:layout_height="44dp"
+                android:layout_marginStart="12dp"
+                android:minWidth="0dp"
+                android:paddingLeft="14dp"
+                android:paddingRight="14dp"
+                android:text="Início" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/FinanceScreenSubtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="4dp"
+            android:text="Registre uma subdespesa sem abrir o fluxo completo." />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical"
+            android:padding="18dp">
+
+            <TextView
+                style="@style/FinanceFieldLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Orçamento pessoal" />
+
+            <Spinner
+                android:id="@+id/spinnerDespesaPessoal"
+                style="@style/FinanceSpinner" />
+
+            <TextView
+                android:id="@+id/txtDestinoPessoal"
+                style="@style/FinanceItemMeta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="7dp"
+                android:text="Competência atual" />
+
+            <TextView
+                android:id="@+id/txtSemOrcamentoPessoal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/bg_widget_personal_finance_warning"
+                android:padding="12dp"
+                android:text="Crie ou prepare uma despesa da categoria PESSOAL nesta competência para habilitar o lançamento."
+                android:textColor="@color/finance_warning"
+                android:textSize="13sp"
+                android:visibility="gone" />
+
+            <TextView
+                style="@style/FinanceFieldLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Descrição" />
+
+            <EditText
+                android:id="@+id/edtDescricaoGastoPessoal"
+                style="@style/FinanceInput"
+                android:hint="Ex.: Almoco, farmacia, transporte"
+                android:imeOptions="actionNext"
+                android:inputType="textCapSentences" />
+
+            <TextView
+                style="@style/FinanceFieldLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Valor" />
+
+            <EditText
+                android:id="@+id/edtValorGastoPessoal"
+                style="@style/FinanceInput"
+                android:hint="0,00"
+                android:imeOptions="actionDone"
+                android:inputType="number" />
+
+            <TextView
+                style="@style/FinanceFieldLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="Data" />
+
+            <EditText
+                android:id="@+id/edtDataGastoPessoal"
+                style="@style/FinanceInput"
+                android:clickable="true"
+                android:focusable="false"
+                android:hint="dd/MM/yyyy"
+                android:inputType="date" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnSalvarGastoPessoal"
+            style="@style/FinanceButtonPrimary"
+            android:layout_marginTop="16dp"
+            android:text="Lançar gasto" />
+
+        <Button
+            android:id="@+id/btnCancelarGastoPessoal"
+            style="@style/FinanceButtonSecondary"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Cancelar" />
+    </LinearLayout>
+</ScrollView>

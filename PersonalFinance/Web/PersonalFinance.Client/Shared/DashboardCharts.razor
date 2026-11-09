@@ -1,0 +1,143 @@
+@using PersonalFinance.Contracts
+@using System.Globalization
+
+<div class="indicator-charts">
+    <section class="indicator-panel" aria-labelledby="categories-title">
+        <h2 id="categories-title" class="h5">Despesas por categoria</h2>
+        <p class="chart-caption">Valores planejados com vencimento neste mês. Toque em uma categoria para ver os lançamentos.</p>
+        @if (Slices.Count == 0)
+        {
+            <p class="chart-empty">Nenhuma despesa planejada neste mês.</p>
+        }
+        else
+        {
+            <div class="category-chart-layout">
+                <svg class="category-donut" viewBox="0 0 220 220" role="img" aria-label="Distribuição das despesas planejadas por categoria">
+                    <circle cx="110" cy="110" r="78" fill="none" stroke="#e9edf2" stroke-width="30" />
+                    @for (var index = 0; index < Slices.Count; index++)
+                    {
+                        var slice = Slices[index];
+                        var length = slice.Amount / ChartTotal * Circumference;
+                        var offset = Slices.Take(index).Sum(x => x.Amount) / ChartTotal * Circumference;
+                        <circle cx="110" cy="110" r="78" fill="none" stroke="@Color(index)" stroke-width="@(selectedSlice == slice ? 35 : 30)"
+                                stroke-dasharray="@($"{Svg(length)} {Svg(Circumference - length)}")" stroke-dashoffset="@Svg(-offset)"
+                                transform="rotate(-90 110 110)" class="chart-slice" @onclick="() => SelectCategory(slice)">
+                            <title>@slice.Label: @Money(slice.Amount) (@Percent(slice.Amount)%)</title>
+                        </circle>
+                    }
+                    <text x="110" y="104" text-anchor="middle" class="donut-label">Planejado</text>
+                    <text x="110" y="126" text-anchor="middle" class="donut-total">@Money(ChartTotal)</text>
+                </svg>
+                <div class="category-legend" aria-label="Categorias e valores">
+                    @for (var index = 0; index < Slices.Count; index++)
+                    {
+                        var slice = Slices[index];
+                        <button type="button" class="category-choice @(selectedSlice == slice ? "selected" : "")" aria-pressed="@(selectedSlice == slice ? "true" : "false")" @onclick="() => SelectCategory(slice)">
+                            <span class="legend-swatch" style="background:@Color(index)"></span>
+                            <span class="category-name">@slice.Label</span><span class="category-values"><strong>@Money(slice.Amount)</strong><small>@Percent(slice.Amount)%</small></span>
+                        </button>
+                    }
+                </div>
+            </div>
+            <p class="chart-caption mb-0">Categorias com menos de 5% aparecem juntas em “Outras”.</p>
+        }
+    </section>
+    <section class="indicator-panel" aria-labelledby="weekly-title">
+        <h2 id="weekly-title" class="h5">Gastos pessoais por semana</h2>
+        <p class="chart-caption">Pagamentos realizados de despesas PESSOAL com vencimento neste mês. Semanas de domingo a sábado.</p>
+        @if (Summary.PersonalSpendingByWeek.All(x => x.Payments == 0))
+        {
+            <p class="chart-empty">Nenhum gasto pessoal pago neste mês.</p>
+        }
+        else
+        {
+            <div class="weekly-chart" role="group" aria-label="Gastos pessoais pagos por semana">
+                @foreach (var week in Summary.PersonalSpendingByWeek)
+                {
+                    <button type="button" class="week-column @(selectedWeek == week ? "selected" : "")" aria-pressed="@(selectedWeek == week ? "true" : "false")"
+                            aria-label="@($"Semana {week.Week}, {Dates(week)}, {Money(week.Amount)}, {week.Payments} {(week.Payments == 1 ? "pagamento" : "pagamentos")}")" @onclick="() => SelectWeek(week)">
+                        <span class="week-amount">@Money(week.Amount)</span>
+                        <span class="week-track"><span class="week-bar" style="height:@Svg(BarHeight(week.Amount))%"></span></span>
+                        <strong>@($"S{week.Week}")</strong><small>@Dates(week)</small>
+                    </button>
+                }
+            </div>
+            <div class="chart-footer"><span>Total pessoal pago</span><strong>@Money(Summary.PersonalSpendingByWeek.Sum(x => x.Amount))</strong></div>
+        }
+    </section>
+</div>
+
+@if (selectedSlice is not null || selectedWeek is not null)
+{
+    <section class="indicator-panel mt-3" aria-live="polite">
+        <div class="chart-detail-header"><h2 class="h5">@(selectedSlice is not null ? $"Despesas · {selectedSlice.Label}" : $"Pagamentos · Semana {selectedWeek!.Week}")</h2><a class="btn btn-sm btn-outline-primary" href="@PaymentLink()">Abrir lançamentos</a><button class="btn btn-sm btn-outline-secondary" @onclick="ClearSelection">Fechar detalhes</button></div>
+        @if (selectedSlice is not null)
+        {
+            <p class="chart-caption">@string.Join(", ", selectedSlice.Categories). Valores quitados até hoje, incluindo pagamentos em outros meses.</p>
+            <div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>Despesa</th><th>Vencimento</th><th class="text-end">Planejado</th><th class="text-end">Quitado</th><th class="text-end">Em aberto</th></tr></thead><tbody>
+                @foreach (var expense in SelectedExpenses)
+                {
+                    <tr><td>@expense.Description<small class="d-block text-muted">@expense.Category</small></td><td>@expense.DueDate.ToString("dd/MM")</td><td class="text-end text-nowrap">@Money(expense.Amount)</td><td class="text-end text-nowrap">@Money(expense.Paid)</td><td class="text-end text-nowrap">@Money(expense.Remaining)</td></tr>
+                }
+            </tbody></table></div>
+        }
+        <h3 class="h6">@(selectedSlice is null ? "Pagamentos da semana" : "Pagamentos da categoria neste mês")</h3>
+        @if (!SelectedPayments.Any()) { <p class="text-muted mb-0">Nenhum pagamento realizado neste período.</p> }
+        else
+        {
+            <div class="table-responsive"><table class="table table-sm align-middle"><thead><tr><th>Data</th><th>Despesa / observação</th><th class="text-end">Valor</th></tr></thead><tbody>
+                @foreach (var payment in SelectedPayments)
+                {
+                    <tr><td>@payment.Date.ToString("dd/MM")</td><td>@payment.Description<small class="d-block text-muted">@payment.Note</small></td><td class="text-end text-nowrap">@Money(payment.Amount)</td></tr>
+                }
+            </tbody></table></div>
+        }
+    </section>
+}
+
+@code {
+    [Parameter, EditorRequired] public BalanceSummary Summary { get; set; } = default!;
+    private static readonly CultureInfo PtBr = CultureInfo.GetCultureInfo("pt-BR");
+    private static readonly string[] Colors = ["#B42335", "#1D5F8A", "#18794E", "#8A4B08", "#6B3FA0", "#126A67", "#A3255F", "#3F51B5", "#596B10", "#A13C12"];
+    private const decimal Circumference = 490.0884539600077m;
+    private List<CategorySlice> Slices = [];
+    private CategorySlice? selectedSlice;
+    private WeeklyPersonalSpending? selectedWeek;
+    private BalanceSummary? previousSummary;
+    private decimal ChartTotal => Slices.Sum(x => x.Amount);
+    private IEnumerable<ChartExpense> SelectedExpenses => Summary.ExpenseDetails.Where(x => selectedSlice?.Categories.Contains(x.Category) == true);
+    private IEnumerable<ChartPayment> SelectedPayments => Summary.PaymentDetails.Where(x => selectedSlice is not null
+        ? selectedSlice.Categories.Contains(x.Category)
+        : selectedWeek is not null && x.Date >= selectedWeek.Start && x.Date <= selectedWeek.End &&
+            Summary.ExpenseDetails.Any(e => e.Id == x.ExpenseId && e.Category == "PESSOAL"));
+
+    protected override void OnParametersSet()
+    {
+        if (ReferenceEquals(previousSummary, Summary)) return;
+        previousSummary = Summary;
+        ClearSelection();
+        var positive = Summary.Categories.Where(x => x.Amount > 0).ToList();
+        var total = positive.Sum(x => x.Amount);
+        Slices = positive.Where(x => x.Amount >= total * 0.05m)
+            .Select(x => new CategorySlice(x.Category, x.Amount, [x.Category])).ToList();
+        var small = positive.Where(x => x.Amount < total * 0.05m).ToList();
+        if (small.Count > 0) Slices.Add(new CategorySlice("Outras", small.Sum(x => x.Amount), small.Select(x => x.Category).ToArray()));
+    }
+    private void SelectCategory(CategorySlice slice) { selectedSlice = slice; selectedWeek = null; }
+    private void SelectWeek(WeeklyPersonalSpending week) { selectedWeek = week; selectedSlice = null; }
+    private void ClearSelection() { selectedSlice = null; selectedWeek = null; }
+    private string PaymentLink() => selectedSlice is not null
+        ? $"/payments?month={Summary.Month:yyyy-MM}&categories={Uri.EscapeDataString(string.Join(',', selectedSlice.Categories))}"
+        : $"/payments?month={Summary.Month:yyyy-MM}&category=PESSOAL&personalDueMonth=true&week={selectedWeek?.Week}";
+    private decimal BarHeight(decimal amount)
+    {
+        var max = Summary.PersonalSpendingByWeek.Max(x => x.Amount);
+        return max > 0 ? Math.Clamp(amount / max * 100, 0, 100) : 0;
+    }
+    private string Percent(decimal amount) => (amount / ChartTotal * 100).ToString("N1", PtBr);
+    private static string Money(decimal value) => value.ToString("C", PtBr);
+    private static string Svg(decimal value) => value.ToString("0.####", CultureInfo.InvariantCulture);
+    private static string Color(int index) => Colors[index % Colors.Length];
+    private static string Dates(WeeklyPersonalSpending week) => $"{week.Start:dd}–{week.End:dd}";
+    private sealed record CategorySlice(string Label, decimal Amount, string[] Categories);
+}

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cabecalhoMes"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="12dp"
+    android:layout_marginTop="12dp"
+    android:layout_marginEnd="12dp"
+    android:background="@drawable/bg_hero"
+    android:elevation="2dp"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/btnMesAnterior"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:contentDescription="@string/lista_mensal_mes_anterior"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="‹"
+        android:textColor="@color/finance_white"
+        android:textSize="34sp" />
+
+    <LinearLayout
+        android:id="@+id/areaGestoMes"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:clickable="true"
+        android:gravity="center"
+        android:minHeight="48dp"
+        android:orientation="vertical"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp">
+
+        <TextView
+            android:id="@+id/tvMesAtual"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:accessibilityLiveRegion="polite"
+            android:gravity="center"
+            android:text="@string/lista_mensal_mes_atual"
+            android:textColor="@color/finance_white"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:alpha="0.72"
+            android:gravity="center"
+            android:text="@string/lista_mensal_instrucao"
+            android:textColor="@color/finance_white"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/btnProximoMes"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:clickable="true"
+        android:contentDescription="@string/lista_mensal_proximo_mes"
+        android:focusable="true"
+        android:gravity="center"
+        android:text="›"
+        android:textColor="@color/finance_white"
+        android:textSize="34sp" />
+</LinearLayout>

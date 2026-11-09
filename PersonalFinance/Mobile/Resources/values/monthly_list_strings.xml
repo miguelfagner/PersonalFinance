@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lista_mensal_mes_anterior">Mês anterior</string>
+    <string name="lista_mensal_proximo_mes">Próximo mês</string>
+    <string name="lista_mensal_mes_atual">MÊS ATUAL</string>
+    <string name="lista_mensal_instrucao">Use as setas ou deslize no mês</string>
+    <string name="lista_mensal_carregando">Carregando lançamentos…</string>
+    <string name="lista_mensal_erro">Não foi possível carregar os lançamentos deste mês.</string>
+    <string name="lista_mensal_sem_receitas">Nenhuma receita cadastrada neste mês.</string>
+    <string name="lista_mensal_sem_despesas">Nenhuma despesa cadastrada neste mês.</string>
+    <string name="lista_mensal_tentar_novamente">Tentar novamente</string>
+</resources>

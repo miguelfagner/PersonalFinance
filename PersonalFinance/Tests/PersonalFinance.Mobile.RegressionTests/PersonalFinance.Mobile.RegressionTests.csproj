@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+    <Compile Include="..\..\Mobile\Resources\Models\*.cs" Link="Production/Models/%(Filename)%(Extension)" />
+    <Compile Include="..\..\Mobile\Resources\Services\DatabaseService.cs" Link="Production/DatabaseService.cs" />
+    <Compile Include="..\..\Mobile\Resources\Services\DatabaseService.LancamentosFixos.cs" Link="Production/DatabaseService.LancamentosFixos.cs" />
+    <Compile Include="..\..\Mobile\Resources\Services\DatabaseService.Sync.cs" Link="Production/DatabaseService.Sync.cs" />
+    <ProjectReference Include="..\..\Shared\PersonalFinance.Contracts\PersonalFinance.Contracts.csproj" />
+  </ItemGroup>
+</Project>

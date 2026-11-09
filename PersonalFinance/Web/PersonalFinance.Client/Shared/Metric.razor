@@ -1,0 +1,2 @@
+<div class="col-6 col-lg"><div class="card h-100"><div class="card-body"><small class="text-muted">@Title</small><div class="fs-5">@Value.ToString("C", System.Globalization.CultureInfo.GetCultureInfo("pt-BR"))</div></div></div></div>
+@code { [Parameter] public string Title { get; set; } = ""; [Parameter] public decimal Value { get; set; } }

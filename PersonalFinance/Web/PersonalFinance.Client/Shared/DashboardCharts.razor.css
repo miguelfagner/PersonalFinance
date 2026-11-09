@@ -1,0 +1,30 @@
+.indicator-charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.indicator-panel { min-width: 0; background: #fff; border: 1px solid #dde3eb; border-radius: 14px; padding: 1.25rem; box-shadow: 0 3px 12px #20334d08; }
+.chart-caption { color: #586678; font-size: .875rem; line-height: 1.5; }
+.chart-empty { min-height: 220px; display: grid; place-items: center; text-align: center; color: #586678; background: #f7f9fc; border-radius: 10px; padding: 1rem; }
+.category-chart-layout { display: flex; align-items: center; flex-wrap: wrap; gap: .75rem; margin-bottom: 1rem; }
+.category-donut { width: 210px; max-width: 100%; margin: auto; flex-shrink: 0; }
+.donut-label { font-size: 12px; fill: #586678; }
+.donut-total { font-size: 16px; font-weight: 700; fill: #20334d; }
+.chart-slice { cursor: pointer; }
+.category-legend { flex: 1; min-width: min(230px, 100%); }
+.category-choice { display: flex; align-items: center; width: 100%; gap: .6rem; border: 1px solid transparent; border-radius: 8px; padding: .65rem .4rem; background: transparent; text-align: left; color: #20334d; }
+.category-choice:hover, .category-choice.selected { background: #f1f5fb; border-color: #b4c9e5; }
+.category-choice:focus-visible, .week-column:focus-visible { outline: 3px solid #1d5f8a; outline-offset: 2px; }
+.legend-swatch { width: 12px; height: 12px; flex-shrink: 0; border-radius: 3px; }
+.category-name { flex: 1; overflow-wrap: anywhere; font-size: .8rem; }
+.category-values { display: grid; text-align: right; white-space: nowrap; font-size: .8rem; }
+.category-values small { color: #586678; }
+.weekly-chart { display: flex; gap: .25rem; margin-top: 1.5rem; }
+.week-column { flex: 1; min-width: 0; display: flex; flex-direction: column; align-items: stretch; border: 1px solid transparent; border-radius: 8px; padding: .4rem .1rem; background: transparent; color: #20334d; }
+.week-column:hover, .week-column.selected { background: #edf4fb; border-color: #b4c9e5; }
+.week-amount { font-size: clamp(.6rem, 1vw, .8rem); font-weight: 600; white-space: nowrap; margin-bottom: .5rem; }
+.week-track { height: 170px; display: flex; justify-content: center; align-items: end; border-bottom: 1px solid #b7c4d4; background: repeating-linear-gradient(to top, transparent 0, transparent 41px, #edf1f6 42px, transparent 43px); margin-bottom: .5rem; }
+.week-bar { width: 60%; background: #1d5f8a; border-radius: 5px 5px 0 0; }
+.week-column strong { font-size: .85rem; }
+.week-column small { font-size: .7rem; color: #586678; }
+.chart-footer { display: flex; justify-content: space-between; gap: .5rem; border-top: 1px solid #dde3eb; padding-top: .85rem; margin-top: .75rem; font-size: .9rem; }
+.chart-detail-header { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .5rem; margin-bottom: .75rem; }
+.chart-detail-header h2 { margin: 0; }
+@media (max-width: 1100px) { .indicator-charts { grid-template-columns: minmax(0, 1fr); } }
+@media (max-width: 420px) { .indicator-panel { padding: .85rem; } .week-amount { font-size: .6rem; } }

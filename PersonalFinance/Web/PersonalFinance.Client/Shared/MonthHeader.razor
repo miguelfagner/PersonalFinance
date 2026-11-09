@@ -1,0 +1,7 @@
+<div class="dashboard-header"><div><h1>@Title</h1><p class="text-muted">@Date.ToString("MMMM 'de' yyyy")</p></div><div class="month-navigation"><button class="btn btn-outline-secondary" aria-label="Mês anterior" @onclick="() => Change.InvokeAsync(-1)">‹</button><input aria-label="Competência" type="month" class="form-control" value="@Date.ToString("yyyy-MM")" @onchange="SelectAsync" /><button class="btn btn-outline-secondary" aria-label="Próximo mês" @onclick="() => Change.InvokeAsync(1)">›</button></div></div>
+@code {
+    [Parameter] public string Title { get; set; } = "";
+    [Parameter] public DateTime Date { get; set; }
+    [Parameter] public EventCallback<int> Change { get; set; }
+    private async Task SelectAsync(ChangeEventArgs e) { if (DateTime.TryParse(e.Value + "-01", out var date)) await Change.InvokeAsync((date.Year - Date.Year) * 12 + date.Month - Date.Month); }
+}

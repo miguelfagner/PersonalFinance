@@ -1,0 +1,6 @@
+@page "/login"
+@inject FinanceApi Api
+@inject NavigationManager Navigation
+<PageTitle>Entrar</PageTitle>
+<div class="card mx-auto mt-5" style="max-width:420px"><div class="card-body"><h1>Entrar</h1><p class="text-muted">Use a mesma conta no Android e na Web.</p><EditForm Model="request" OnValidSubmit="LoginAsync"><DataAnnotationsValidator /><ValidationSummary /><label class="d-block mb-3">E-mail<InputText class="form-control" type="email" autocomplete="username" @bind-Value="request.Email" required /></label><label class="d-block mb-3">Senha<InputText class="form-control" type="password" autocomplete="current-password" @bind-Value="request.Password" required /></label><button class="btn btn-primary w-100" disabled="@busy">@(busy?"Entrando…":"Entrar")</button></EditForm>@if(error is not null){<p class="text-danger mt-3" role="alert">@error</p>}</div></div>
+@code {private readonly LoginRequest request=new();private bool busy;private string? error;private async Task LoginAsync(){if(busy)return;busy=true;error=null;try{if(await Api.LoginAsync(request))Navigation.NavigateTo("/");else error="E-mail ou senha inválidos.";}catch{error="Não foi possível entrar. Confira sua conexão e tente novamente.";}finally{busy=false;}}}

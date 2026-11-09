@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/estadoListaMensal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:paddingBottom="88dp">
+
+    <ProgressBar
+        android:id="@+id/progressoListaMensal"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:importantForAccessibility="no"
+        android:indeterminate="true"
+        android:indeterminateTint="@color/finance_accent" />
+
+    <TextView
+        android:id="@+id/mensagemListaMensal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:accessibilityLiveRegion="polite"
+        android:gravity="center"
+        android:lineSpacingExtra="2dp"
+        android:text="@string/lista_mensal_carregando"
+        android:textColor="@color/finance_text_secondary"
+        android:textSize="15sp" />
+
+    <Button
+        android:id="@+id/btnTentarNovamente"
+        style="@style/FinanceButtonSecondary"
+        android:layout_width="wrap_content"
+        android:layout_marginTop="16dp"
+        android:minWidth="200dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:text="@string/lista_mensal_tentar_novamente"
+        android:visibility="gone" />
+</LinearLayout>

@@ -1,0 +1,25 @@
+@page "/"
+@inherits FinancePage
+<PageTitle>Balanço mensal</PageTitle>
+<MonthHeader Title="Balanço mensal" Date="MonthValue" Change="ChangeMonthAsync" />
+<PageStatus Loading="Loading" Error="@Error" Message="@Message" Retry="ReloadAsync" />
+<div class="page-actions"><a class="btn btn-primary" href="@Link("personal")">＋ Gasto pessoal rápido</a><a class="btn btn-outline-secondary" href="@Link("open")">Valores a quitar</a><a class="btn btn-outline-secondary" href="@Link("prepare")">Preparar mês</a></div>
+@if(summary is not null){
+<div class="row g-3 mb-3"><Metric Title="Receita cadastrada" Value="summary.Income" /><Metric Title="Compromissos" Value="summary.Expenses" /><Metric Title="Quitado da competência" Value="summary.Paid" /><Metric Title="Em aberto agora" Value="summary.Remaining" /></div>
+<div class="row g-3 mb-4"><Metric Title="Saldo após compromissos" Value="summary.Balance" /><Metric Title="Saídas no mês" Value="summary.Outflows" /><Metric Title="Receita − saídas do mês" Value="summary.CashBalance" /></div>
+<div class="insight-grid"><section class="card card-body"><h2>Situação das contas</h2><p>@summary.Insights.Settled quitadas · @summary.Insights.Partial parciais · @summary.Insights.Unpaid sem pagamento</p><a class="danger-value" href="@Link("open")">@summary.Insights.Overdue vencidas · @summary.Insights.OverdueAmount.ToString("C")</a><p>Renda comprometida: @Percent(summary.Insights.IncomeCommitment)<br/>Peso dos recorrentes: @Percent(summary.Insights.RecurringShare)</p></section>
+<section class="card card-body personal-summary"><h2>Controle pessoal</h2><p>Orçamento <strong>@summary.Insights.PersonalBudget.ToString("C")</strong></p><p>Realizado no mês <strong>@summary.Insights.PersonalSpent.ToString("C")</strong></p><p>Média diária @summary.Insights.PersonalDailyAverage.ToString("C") · @summary.Insights.DaysWithPersonalSpending dias com gastos</p><p>Limite diário restante: @Money(summary.Insights.PersonalDailyLimit)<br/>Projeção: @Money(summary.Insights.PersonalProjection)</p><p>@PersonalPace(summary.Insights)</p><a href="@($"{Link("payments")}&category=PESSOAL&personalDueMonth=true")">Ver gastos pessoais</a></section>
+<section class="card card-body"><h2>Pagamentos do mês</h2><p>@summary.Insights.PaymentCount lançamentos · média @summary.Insights.AveragePayment.ToString("C")</p><p>Maior lançamento <strong>@summary.Insights.LargestPayment.ToString("C")</strong><br/>@summary.Insights.LargestPaymentDescription</p><a href="@Link("payments")">Ver transações</a></section></div>
+<DashboardCharts Summary="summary" @key="summary" />
+<section class="card card-body mt-4"><h2>Planejado e quitado por categoria</h2>@foreach(var c in summary.Insights.CategorySettlements){<div class="category-settlement"><a href="@($"{Link("payments")}&category={Uri.EscapeDataString(c.Category)}")">@c.Category</a><span>@c.Paid.ToString("C") de @c.Planned.ToString("C")</span><progress max="@Math.Max(1,c.Planned)" value="@c.Paid">@c.Paid</progress></div>}</section>
+<section class="card card-body mt-3"><h2>Panorama do mês</h2><p>Valor quitado: @PercentOf(summary.Paid,summary.Expenses) · Contas quitadas: @PercentOf(summary.Insights.Settled,summary.Insights.Accounts)</p><progress max="@Math.Max(1,summary.Expenses)" value="@summary.Paid">@summary.Paid</progress><p class="mt-3">@summary.Insights.DaysWithOutflows dias com saídas no mês.</p>@if(summary.Insights.LargestCategory!=""){<p>Maior categoria de saídas: <strong>@summary.Insights.LargestCategory</strong> · @summary.Insights.LargestCategoryAmount.ToString("C") (@summary.Insights.LargestCategoryShare.ToString("N1")%). As três maiores concentram @summary.Insights.TopThreeShare.ToString("N1")% das saídas.</p>}</section>
+}
+@code {
+ private BalanceSummary? summary;
+ protected override async Task LoadAsync(){summary=await Api.GetAsync<BalanceSummary>($"api/dashboard/{Month.Year}/{Month.Month}?today={DateTime.Today:yyyy-MM-dd}");}
+ private static string Percent(decimal? x)=>x.HasValue?x.Value.ToString("N1")+"%":"Sem base de cálculo";
+ private static string PercentOf(decimal value,decimal total)=>total>0?(value/total*100).ToString("N1")+"%":"Sem base de cálculo";
+ private static string PercentOf(int value,int total)=>total>0?((decimal)value/total*100).ToString("N1")+"%":"Sem contas";
+ private static string PersonalPace(BalanceInsights insight)=>insight.PersonalBudget<=0?"Sem orçamento pessoal planejado.":insight.PersonalProjection is null?"Projeção disponível após o início do mês.":insight.PersonalProjection>insight.PersonalBudget?"Ritmo acima do orçamento pessoal.":"Ritmo dentro do orçamento pessoal.";
+ private static string Money(decimal? x)=>x?.ToString("C")??"Não se aplica";
+}

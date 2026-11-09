@@ -1,0 +1,33 @@
+@page "/incomes"
+@inherits FinancePage
+<PageTitle>Receitas</PageTitle>
+<MonthHeader Title="Receitas" Date="MonthValue" Change="ChangeMonthAsync" />
+<PageStatus Loading="Loading" Error="@Error" Message="@Message" Retry="ReloadAsync" />
+<div class="page-actions"><button class="btn btn-primary" @onclick="New">＋ Nova receita</button><a class="btn btn-outline-secondary" href="@Link("fixed-convert")">Transformar em fixos</a></div>
+@if (editing is not null)
+{
+    <EditForm Model="editing" OnValidSubmit="SaveRecordAsync" class="card card-body mb-4"><DataAnnotationsValidator /><ValidationSummary />
+        <h2>@(editing.Id == 0 ? "Nova receita" : "Editar receita")</h2>
+        <div class="form-grid">
+            <label>Fonte pagadora<InputText class="form-control" @bind-Value="editing.Payer" required /></label>
+            <label>Descrição<InputText class="form-control" @bind-Value="editing.Description" required /></label>
+            <label>Tipo<InputText class="form-control" @bind-Value="editing.Type" required /></label>
+            <label>Valor (R$)<InputNumber class="form-control" @bind-Value="editing.Amount" step="0.01" min="0.01" required /></label>
+            <label>Competência<input type="month" class="form-control" value="@editMonth.ToString("yyyy-MM")" disabled="@editing.GeneratedForMonth.HasValue" @onchange="e => SetEditMonth(e)" /></label>
+        </div><div class="form-actions"><button class="btn btn-primary" disabled="@Busy">Salvar</button><button type="button" class="btn btn-outline-secondary" @onclick="() => editing = null">Cancelar</button></div>
+    </EditForm>
+}
+@if (!Loading && items.Count == 0) { <div class="empty-state">Nenhuma receita nesta competência. Cadastre uma receita ou prepare o mês.</div> }
+<div class="records">@foreach (var item in items) {
+    <article class="record-card"><div><h2>@item.Payer</h2><p>@item.Description</p><small>@item.Type · @item.ReferenceMonth.ToString("MM/yyyy") @(item.GeneratedForMonth.HasValue ? "· lançamento fixo" : "")</small></div><strong class="record-amount">@item.Amount.ToString("C")</strong><div class="record-actions"><button class="btn btn-sm btn-outline-primary" @onclick="() => Edit(item)">Detalhes / editar</button><button class="btn btn-sm btn-outline-danger" disabled="@Busy" @onclick='() => DeleteAsync($"api/incomes/{item.Id}", item.Description, item)'>Excluir</button></div></article>
+}</div><p class="list-total">Total de receitas <strong>@items.Sum(x => x.Amount).ToString("C")</strong></p>
+@code {
+    private List<Income> items = [];
+    private Income? editing;
+    private DateTime editMonth;
+    protected override async Task LoadAsync() => items = await Api.GetAsync<List<Income>>($"api/incomes/{Month.Year}/{Month.Month}") ?? [];
+    private void New() { editing = new(); editMonth = MonthValue; }
+    private void Edit(Income x) { editing = new() { Id=x.Id, ClientId=x.ClientId, Revision=x.Revision, Payer=x.Payer, Description=x.Description, Type=x.Type, Amount=x.Amount, ReferenceMonth=x.ReferenceMonth, FixedIncomeId=x.FixedIncomeId, GeneratedForMonth=x.GeneratedForMonth }; editMonth=x.ReferenceMonth.ToDateTime(TimeOnly.MinValue); }
+    private void SetEditMonth(ChangeEventArgs e) { if(DateTime.TryParse(e.Value + "-01",out var d)) editMonth=d; }
+    private Task SaveRecordAsync() => RunAsync(async () => { if(editing is null)return; editing.ReferenceMonth=DateOnly.FromDateTime(editMonth); await SaveAsync("api/incomes",editing,editing.Id); editing=null; });
+}

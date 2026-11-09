@@ -1,0 +1,38 @@
+@page "/expenses"
+@page "/open"
+@inherits FinancePage
+<PageTitle>Despesas</PageTitle>
+<MonthHeader Title="@(OpenOnly ? "Valores a quitar" : "Despesas")" Date="MonthValue" Change="ChangeMonthAsync" />
+<PageStatus Loading="Loading" Error="@Error" Message="@Message" Retry="ReloadAsync" />
+<div class="page-actions"><button class="btn btn-primary" @onclick="New">＋ Nova despesa</button><a class="btn btn-outline-secondary" href="@Link(OpenOnly ? "expenses" : "open")">@(OpenOnly ? "Todas as despesas" : "Valores a quitar")</a><a class="btn btn-outline-secondary" href="@Link("personal")">Gasto pessoal rápido</a></div>
+<div class="filter-bar"><label>Categoria<select class="form-select" @bind="category"><option value="">Todas</option>@foreach(var c in items.Select(x=>x.Expense.Category).Distinct()){<option>@c</option>}</select></label><label>Situação<select class="form-select" @bind="status"><option value="">Todas</option><option>Pendente</option><option>Parcial</option><option>Quitada</option></select></label></div>
+@if(editing is not null) {
+<EditForm Model="editing" OnValidSubmit="SaveRecordAsync" class="card card-body mb-4"><DataAnnotationsValidator /><ValidationSummary /><h2>@(editing.Id==0?"Nova despesa":"Editar despesa")</h2>
+<div class="input-group mb-3"><input class="form-control" placeholder="Buscar receita de qualquer competência" aria-label="Buscar receita" @bind="incomeSearch" /><button type="button" class="btn btn-outline-secondary" @onclick="SearchIncomesAsync">Buscar</button></div>
+<div class="form-grid">
+<label>Receita<select class="form-select" @bind="editing.IncomeId" disabled="@editing.GeneratedForMonth.HasValue" required><option value="0">Selecione uma receita</option>@foreach(var x in incomes){<option value="@x.Id">@x.Payer — @x.Description (@x.Amount.ToString("C"))</option>}</select></label>
+<label>Descrição<InputText class="form-control" @bind-Value="editing.Description" required /></label>
+<label>Categoria<select class="form-select" @bind="editing.Category">@foreach(var c in CategoryOptions(editing.Category)){<option>@c</option>}</select></label>
+<label>Valor (R$)<InputNumber class="form-control" @bind-Value="editing.Amount" step="0.01" min="0.01" required /></label>
+<label>Vencimento<InputDate class="form-control" @bind-Value="editing.DueDate" min="@(editing.GeneratedForMonth?.ToString("yyyy-MM-dd"))" max="@(editing.GeneratedForMonth?.AddMonths(1).AddDays(-1).ToString("yyyy-MM-dd"))" required /></label>
+<label>Número da parcela<InputNumber class="form-control" @bind-Value="editing.InstallmentNumber" min="0" disabled="@editing.GeneratedForMonth.HasValue" /></label>
+</div><p class="text-muted">Cadastrada em @editing.CreatedOn.ToString("dd/MM/yyyy") @(editing.GeneratedForMonth.HasValue ? "· competência protegida de lançamento fixo" : "")</p>
+<div class="form-actions"><button class="btn btn-primary" disabled="@Busy">Salvar</button><button type="button" class="btn btn-outline-secondary" @onclick="()=>editing=null">Cancelar</button></div></EditForm>
+}
+@if(!Loading && !Visible.Any()){<div class="empty-state">Nenhuma despesa encontrada para esta competência e filtros.</div>}
+<div class="records">@foreach(var item in Visible) { var x=item.Expense;
+<article class="record-card"><div><h2>@x.Description</h2><p>@x.Category · vence @x.DueDate.ToString("dd/MM/yyyy")</p><span class="status-badge @(item.Remaining==0?"settled":x.DueDate<DateOnly.FromDateTime(DateTime.Today)?"overdue":"pending")">@item.Status @(item.Remaining>0 && x.DueDate<DateOnly.FromDateTime(DateTime.Today)?"· vencida":"")</span></div><div class="amount-breakdown"><strong>@x.Amount.ToString("C")</strong><small>Pago @item.Paid.ToString("C")</small><small>Restante @item.Remaining.ToString("C")</small></div>
+<div class="record-actions"><button class="btn btn-sm btn-outline-primary" @onclick="()=>Edit(x)">Detalhes / editar</button><a class="btn btn-sm btn-outline-primary" href="@($"{Link("payments")}&expenseId={x.Id}")">Pagamentos</a>@if(item.Remaining>0){<a class="btn btn-sm btn-outline-primary" href="@($"{Link("payments")}&expenseId={x.Id}&new=1")">Registrar pagamento</a><button class="btn btn-sm btn-primary" disabled="@Busy" @onclick="()=>SettleAsync(x)">Quitar restante</button>}<button class="btn btn-sm btn-outline-danger" disabled="@Busy" @onclick='()=>DeleteAsync($"api/expenses/{x.Id}",x.Description,x)'>Excluir</button></div>
+</article>}</div>
+<p class="list-total">Em aberto <strong>@Visible.Sum(x=>x.Remaining).ToString("C")</strong></p>
+@code {
+    private List<ExpenseListItem> items=[]; private List<Income> incomes=[]; private Expense? editing; private string category=""; private string status=""; private string incomeSearch="";
+    private bool OpenOnly => new Uri(Navigation.Uri).AbsolutePath=="/open";
+    private IEnumerable<ExpenseListItem> Visible=>items.Where(x=>(!OpenOnly||x.Remaining>0)&&(category==""||x.Expense.Category==category)&&(status==""||x.Status==status));
+    protected override async Task LoadAsync(){items=await Api.GetAsync<List<ExpenseListItem>>($"api/expenses/{Month.Year}/{Month.Month}")??[];incomes=await Api.GetAsync<List<Income>>($"api/incomes/{Month.Year}/{Month.Month}")??[];}
+    private void New(){editing=new(){Category="PESSOAL",CreatedOn=DateOnly.FromDateTime(DateTime.Today),DueDate=Month.AddDays(Math.Min(DateTime.Today.Day,DateTime.DaysInMonth(Month.Year,Month.Month))-1)};}
+    private async Task Edit(Expense x){ editing=new(){Id=x.Id,ClientId=x.ClientId,Revision=x.Revision,IncomeId=x.IncomeId,Description=x.Description,Category=x.Category,Amount=x.Amount,DueDate=x.DueDate,CreatedOn=x.CreatedOn,InstallmentNumber=x.InstallmentNumber,Replicable=x.Replicable,FixedExpenseId=x.FixedExpenseId,GeneratedForMonth=x.GeneratedForMonth}; if(!incomes.Any(i=>i.Id==x.IncomeId)){var parent=await Api.GetAsync<Income>($"api/incomes/{x.IncomeId}");if(parent is not null)incomes.Add(parent);} }
+    private Task SearchIncomesAsync()=>RunAsync(async()=>{var found=await Api.GetAsync<List<Income>>("api/lookups/incomes?q="+Uri.EscapeDataString(incomeSearch))??[];incomes=incomes.Concat(found).DistinctBy(x=>x.Id).OrderByDescending(x=>x.ReferenceMonth).ToList();});
+    private Task SaveRecordAsync()=>RunAsync(async()=>{if(editing is null)return;editing.IncomeClientId=incomes.FirstOrDefault(x=>x.Id==editing.IncomeId)?.ClientId;await SaveAsync("api/expenses",editing,editing.Id);editing=null;});
+    private async Task SettleAsync(Expense x){if(!await Js.InvokeAsync<bool>("confirm",$"Quitar o restante de {x.Description} com data de hoje?"))return;await RunAsync(async()=>{await SaveAsync($"api/expenses/{x.Id}/settle",new SettleRequest(DateOnly.FromDateTime(DateTime.Today),"Quitação",Guid.NewGuid()),target:x);});}
+}

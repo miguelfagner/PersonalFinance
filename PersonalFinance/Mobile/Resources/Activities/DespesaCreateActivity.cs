@@ -1,0 +1,140 @@
+using Android.App;
+using Android.OS;
+using Android.Widget;
+using PersonalFinance.Resources.Models;
+using PersonalFinance.Resources.Services;
+using PersonalFinance.Resources.ViewModels;
+using PersonalFinance.Resources.Helpers;
+using PersonalFinance.Resources.Widgets;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+
+namespace PersonalFinance.Resources.Activities
+{
+    [Activity(Label = "Cadastro de Despesa")]
+    public class DespesaCreateActivity : FinanceActivity
+    {
+        private Spinner _spinnerReceita;
+        private Spinner _spinnerCategoria;
+        private EditText _edtDescricao, _edtValor, _edtNParcela, _edtData;
+        private Button _btnSalvar;
+        private DespesaViewModel _viewModel;
+        private List<Receita> _receitas;
+        private DateTime _dataSelecionada = DateTime.Today;
+
+        protected override async void OnCreate(Bundle savedInstanceState)
+        {
+            base.OnCreate(savedInstanceState);
+            SetContentView(Resource.Layout.activity_despesa_cadastro);
+
+            // Inicializa ViewModel
+            _viewModel = new DespesaViewModel();
+
+            // Vincular componentes
+            _spinnerReceita = FindViewById<Spinner>(Resource.Id.spinnerReceita);
+            _spinnerCategoria = FindViewById<Spinner>(Resource.Id.spinnerCategoria);
+            _edtDescricao = FindViewById<EditText>(Resource.Id.edtDescricao);
+            _edtValor = FindViewById<EditText>(Resource.Id.edtValor)!;
+            _edtNParcela = FindViewById<EditText>(Resource.Id.edtNParcela);
+            _edtData = FindViewById<EditText>(Resource.Id.edtVencimento);
+            _btnSalvar = FindViewById<Button>(Resource.Id.btnSalvar);
+            MoneyInputFormatter.Configure(_edtValor);
+
+            int mesInicial = Intent.GetIntExtra("Mes", DateTime.Today.Month);
+            int anoInicial = Intent.GetIntExtra("Ano", DateTime.Today.Year);
+            int diaInicial = Math.Min(DateTime.Today.Day, DateTime.DaysInMonth(anoInicial, mesInicial));
+            _dataSelecionada = new DateTime(anoInicial, mesInicial, diaInicial);
+
+            // Carregar receitas do banco
+            var db = new FinanceRepository();
+            var inicioMes = new DateTime(anoInicial, mesInicial, 1);
+            _receitas = await db.ListaReceitasAsync(inicioMes, inicioMes.AddMonths(1));
+
+            // Adapter do Spinner
+            _spinnerReceita.Adapter = FormOptions.CreateSpinnerAdapter(this, _receitas.Select(r => r.FontePagadora));
+
+            // Receber dados passados via intent (se houver)
+            var descricao = Intent.GetStringExtra("Descricao");
+            var categoria = Intent.GetStringExtra("Categoria");
+            var valor = Intent.GetDoubleExtra("Valor", 0);
+            var nParcela = Intent.GetIntExtra("NParcela", 0);
+            var ticks = Intent.GetLongExtra("Vencimento", 0);
+            var receitaId = Intent.GetIntExtra("ReceitaId", 0);
+
+            if (!string.IsNullOrEmpty(descricao)) _edtDescricao.Text = descricao;
+            MoneyInputFormatter.SetValue(_edtValor, Convert.ToDecimal(valor, CultureInfo.InvariantCulture));
+            _edtNParcela.Text = nParcela.ToString();
+            if (ticks > 0)
+            {
+                _dataSelecionada = new DateTime(ticks);
+                _edtData.Text = _dataSelecionada.ToString("dd/MM/yyyy");
+            }
+
+            // Selecionar receita no spinner, se necessário
+            if (receitaId > 0)
+            {
+                int index = _receitas.FindIndex(r => r.Id == receitaId);
+                if (index >= 0) _spinnerReceita.SetSelection(index);
+            }
+
+            var categorias = FormOptions.WithCurrentOption(FormOptions.CategoriasDespesa, categoria);
+            _spinnerCategoria.Adapter = FormOptions.CreateSpinnerAdapter(this, categorias);
+
+            int categoriaIndex = categorias.FindIndex(c => string.Equals(c, categoria, StringComparison.OrdinalIgnoreCase));
+            if (categoriaIndex >= 0) _spinnerCategoria.SetSelection(categoriaIndex);
+
+            // Mostrar a data de hoje como padrão se não veio do intent
+            if (_edtData.Text == "") _edtData.Text = _dataSelecionada.ToString("dd/MM/yyyy");
+
+            // Abrir DatePicker ao clicar no campo de data
+            _edtData.Click += (s, e) =>
+            {
+                var dialog = new DatePickerDialog(this,
+                    (sender, args) =>
+                    {
+                        _dataSelecionada = args.Date;
+                        _edtData.Text = _dataSelecionada.ToString("dd/MM/yyyy");
+                    },
+                    _dataSelecionada.Year,
+                    _dataSelecionada.Month - 1,
+                    _dataSelecionada.Day);
+
+                dialog.Show();
+            };
+
+            // Salvar despesa
+            _btnSalvar.Click += async (s, e) =>
+            {
+                var selectedIndex = _spinnerReceita.SelectedItemPosition;
+                if (selectedIndex < 0 || selectedIndex >= _receitas.Count)
+                {
+                    Toast.MakeText(this, "Selecione uma receita.", ToastLength.Short).Show();
+                    return;
+                }
+
+                _viewModel.ReceitaId = _receitas[selectedIndex].Id;
+                _viewModel.Descricao = _edtDescricao.Text?.Trim().ToUpper();
+                _viewModel.Categoria = _spinnerCategoria.SelectedItem?.ToString()?.Trim().ToUpperInvariant();
+
+                _viewModel.Valor = MoneyInputFormatter.Parse(_edtValor.Text);
+
+                _viewModel.NParcela = int.TryParse(_edtNParcela.Text, out int parcela) ? parcela : 0;
+                _viewModel.Vencimento = _dataSelecionada;
+
+                bool sucesso = await _viewModel.SalvarDespesa();
+                if (sucesso)
+                {
+                    await PersonalFinanceWidgetProvider.AtualizarTodosAsync(this);
+                    Toast.MakeText(this, "Despesa cadastrada!", ToastLength.Short).Show();
+                    Finish(); // fecha Activity e volta para a lista
+                }
+                else
+                {
+                    Toast.MakeText(this, "Erro ao cadastrar despesa.", ToastLength.Short).Show();
+                }
+            };
+        }
+    }
+}

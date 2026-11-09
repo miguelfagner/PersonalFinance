@@ -1,0 +1,16 @@
+<Solution>
+  <Folder Name="/Mobile/">
+    <Project Path="Mobile/PersonalFinance.Mobile.csproj" />
+  </Folder>
+  <Folder Name="/Shared/">
+    <Project Path="Shared/PersonalFinance.Contracts/PersonalFinance.Contracts.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="Tests/PersonalFinance.ImportTests/PersonalFinance.ImportTests.csproj" />
+    <Project Path="Tests/PersonalFinance.Mobile.RegressionTests/PersonalFinance.Mobile.RegressionTests.csproj" />
+  </Folder>
+  <Folder Name="/Web/">
+    <Project Path="Web/PersonalFinance.Api/PersonalFinance.Api.csproj" />
+    <Project Path="Web/PersonalFinance.Client/PersonalFinance.Client.csproj" />
+  </Folder>
+</Solution>

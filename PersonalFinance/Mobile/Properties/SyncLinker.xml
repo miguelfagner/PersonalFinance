@@ -1,0 +1,6 @@
+<linker>
+  <assembly fullname="PersonalFinance">
+    <type fullname="PersonalFinance.Resources.Models.*" preserve="all" />
+    <type fullname="PersonalFinance.Resources.Services.DatabaseService" preserve="all" />
+  </assembly>
+</linker>

@@ -1,0 +1,32 @@
+@page "/import"
+@inject PersonalFinance.Client.Services.FinanceApi Api
+@inject NavigationManager Navigation
+@inject IJSRuntime Js
+@using PersonalFinance.Contracts
+<h1>Backup e importação</h1>
+<div class="page-actions"><button class="btn btn-primary" @onclick="DownloadAsync">Exportar backup compatível com Android</button></div>
+<p>Selecione o arquivo <code>financeiro.db</code> exportado pelo aplicativo Android. O banco de destino precisa estar sem lançamentos financeiros; sua conta de login pode permanecer.</p>
+<InputFile OnChange="SelectAsync" accept=".db,application/octet-stream" disabled="@importing" />
+@if (importing) { <p role="status">Importando o backup… Aguarde a conclusão.</p> }
+@if (result is not null) { <div class="alert alert-success mt-3">Importação concluída: @result.Incomes receitas, @result.Expenses despesas e @result.Payments pagamentos.</div> }
+@if (error is not null) { <div class="alert alert-danger mt-3">@error</div> }
+@code {
+    private ImportResult? result;
+    private string? error;
+    private bool importing;
+    private async Task DownloadAsync() { try { await Api.DownloadBackupAsync(); } catch { error = "Não foi possível baixar o backup. Confira sua sessão e conexão."; } }
+    protected override async Task OnInitializedAsync()
+    {
+        if (!await Api.IsLoggedInAsync()) Navigation.NavigateTo("login");
+    }
+    private async Task SelectAsync(InputFileChangeEventArgs args)
+    {
+        if (importing) return;
+        importing = true;
+        error = null;
+        result = null;
+        try { result = await Api.ImportAsync(args.File); }
+        catch (Exception exception) { error = exception.Message; }
+        finally { importing = false; }
+    }
+}

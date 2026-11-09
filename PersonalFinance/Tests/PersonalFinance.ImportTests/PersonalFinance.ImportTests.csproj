@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    <ProjectReference Include="..\..\Shared\PersonalFinance.Contracts\PersonalFinance.Contracts.csproj" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="10.0.12" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.12" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.12" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.14" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+    <Compile Include="..\..\Web\PersonalFinance.Api\Data\FinanceDbContext.cs" Link="Production/FinanceDbContext.cs" />
+    <Compile Include="..\..\Web\PersonalFinance.Api\Data\SyncLog.cs" Link="Production/SyncLog.cs" />
+    <Compile Include="..\..\Web\PersonalFinance.Api\Data\RefreshSession.cs" Link="Production/RefreshSession.cs" />
+    <Compile Include="..\..\Web\PersonalFinance.Api\Data\Migrations\*.cs" Link="Production/Migrations/%(Filename)%(Extension)" />
+    <Compile Include="..\..\Web\PersonalFinance.Api\Services\SqliteImporter.cs" Link="Production/SqliteImporter.cs" />
+    <Compile Include="..\..\Web\PersonalFinance.Api\Services\ImportConflictException.cs" Link="Production/ImportConflictException.cs" />
+    <Compile Include="..\..\Web\PersonalFinance.Api\Services\ImportEndpoint.cs" Link="Production/ImportEndpoint.cs" />
+    <Compile Include="..\..\Web\PersonalFinance.Api\Services\FinanceService.cs" Link="Production/FinanceService.cs" />
+    <Compile Include="..\..\Web\PersonalFinance.Api\Services\CommandService.cs" Link="Production/CommandService.cs" />
+    <Compile Include="..\..\Web\PersonalFinance.Api\Services\SyncService.cs" Link="Production/SyncService.cs" />
+    <Compile Include="..\..\Web\PersonalFinance.Api\Services\DeviceSnapshotService.cs" Link="Production/DeviceSnapshotService.cs" />
+    <Compile Include="..\..\Web\PersonalFinance.Api\Services\BackupService.cs" Link="Production/BackupService.cs" />
+    <Compile Include="..\..\Web\PersonalFinance.Api\Services\FinanceEndpoints.cs" Link="Production/FinanceEndpoints.cs" />
+    <Compile Include="..\..\Mobile\Resources\ViewModels\BalancoMensalResumo.cs" Link="Android/BalancoMensalResumo.cs" />
+    <Compile Include="..\..\Mobile\Resources\Models\*.cs" Link="Android/Models/%(Filename)%(Extension)" />
+  </ItemGroup>
+</Project>

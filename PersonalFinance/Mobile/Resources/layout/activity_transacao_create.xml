@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/finance_background"
+    android:fillViewport="true"
+    android:fitsSystemWindows="true">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="20dp">
+        <TextView style="@style/FinanceScreenTitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Registrar pagamento" />
+        <TextView style="@style/FinanceScreenSubtitle" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="5dp" android:layout_marginBottom="20dp" android:text="Informe o valor pago e a data da movimentação." />
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/bg_card" android:elevation="1dp" android:orientation="vertical" android:padding="18dp">
+            <TextView style="@style/FinanceFieldLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Despesa" />
+            <Spinner android:id="@+id/spinnerDespesa" style="@style/FinanceSpinner" />
+            <TextView style="@style/FinanceFieldLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="Valor" />
+            <EditText android:id="@+id/edtValor" style="@style/FinanceInput" android:hint="0,00" android:inputType="number" />
+            <TextView style="@style/FinanceFieldLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="Observação" />
+            <EditText android:id="@+id/edtObservacao" style="@style/FinanceInput" android:hint="Ex.: Pagamento da fatura" android:inputType="textCapSentences" />
+            <TextView style="@style/FinanceFieldLabel" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:text="Data" />
+            <EditText android:id="@+id/edtData" style="@style/FinanceInput" android:clickable="true" android:focusable="false" android:hint="dd/MM/yyyy" android:inputType="date" />
+        </LinearLayout>
+
+        <Button android:id="@+id/btnSalvar" style="@style/FinanceButtonPrimary" android:layout_marginTop="18dp" android:layout_marginBottom="12dp" android:text="Registrar pagamento" />
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,25 @@
+@page "/prepare"
+@inherits FinancePage
+<PageTitle>Preparar mês</PageTitle>
+<MonthHeader Title="Preparar mês" Date="MonthValue" Change="ChangeMonthAsync" />
+<PageStatus Loading="Loading" Error="@Error" Message="@Message" Retry="ReloadAsync" />
+<p>Revise os valores antes de gerar. Os ajustes abaixo valem apenas para esta competência.</p>
+@if(!Loading && items.Count==0){<div class="empty-state">Nenhum modelo fixo ativo. <a href="/fixed">Cadastre ou reative modelos</a>.</div>}
+@foreach(var type in new[]{"INCOME","EXPENSE"}) {
+<h2>@(type=="INCOME"?"Receitas":"Despesas")</h2>
+@foreach(var x in items.Where(x=>x.ModelType==type)){
+<article class="preparation-card"><div class="preparation-title"><label><input type="checkbox" checked="@x.Selected" disabled="@x.AlreadyCreated" @onchange="e=>Select(x,(bool)e.Value!)" /> @x.Description</label><span class="status-badge">@(x.AlreadyCreated?"Já gerado":x.Ignored?"Ignorado":x.NewSincePreparation?"Novo desde a preparação":"A gerar")</span></div>
+@if(!x.AlreadyCreated){<div class="form-grid"><label>Descrição<input class="form-control" @bind="x.Description" /></label><label>Valor (R$)<input class="form-control" type="number" min="0.01" step="0.01" @bind="x.Amount" /></label>@if(type=="INCOME"){<label>Fonte<input class="form-control" @bind="x.Payer" /></label><label>Tipo<input class="form-control" @bind="x.Type" /></label>}else{<label>Categoria<select class="form-select" @bind="x.Category">@foreach(var c in CategoryOptions(x.Category)){<option>@c</option>}</select></label><label>Dia do vencimento<input class="form-control" type="number" min="1" max="31" @bind="x.DueDay" /></label>}</div>}else{<p>@x.Amount.ToString("C") — edite o lançamento mensal pela lista, se necessário.</p>}
+</article>}}
+<div class="card card-body mt-3"><p>Receitas selecionadas: <strong>@items.Where(x=>x.Selected&&x.ModelType=="INCOME").Sum(x=>x.Amount).ToString("C")</strong> · Despesas selecionadas: <strong>@items.Where(x=>x.Selected&&x.ModelType=="EXPENSE").Sum(x=>x.Amount).ToString("C")</strong></p><div class="form-actions"><button class="btn btn-primary" disabled="@(Busy||items.Count==0)" @onclick="GenerateAsync">Confirmar preparação</button><a class="btn btn-outline-secondary" href="@Link("expenses")">Ver despesas do mês</a><a class="btn btn-outline-secondary" href="@Link("incomes")">Ver receitas do mês</a></div></div>
+<p class="mt-2">Saldo previsto: <strong>@((items.Where(x=>x.Selected&&x.ModelType=="INCOME").Sum(x=>x.Amount)-items.Where(x=>x.Selected&&x.ModelType=="EXPENSE").Sum(x=>x.Amount)).ToString("C"))</strong> · A gerar: @items.Count(x=>x.Selected&&!x.AlreadyCreated) · Já lançados: @items.Count(x=>x.AlreadyCreated) · Ignorados: @items.Count(x=>!x.Selected&&!x.AlreadyCreated)</p>
+@if(result is not null){<div class="alert alert-success">Preparação concluída: @result.IncomesCreated receitas e @result.ExpensesCreated despesas criadas; @result.IncomesExisting receitas e @result.ExpensesExisting despesas já existentes; @result.Ignored ignorados.</div>}
+@code {
+    private List<PreparationPreviewItem> items=[];
+    private PreparationResult? result;
+    protected override Task InitializeAsync(){if(Query("month") is null)MonthValue=MonthValue.AddMonths(1);return Task.CompletedTask;}
+    protected override async Task LoadAsync(){var fresh=await Api.GetAsync<List<PreparationPreviewItem>>($"api/prepare/{Month.Year}/{Month.Month}")??[];foreach(var x in fresh){var draft=items.SingleOrDefault(i=>i.ModelType==x.ModelType&&i.ModelId==x.ModelId&&!i.AlreadyCreated);if(draft is null||x.AlreadyCreated)continue;x.Selected=draft.Selected;x.Description=draft.Description;x.Amount=draft.Amount;x.Payer=draft.Payer;x.Type=draft.Type;x.Category=draft.Category;x.DueDay=draft.DueDay;}items=fresh;}
+    protected new async Task ChangeMonthAsync(int offset){items=[];result=null;await base.ChangeMonthAsync(offset);}
+    private void Select(PreparationPreviewItem x,bool value){x.Selected=value;if(x.ModelType=="INCOME"&&!value)foreach(var e in items.Where(e=>e.FixedIncomeId==x.ModelId&&!e.AlreadyCreated))e.Selected=false;if(x.ModelType=="EXPENSE"&&value){var parent=items.SingleOrDefault(i=>i.ModelType=="INCOME"&&i.ModelId==x.FixedIncomeId);if(parent is not null&&!parent.AlreadyCreated)parent.Selected=true;}}
+    private async Task GenerateAsync(){if(!await Js.InvokeAsync<bool>("confirm","Gerar os selecionados e registrar os demais como ignorados nesta competência?"))return;await RunAsync(async()=>{var request=new PrepareMonthRequest(Month,items.Where(x=>x.Selected&&x.ModelType=="INCOME").Select(x=>x.ModelId).ToList(),items.Where(x=>x.Selected&&x.ModelType=="EXPENSE").Select(x=>x.ModelId).ToList()){Items=items,OperationId=Guid.NewGuid()};var outcome=await Api.SendWithResultAsync<PrepareMonthRequest,PreparationResult>(HttpMethod.Post,"api/prepare",request);result=outcome.Result;Message=outcome.Sent?"Mês preparado.":"Preparação aguardando sincronização.";if(outcome.Sent){items=[];await LoadAsync();}});}
+}

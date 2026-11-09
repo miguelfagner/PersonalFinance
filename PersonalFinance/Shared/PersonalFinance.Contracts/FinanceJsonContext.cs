@@ -1,0 +1,33 @@
+using System.Text.Json.Serialization;
+
+namespace PersonalFinance.Contracts;
+
+[JsonSourceGenerationOptions(PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase)]
+[JsonSerializable(typeof(LoginRequest))]
+[JsonSerializable(typeof(LoginResponse))]
+[JsonSerializable(typeof(RefreshRequest))]
+[JsonSerializable(typeof(Income))]
+[JsonSerializable(typeof(Expense))]
+[JsonSerializable(typeof(Payment))]
+[JsonSerializable(typeof(FixedIncome))]
+[JsonSerializable(typeof(FixedExpense))]
+[JsonSerializable(typeof(MonthlyPreparationItem))]
+[JsonSerializable(typeof(SyncChange))]
+[JsonSerializable(typeof(SyncConflict))]
+[JsonSerializable(typeof(SyncPushRequest))]
+[JsonSerializable(typeof(SyncPushResult))]
+[JsonSerializable(typeof(FinanceCommand))]
+[JsonSerializable(typeof(FinanceCommandResult))]
+[JsonSerializable(typeof(PrepareIdentityRequest))]
+[JsonSerializable(typeof(ConvertIdentityRequest))]
+[JsonSerializable(typeof(SyncPullResult))]
+[JsonSerializable(typeof(SyncStatus))]
+[JsonSerializable(typeof(BootstrapSyncRequest))]
+[JsonSerializable(typeof(BootstrapCheckpoint))]
+[JsonSerializable(typeof(DeviceSnapshotRequest))]
+[JsonSerializable(typeof(DeviceSnapshotCheckpoint))]
+[JsonSerializable(typeof(Dictionary<Guid, Guid>))]
+[JsonSerializable(typeof(Dictionary<Guid, long>))]
+[JsonSerializable(typeof(List<SyncChange>))]
+[JsonSerializable(typeof(System.Text.Json.Nodes.JsonNode))]
+public partial class FinanceJsonContext : JsonSerializerContext;

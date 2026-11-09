@@ -1,0 +1,15 @@
+@page "/personal"
+@inherits FinancePage
+<PageTitle>Gasto pessoal rápido</PageTitle>
+<MonthHeader Title="Gasto pessoal rápido" Date="MonthValue" Change="ChangeMonthAsync" />
+<PageStatus Loading="Loading" Error="@Error" Message="@Message" Retry="ReloadAsync" />
+@if(!Loading && budgets.Count==0){<div class="empty-state">Não existe orçamento PESSOAL nesta competência. <a href="@Link("expenses")">Cadastrar despesa</a></div>}
+<EditForm Model="form" OnValidSubmit="SubmitAsync" class="card card-body"><div class="form-grid"><label>Orçamento pessoal<select class="form-select" @bind="form.ExpenseId" required><option value="0">Selecione</option>@foreach(var x in budgets){<option value="@x.Expense.Id">@x.Expense.Description — @x.Expense.Amount.ToString("C")</option>}</select></label><label>Descrição<InputText class="form-control" @bind-Value="form.Note" required /></label><label>Valor (R$)<InputNumber class="form-control" @bind-Value="form.Amount" min="0.01" step="0.01" required /></label><label>Data<InputDate class="form-control" @bind-Value="form.Date" @bind-Value:after="DateChangedAsync" required /></label></div><div class="form-actions"><button class="btn btn-primary" disabled="@(Busy||budgets.Count==0)">Lançar gasto</button><a class="btn btn-outline-secondary" href="@Link("")">Voltar ao balanço</a></div></EditForm>
+@code {
+    private List<ExpenseListItem> budgets=[];private Payment form=new(){Date=DateOnly.FromDateTime(DateTime.Today)};
+    protected override Task InitializeAsync(){form.Date=Month.AddDays(Math.Min(DateTime.Today.Day,DateTime.DaysInMonth(Month.Year,Month.Month))-1);return Task.CompletedTask;}
+    protected override async Task LoadAsync(){budgets=(await Api.GetAsync<List<ExpenseListItem>>($"api/expenses/{Month.Year}/{Month.Month}")??[]).Where(x=>BalanceCalculator.NormalizeCategory(x.Expense.Category)=="PESSOAL").ToList();if(!budgets.Any(x=>x.Expense.Id==form.ExpenseId))form.ExpenseId=budgets.FirstOrDefault()?.Expense.Id??0;}
+    protected new async Task ChangeMonthAsync(int offset){var target=MonthValue.AddMonths(offset);form.Date=new DateOnly(target.Year,target.Month,Math.Min(form.Date.Day,DateTime.DaysInMonth(target.Year,target.Month)));await base.ChangeMonthAsync(offset);}
+    private Task DateChangedAsync(){var selected=new DateTime(form.Date.Year,form.Date.Month,1);return base.ChangeMonthAsync((selected.Year-MonthValue.Year)*12+selected.Month-MonthValue.Month);}
+    private Task SubmitAsync()=>RunAsync(async()=>{if(form.Date.Year!=Month.Year||form.Date.Month!=Month.Month||!budgets.Any(x=>x.Expense.Id==form.ExpenseId))throw new InvalidOperationException("Selecione uma data e um orçamento PESSOAL da mesma competência.");await SaveAsync("api/personal",new PersonalExpenseRequest(form.ExpenseId,form.Date,form.Note,form.Amount,form.ClientId),target:budgets.Single(x=>x.Expense.Id==form.ExpenseId).Expense);form=new(){ExpenseId=form.ExpenseId,Date=form.Date};});
+}

@@ -1,0 +1,19 @@
+@page "/fixed-convert"
+@inherits FinancePage
+<PageTitle>Converter lançamentos em fixos</PageTitle>
+<MonthHeader Title="Converter lançamentos em fixos" Date="MonthValue" Change="ChangeMonthAsync" />
+<PageStatus Loading="Loading" Error="@Error" Message="@Message" Retry="ReloadAsync" />
+<p>Selecione os lançamentos que devem virar modelos. As receitas vinculadas às despesas serão incluídas automaticamente.</p>
+<h2>Receitas</h2>@foreach(var x in incomes){<label class="selection-row"><input type="checkbox" checked="@incomeIds.Contains(x.Id)" @onchange="e=>SelectIncome(x.Id,(bool)e.Value!)" /> @x.Payer — @x.Description <strong>@x.Amount.ToString("C")</strong> @(x.FixedIncomeId.HasValue?"(modelo será reutilizado)":"")</label>}
+<h2 class="mt-4">Despesas</h2>@foreach(var x in expenses){<label class="selection-row"><input type="checkbox" checked="@expenseIds.Contains(x.Expense.Id)" @onchange="e=>SelectExpense(x.Expense,(bool)e.Value!)" /> @x.Expense.Description <strong>@x.Expense.Amount.ToString("C")</strong> @(x.Expense.FixedExpenseId.HasValue?"(modelo será reutilizado)":"")</label>}
+<div class="form-actions"><button class="btn btn-primary" disabled="@(Busy||incomeIds.Count+expenseIds.Count==0)" @onclick="ConvertAsync">Converter selecionados</button><a class="btn btn-outline-secondary" href="/fixed">Ver modelos</a></div>
+@if(result is not null){<div class="alert alert-success mt-3">Conversão concluída: @result.IncomesCreated receitas e @result.ExpensesCreated despesas criadas; @result.IncomesReused receitas e @result.ExpensesReused despesas reutilizadas.</div>}
+@code {
+ private List<Income> incomes=[];private List<ExpenseListItem> expenses=[];private HashSet<int> incomeIds=[];private HashSet<int> expenseIds=[];private ConvertFixedResult? result;
+ protected override async Task LoadAsync(){incomes=await Api.GetAsync<List<Income>>($"api/incomes/{Month.Year}/{Month.Month}")??[];expenses=await Api.GetAsync<List<ExpenseListItem>>($"api/expenses/{Month.Year}/{Month.Month}")??[];}
+ protected new async Task ChangeMonthAsync(int offset){incomeIds.Clear();expenseIds.Clear();await base.ChangeMonthAsync(offset);}
+ private static void Select(HashSet<int> set,int id,bool value){if(value)set.Add(id);else set.Remove(id);}
+ private void SelectIncome(int id,bool value){Select(incomeIds,id,value);if(!value)foreach(var expense in expenses.Where(x=>x.Expense.IncomeId==id))expenseIds.Remove(expense.Expense.Id);}
+ private void SelectExpense(Expense expense,bool value){Select(expenseIds,expense.Id,value);if(value)incomeIds.Add(expense.IncomeId);}
+ private async Task ConvertAsync(){if(!await Js.InvokeAsync<bool>("confirm","Converter os selecionados em modelos fixos, preservando o histórico?"))return;await RunAsync(async()=>{var outcome=await Api.SendWithResultAsync<ConvertFixedRequest,ConvertFixedResult>(HttpMethod.Post,"api/fixed/convert",new ConvertFixedRequest(Month,incomeIds.ToList(),expenseIds.ToList()));result=outcome.Result;Message=outcome.Sent?"Conversão concluída.":"Conversão aguardando sincronização.";incomeIds.Clear();expenseIds.Clear();if(outcome.Sent)await LoadAsync();});}
+}
